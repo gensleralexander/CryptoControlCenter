@@ -1,4 +1,4 @@
-## CryptoControlCenter
+## ![Icon](https://github.com/gensleralexander/CryptoControlCenter/tree/master/CryptoControlCenter.WPF/Resources/Logo128.png?raw=true) CryptoControlCenter
 
 An App to keep track of your crypto.
 
