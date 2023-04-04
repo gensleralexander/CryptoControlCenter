@@ -29,23 +29,7 @@ namespace CryptoControlCenter.Common
     /// </summary>
     public sealed class CryptoCenter : AbstractPropertyChanged, ICryptoCenter
     {
-        BinanceSocketClient socketClient = new BinanceSocketClient();
-        Task.Run(async () =>
-            {
-                var subscribeResult = await socketClient.SpotStreams.SubscribeToKlineUpdatesAsync("BTCUSDT", Binance.Net.Enums.KlineInterval.OneMinute, data =>
-                {
-                    if (data.Data.Data.Final)
-                    {
-                        var x = data.Data.Data;
-                    }
-                });
-        Console.WriteLine(subscribeResult.Success);
-            }).Wait();
-
-
-
-
-    internal static bool isInitialized = false;
+        internal static bool isInitialized = false;
 
         public static void Initialize()
         {
@@ -367,7 +351,7 @@ namespace CryptoControlCenter.Common
         {
             SortedSet<HodledAsset> hodledAssets = new SortedSet<HodledAsset>();
             Dictionary<string, FinancialStatementHelper> fshelper = new Dictionary<string, FinancialStatementHelper>();
-            foreach(IExchangeWalletViewer wallet in ExchangeWallets)
+            foreach (IExchangeWalletViewer wallet in ExchangeWallets)
             {
                 fshelper.Add(wallet.WalletName, new FinancialStatementHelper());
             }

@@ -9,8 +9,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CryptoControlCenter.Common"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CryptoControlCenter.Common.UnitTests", "CryptoControlCenter.Common.UnitTests\CryptoControlCenter.Common.UnitTests.csproj", "{11F6694B-2448-4B22-8375-296AAAB342B4}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CryptoControlCenter.ConsoleDevelopment", "CryptoControlCenter.ConsoleDevelopment\CryptoControlCenter.ConsoleDevelopment.csproj", "{DCF36EDC-AEC0-4475-B695-976D4834040F}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{A8B181A5-BF63-4B99-AF5D-39E94319B465}"
 	ProjectSection(SolutionItems) = preProject
 		LICENSE.MD = LICENSE.MD
@@ -23,6 +21,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Installer", "Installer", "{
 	ProjectSection(SolutionItems) = preProject
 		Installer\.gitattributes = Installer\.gitattributes
 	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CryptoControlCenter.ConsoleDevelopment", "CryptoControlCenter.ConsoleDevelopment\CryptoControlCenter.ConsoleDevelopment.csproj", "{77E8981A-986C-4661-864D-EC1930D8BB7A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -42,14 +42,14 @@ Global
 		{11F6694B-2448-4B22-8375-296AAAB342B4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{11F6694B-2448-4B22-8375-296AAAB342B4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{11F6694B-2448-4B22-8375-296AAAB342B4}.Release|Any CPU.Build.0 = Release|Any CPU
-		{DCF36EDC-AEC0-4475-B695-976D4834040F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{DCF36EDC-AEC0-4475-B695-976D4834040F}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{DCF36EDC-AEC0-4475-B695-976D4834040F}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{DCF36EDC-AEC0-4475-B695-976D4834040F}.Release|Any CPU.Build.0 = Release|Any CPU
 		{C77A904D-4977-4CDF-A278-9ADC4DF35C89}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{C77A904D-4977-4CDF-A278-9ADC4DF35C89}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C77A904D-4977-4CDF-A278-9ADC4DF35C89}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C77A904D-4977-4CDF-A278-9ADC4DF35C89}.Release|Any CPU.Build.0 = Release|Any CPU
+		{77E8981A-986C-4661-864D-EC1930D8BB7A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{77E8981A-986C-4661-864D-EC1930D8BB7A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{77E8981A-986C-4661-864D-EC1930D8BB7A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{77E8981A-986C-4661-864D-EC1930D8BB7A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
