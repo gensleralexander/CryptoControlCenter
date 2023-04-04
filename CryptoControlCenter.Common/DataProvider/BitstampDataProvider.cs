@@ -65,10 +65,6 @@ namespace CryptoControlCenter.Common.DataProvider
             }
             List<Transaction> transactions = new List<Transaction>();
 
-            #region Bank Actions
-
-            #endregion
-
             #region User Transactions
             IEnumerable<BitstampUserTransaction> userTransactions = new List<BitstampUserTransaction>();
             var userTransactionsResult = await Client.Api.Private.GetUserTransactionsAsync(null, 0, 1000, SortingOrder.Ascending, null, null); //since_timestamp parameter not working on Bitstamp. Transactions before startingPoint parameter will be dropped

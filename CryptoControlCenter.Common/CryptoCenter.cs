@@ -134,24 +134,21 @@ namespace CryptoControlCenter.Common
                 List<WalletBalance> list = new List<WalletBalance>();
                 ObservableCollection<IBalanceViewer> output = new ObservableCollection<IBalanceViewer>();
                 WalletBalance item;
-                foreach (KeyValuePair<string, SortedSet<HodledAsset>> wallet in GetHodledAssets())
+                foreach (HodledAsset asset in GetHodledAssets().Value)
                 {
-                    foreach (HodledAsset asset in wallet.Value)
+                    try
                     {
-                        try
-                        {
-                            item = list.First(x => x.Asset == asset.Asset);
-                        }
-                        catch
-                        {
-                            item = null;
-                        }
-                        if (item != null)
-                        {
-                            item.CurrentAmount += (double)asset.CurrentAmount;
-                        }
-                        else list.Add(new WalletBalance(wallet.Key, asset.Asset, (double)asset.CurrentAmount));
+                        item = list.First(x => x.Asset == asset.Asset);
                     }
+                    catch
+                    {
+                        item = null;
+                    }
+                    if (item != null)
+                    {
+                        item.CurrentAmount += (double)asset.CurrentAmount;
+                    }
+                    else list.Add(new WalletBalance(asset.Location, asset.Asset, (double)asset.CurrentAmount));
                 }
                 list.ForEach(output.Add);
                 return output;
@@ -327,28 +324,19 @@ namespace CryptoControlCenter.Common
         /// <summary>
         /// Get all hodled assets grouped by WalletNames based on the current transactions collection
         /// </summary>
-        /// <returns>Dictionary, where Keys = walletNames and Values = HodledAssets on that exchange</returns>
-        private Dictionary<string, SortedSet<HodledAsset>> GetHodledAssets()
+        /// <returns>A KeyValuePair, where Key is the FinancialHelper-Dictionary and Pair is the SortedSet with HodledAssets</returns>
+        private KeyValuePair<Dictionary<string, FinancialStatementHelper>, SortedSet<HodledAsset>> GetHodledAssets()
         {
-            Dictionary<string, SortedSet<HodledAsset>> result = new Dictionary<string, SortedSet<HodledAsset>>();
-            foreach (IExchangeWalletViewer wallet in ExchangeWallets)
-            {
-                SortedSet<HodledAsset> walletAssets = new SortedSet<HodledAsset>();
-                Dictionary<string, FinancialStatementHelper> dummy = new Dictionary<string, FinancialStatementHelper>()//Dummy-Object; not used in this method, but necessary for the document generator
+            SortedSet<HodledAsset> hodledAssets = new SortedSet<HodledAsset>();
+            Dictionary<string, FinancialStatementHelper> fshelper = new Dictionary<string, FinancialStatementHelper>()
                 {
                     { "Test", new FinancialStatementHelper(0,0) }
                 };
-                int currentNr = 1;
-                var transactions = Transactions.Where(x => x.Wallet == wallet.WalletName);
-
-                foreach (ITransactionViewer transaction in transactions)
-                {
-                    transaction.Process(ref dummy, ref walletAssets);
-                    currentNr++;
-                }
-                result.Add(wallet.WalletName, walletAssets);
+            foreach (ITransactionViewer transaction in Transactions)
+            {
+                transaction.Process(ref fshelper, ref hodledAssets);
             }
-            return result;
+            return new KeyValuePair<Dictionary<string, FinancialStatementHelper>, SortedSet<HodledAsset>>(fshelper, hodledAssets);
         }
         /// <inheritdoc/>
         public async Task CreateWallet(string walletName, Exchange exchange, string exchangeApiKey, string exchangeApiSecret)

@@ -137,10 +137,6 @@ namespace CryptoControlCenter.Common
                             Console.Write(debugLfd + " --- ");
                             Console.WriteLine(transaction.ToString());
                             debugLfd++;
-                            if (debugLfd == 427)
-                            {
-
-                            }
 #endif
                             //Check for a change in year -> Annual Financial Statement
                             if (last != null && transaction.TransactionTime.Year > last.TransactionTime.Year)
