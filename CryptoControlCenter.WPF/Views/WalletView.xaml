@@ -1,0 +1,118 @@
+﻿<UserControl x:Class="CryptoControlCenter.WPF.Views.WalletView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:vm="clr-namespace:CryptoControlCenter.WPF.ViewModels"
+             xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
+             xmlns:res="clr-namespace:CryptoControlCenter.WPF.Resources"
+             xmlns:mock="clr-namespace:CryptoControlCenter.WPF.MockData"
+             xmlns:sunburst="clr-namespace:Syncfusion.UI.Xaml.SunburstChart;assembly=Syncfusion.SfSunburstChart.WPF"
+             mc:Ignorable="d" 
+             d:DesignHeight="500" d:DesignWidth="800"
+             Background="{StaticResource Background}">
+    <UserControl.DataContext>
+        <mock:MockViewModel/>
+        <!--<vm:WalletViewModel/>-->
+    </UserControl.DataContext>
+    <Grid Margin="2">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <StackPanel Orientation="Horizontal" Grid.Row="0" Grid.Column="0">
+            <Button x:Name="AddWallet" Command="{Binding AddCommand}">
+                <Button.Content>
+                    <StackPanel Orientation="Horizontal">
+                        <iconPacks:PackIconMaterial Kind="WalletPlus" VerticalAlignment="Center" 
+                                              HorizontalAlignment="Center" Margin="10"/>
+                        <TextBlock Text="{x:Static res:Strings.Add}" Margin="0,10,10,10"/>
+                    </StackPanel>
+                </Button.Content>
+            </Button>
+            <Button x:Name="DeleteWallet" Command="{Binding DeleteCommand}" IsEnabled="{Binding ElementName=WalletList, Path=SelectedItem, Converter={StaticResource HasSelectionConverter}}" Margin="10,0,0,0">
+                <Button.Content>
+                    <StackPanel Orientation="Horizontal">
+                        <iconPacks:PackIconMaterial Kind="Delete" VerticalAlignment="Center" 
+                                              HorizontalAlignment="Center" Margin="10"/>
+                        <TextBlock Text="{x:Static res:Strings.Delete}" Margin="0,10,10,10"/>
+                    </StackPanel>
+                </Button.Content>
+            </Button>
+        </StackPanel>
+
+        <StackPanel Grid.Column="0" Grid.Row="1">
+            <TextBlock Text="{x:Static res:Strings.Wallets}" FontSize="{DynamicResource AppFontSizeHeaders}" Margin="0,10,0,10"/>
+            <ListBox x:Name="WalletList" SelectedItem="{Binding SelectedWallet,Mode=TwoWay}" ItemsSource="{Binding Wallets}" BorderThickness="0" Background="{StaticResource Background}">
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <TextBlock Text="{Binding WalletName}" Foreground="{StaticResource Foreground}" FontSize="{DynamicResource AppFontSize}"/>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
+        </StackPanel>
+
+        <StackPanel Grid.Row="0" Grid.Column="1" Grid.RowSpan="2">
+            <TextBlock Text="{x:Static res:Strings.Assets}" FontSize="{DynamicResource AppFontSizeHeaders}" HorizontalAlignment="Center" Margin="0,10,0,0"/>
+            <sunburst:SfSunburstChart x:Name="Sunburst" InnerRadius="0.35" Background="{StaticResource Background}" Palette="Pineapple" HorizontalContentAlignment="Center" EnableAnimation="True" AnimationType="FadeIn" AnimationDuration="1200" ValueMemberPath="CurrentValue" StrokeThickness="2" Stroke="{StaticResource Background}" Foreground="{StaticResource PrimaryLightBrush}" d:DataContext="{d:DesignInstance Type=mock:MockViewModel,IsDesignTimeCreatable=True}" ItemsSource="{Binding Balances}">
+                <sunburst:SfSunburstChart.Levels>
+                    <!--<sunburst:SunburstHierarchicalLevel GroupMemberPath="Wallet"/>-->
+                    <sunburst:SunburstHierarchicalLevel GroupMemberPath="Asset"/>
+                </sunburst:SfSunburstChart.Levels>
+                <!--<sunburst:SfSunburstChart.Legend>
+                <sunburst:SunburstLegend DockPosition="Top" Foreground="{StaticResource Foreground}" ClickAction="ToggleSegmentVisibility"/>
+            </sunburst:SfSunburstChart.Legend>-->
+                <sunburst:SfSunburstChart.DataLabelInfo>
+                    <sunburst:SunburstDataLabelInfo LabelOverflowMode="Trim" LabelRotationMode="Normal" FontWeight="DemiBold">
+                        <sunburst:SunburstDataLabelInfo.LabelTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding Category}" FontSize="{DynamicResource AppFontSize}" Foreground="Black"/>
+                            </DataTemplate>
+                        </sunburst:SunburstDataLabelInfo.LabelTemplate>
+                    </sunburst:SunburstDataLabelInfo>
+                </sunburst:SfSunburstChart.DataLabelInfo>
+                <sunburst:SfSunburstChart.Behaviors>
+                    <sunburst:SunburstToolTipBehavior HorizontalAlignment="Right" EnableAnimation="True">
+                        <sunburst:SunburstToolTipBehavior.ToolTipTemplate>
+                            <DataTemplate>
+                                <Border Background="{Binding Interior}" BorderThickness="0">
+                                    <StackPanel Orientation="Horizontal">
+                                        <TextBlock Foreground="Black">
+                                            <Run Text="{Binding Value}"/>
+                                            <Run Text=" "/>
+                                            <Run Text="{x:Static res:Strings.CurrentCurrency}"/>
+                                        </TextBlock>
+                                    </StackPanel>
+                                </Border>
+                            </DataTemplate>
+                        </sunburst:SunburstToolTipBehavior.ToolTipTemplate>
+                    </sunburst:SunburstToolTipBehavior>
+                    <sunburst:SunburstZoomingBehavior ToolBarHorizontalAlignment="Center" ToolBarVerticalAlignment="Center"/>
+                </sunburst:SfSunburstChart.Behaviors>
+
+                <!--<sunburst:SfSunburstChart.ColorModel>
+                <sunburst:SunburstColorModel>
+                    <sunburst:SunburstColorModel.CustomBrushes>
+                        <LinearGradientBrush>
+                            <GradientStop Color="Yellow" Offset="0"/>
+                        </LinearGradientBrush>
+
+                        <LinearGradientBrush>
+                            <GradientStop Color="Blue" Offset="0"/>
+                        </LinearGradientBrush>
+
+                        <LinearGradientBrush>
+                            <GradientStop Color="Green" Offset="0"/>
+                        </LinearGradientBrush>
+                    </sunburst:SunburstColorModel.CustomBrushes>
+                </sunburst:SunburstColorModel>
+            </sunburst:SfSunburstChart.ColorModel>-->
+            </sunburst:SfSunburstChart>
+        </StackPanel>
+    </Grid>
+</UserControl>
