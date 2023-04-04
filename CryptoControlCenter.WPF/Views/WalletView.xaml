@@ -12,8 +12,8 @@
              d:DesignHeight="500" d:DesignWidth="800"
              Background="{StaticResource Background}">
     <UserControl.DataContext>
-        <mock:MockViewModel/>
-        <!--<vm:WalletViewModel/>-->
+        <!--<mock:MockViewModel/>-->
+        <vm:WalletViewModel/>
     </UserControl.DataContext>
     <Grid Margin="2">
         <Grid.ColumnDefinitions>

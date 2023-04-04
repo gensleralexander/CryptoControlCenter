@@ -29,7 +29,23 @@ namespace CryptoControlCenter.Common
     /// </summary>
     public sealed class CryptoCenter : AbstractPropertyChanged, ICryptoCenter
     {
-        internal static bool isInitialized = false;
+        BinanceSocketClient socketClient = new BinanceSocketClient();
+        Task.Run(async () =>
+            {
+                var subscribeResult = await socketClient.SpotStreams.SubscribeToKlineUpdatesAsync("BTCUSDT", Binance.Net.Enums.KlineInterval.OneMinute, data =>
+                {
+                    if (data.Data.Data.Final)
+                    {
+                        var x = data.Data.Data;
+                    }
+                });
+        Console.WriteLine(subscribeResult.Success);
+            }).Wait();
+
+
+
+
+    internal static bool isInitialized = false;
 
         public static void Initialize()
         {
@@ -143,32 +159,37 @@ namespace CryptoControlCenter.Common
         public ObservableCollection<IExchangeWalletViewer> ExchangeWallets { get; }
         /// <inheritdoc/>
         public ObservableCollection<ITransactionViewer> Transactions { get; private set; }
+
+        private ObservableCollection<IBalanceViewer> currentAssets;
         /// <inheritdoc/>
         public ObservableCollection<IBalanceViewer> CurrentAssets
         {
             get
             {
-                List<WalletBalance> list = new List<WalletBalance>();
-                ObservableCollection<IBalanceViewer> output = new ObservableCollection<IBalanceViewer>();
-                WalletBalance item;
-                foreach (HodledAsset asset in GetHodledAssets().Value)
+                if (currentAssets == null)
                 {
-                    try
+                    List<WalletBalance> list = new List<WalletBalance>();
+                    currentAssets = new ObservableCollection<IBalanceViewer>();
+                    WalletBalance item;
+                    foreach (HodledAsset asset in GetHodledAssets().Value)
                     {
-                        item = list.First(x => x.Asset == asset.Asset);
+                        try
+                        {
+                            item = list.First(x => x.Asset == asset.Asset);
+                        }
+                        catch
+                        {
+                            item = null;
+                        }
+                        if (item != null)
+                        {
+                            item.CurrentAmount += (double)asset.CurrentAmount;
+                        }
+                        else list.Add(new WalletBalance(asset.Location, asset.Asset, (double)asset.CurrentAmount));
                     }
-                    catch
-                    {
-                        item = null;
-                    }
-                    if (item != null)
-                    {
-                        item.CurrentAmount += (double)asset.CurrentAmount;
-                    }
-                    else list.Add(new WalletBalance(asset.Location, asset.Asset, (double)asset.CurrentAmount));
+                    list.ForEach(currentAssets.Add);
                 }
-                list.ForEach(output.Add);
-                return output;
+                return currentAssets;
             }
         }
 

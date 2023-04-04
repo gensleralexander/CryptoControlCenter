@@ -12,23 +12,26 @@
     <UserControl.DataContext>
         <vm:InfoViewModel/>
     </UserControl.DataContext>
-    <StackPanel Orientation="Vertical" Margin="10,0,0,0">
-        <TextBlock Margin="0,20,0,0" Text="Version" FontWeight="DemiBold" FontSize="{DynamicResource AppFontSizeHeaders}"/>
-        <TextBlock Margin="10,10,0,20" Text="{Binding AppVersion}"/>
-        <!--Disclaimer-->
-        <TextBlock
+    <Grid>
+        <Image Source="/Resources/Logo64.png" Margin="10" Width="64" Height="64" HorizontalAlignment="Right" VerticalAlignment="Top"/>
+        <StackPanel Orientation="Vertical" Margin="10,0,0,0">
+            <TextBlock Margin="0,20,0,0" Text="Version" FontWeight="DemiBold" FontSize="{DynamicResource AppFontSizeHeaders}"/>
+            <TextBlock Margin="10,10,0,20" Text="{Binding AppVersion}"/>
+            <!--Disclaimer-->
+            <TextBlock
                 FontWeight="DemiBold"
                 Text="{x:Static res:Strings.Disclaimer}"
                 FontSize="{DynamicResource AppFontSizeHeaders}"/>
-        <RichTextBox IsReadOnly="True" FontSize="{DynamicResource AppFontSize}" Foreground="{StaticResource Foreground}" Background="{StaticResource Background}" BorderThickness="0" MinWidth="500" MaxWidth="900" Margin="10,10,0,0" HorizontalAlignment="Left">
-            <FlowDocument>
-                <Paragraph Background="{StaticResource Background}">
-                    <Run Text="{x:Static res:Strings.SoftwareLicense}"/>
-                </Paragraph>
-                <Paragraph Margin="0,15,0,0" Background="{StaticResource Background}">
-                    <Run Text="{x:Static res:Strings.CryptoDisclaimer}"/>
-                </Paragraph>
-            </FlowDocument>
-        </RichTextBox>
-    </StackPanel>
+            <RichTextBox IsReadOnly="True" FontSize="{DynamicResource AppFontSize}" Foreground="{StaticResource Foreground}" Background="{StaticResource Background}" BorderThickness="0" MinWidth="500" MaxWidth="900" Margin="10,10,0,0" HorizontalAlignment="Left">
+                <FlowDocument>
+                    <Paragraph Background="{StaticResource Background}">
+                        <Run Text="{x:Static res:Strings.SoftwareLicense}"/>
+                    </Paragraph>
+                    <Paragraph Margin="0,15,0,0" Background="{StaticResource Background}">
+                        <Run Text="{x:Static res:Strings.CryptoDisclaimer}"/>
+                    </Paragraph>
+                </FlowDocument>
+            </RichTextBox>
+        </StackPanel>
+    </Grid>
 </UserControl>

@@ -6,8 +6,8 @@
     <Nullable>enable</Nullable>
     <UseWPF>true</UseWPF>
     <AssemblyName>CryptoControlCenter</AssemblyName>
-    <AssemblyVersion>1.0.96.8494</AssemblyVersion>
-    <FileVersion>1.0.96.8494</FileVersion>
+    <AssemblyVersion>1.0.106.8494</AssemblyVersion>
+    <FileVersion>1.0.106.8494</FileVersion>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
@@ -42,6 +42,8 @@
 
   <ItemGroup>
     <None Remove="Resources\Logo128.png" />
+    <None Remove="Resources\Logo48.png" />
+    <None Remove="Resources\Logo64.png" />
   </ItemGroup>
 
   <ItemGroup>
@@ -60,6 +62,8 @@
 
   <ItemGroup>
     <Resource Include="Resources\Logo128.png" />
+    <Resource Include="Resources\Logo48.png" />
+    <Resource Include="Resources\Logo64.png" />
   </ItemGroup>
 
   <ItemGroup>

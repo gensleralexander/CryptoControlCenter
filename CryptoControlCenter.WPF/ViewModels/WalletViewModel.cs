@@ -4,6 +4,7 @@ using CryptoControlCenter.Common.Models.Interfaces;
 using CryptoControlCenter.WPF.Helper;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Linq;
 using System.Windows.Data;
 using System.Windows.Input;
 
@@ -50,9 +51,9 @@ namespace CryptoControlCenter.WPF.ViewModels
                 else
                 {
                     var source = CollectionViewSource.GetDefaultView(balances);
-                    source.Filter = p =>
+                    source.Filter = item =>
                     {
-                        return ((IBalanceViewer)p).Wallet == SelectedWallet.WalletName;
+                        return ((IBalanceViewer)item).Wallet == SelectedWallet.WalletName;
                     };
                     return source;
                 }
@@ -88,8 +89,8 @@ namespace CryptoControlCenter.WPF.ViewModels
 
         private void AddExecute()
         {
-            int i = System.Random.Shared.Next();
-            CryptoCenter.Instance.CreateWallet("Test" + i, Common.Enums.Exchange.Bitstamp, "test"+ i, "test" + i);
+            //int i = System.Random.Shared.Next();
+            //CryptoCenter.Instance.CreateWallet("Test" + i, Common.Enums.Exchange.Bitstamp, "test"+ i, "test" + i);
         }
 
         private void DeleteExecute()
