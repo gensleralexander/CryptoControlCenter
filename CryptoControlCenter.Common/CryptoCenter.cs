@@ -33,35 +33,52 @@ namespace CryptoControlCenter.Common
 
         public static void Initialize()
         {
-            try
+            List<Task> taskList = new List<Task>();
+            ConcurrentBag<Exception> exceptionBag = new ConcurrentBag<Exception>();
+            taskList.Add(Task.Run(() =>
             {
-                InternalInstance.ActualizeSymbols();
-                #region Load existing entries from database
-                List<Task> taskList = new List<Task>();
-                ConcurrentBag<Exception> exceptionBag = new ConcurrentBag<Exception>();
-                taskList.Add(Task.Run(async () =>
+                try
+                {
+                    InternalInstance.ActualizeSymbols();
+                }
+                catch (Exception ex)
+                {
+                    exceptionBag.Add(ex);
+                }
+            }));
+            #region Load existing entries from database
+            taskList.Add(Task.Run(async () =>
+            {
+                try
                 {
                     (await SQLiteDatabaseManager.Database.Table<ExchangeWallet>().ToListAsync()).ForEach(InternalInstance.ExchangeWallets.Add);
-                }));
-                taskList.Add(Task.Run(async () =>
+                }
+                catch (Exception ex)
+                {
+                    exceptionBag.Add(ex);
+                }
+            }));
+            taskList.Add(Task.Run(async () =>
+            {
+                try
                 {
                     var list = await SQLiteDatabaseManager.Database.Table<Transaction>().ToListAsync();
                     if (list != null) { list.ForEach(InternalInstance.Transactions.Add); }
-                }));
-
-                Task.WhenAll(taskList).Wait();
-                foreach (Exception ex in exceptionBag)
-                {
-                    InternalInstance.AddLog(ex.Message);
                 }
-                #endregion
-                isInitialized = true;
-            }
-            catch (InvalidOperationException ex)
+                catch (Exception ex)
+                {
+                    exceptionBag.Add(ex);
+                }
+            }));
+
+            Task.WhenAll(taskList).Wait();
+            foreach (Exception ex in exceptionBag)
             {
                 InternalInstance.AddLog(ex.Message);
-                //TODO Critical
+                //TODO
             }
+            isInitialized = true;
+            #endregion
             InternalInstance.AddLog("Initialization completed.", "Initialization");
         }
 
@@ -105,7 +122,7 @@ namespace CryptoControlCenter.Common
                 }
                 else
                 {
-                    //Initialize();
+                    Initialize();
                     return lazy.Value;
                 }
             }
@@ -233,7 +250,7 @@ namespace CryptoControlCenter.Common
 #endif
         }
         /// <summary>
-        /// Actualize the binance symbols list - gets called in Constructor and in the Timer elapsed event
+        /// Actualize the binance symbols list
         /// </summary>
         private void ActualizeSymbols()
         {
@@ -328,11 +345,14 @@ namespace CryptoControlCenter.Common
         private KeyValuePair<Dictionary<string, FinancialStatementHelper>, SortedSet<HodledAsset>> GetHodledAssets()
         {
             SortedSet<HodledAsset> hodledAssets = new SortedSet<HodledAsset>();
-            Dictionary<string, FinancialStatementHelper> fshelper = new Dictionary<string, FinancialStatementHelper>()
-                {
-                    { "Test", new FinancialStatementHelper(0,0) }
-                };
-            foreach (ITransactionViewer transaction in Transactions)
+            Dictionary<string, FinancialStatementHelper> fshelper = new Dictionary<string, FinancialStatementHelper>();
+            foreach(IExchangeWalletViewer wallet in ExchangeWallets)
+            {
+                fshelper.Add(wallet.WalletName, new FinancialStatementHelper());
+            }
+            var temp = Transactions.ToList();
+            temp.Sort();
+            foreach (ITransactionViewer transaction in temp)
             {
                 transaction.Process(ref fshelper, ref hodledAssets);
             }

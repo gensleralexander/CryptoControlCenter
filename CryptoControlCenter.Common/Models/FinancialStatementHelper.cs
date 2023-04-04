@@ -21,6 +21,12 @@ namespace CryptoControlCenter.Common.Models
         public int currentNr { get; set; }
         public int processedTransactions { get; set; }
 
+        public FinancialStatementHelper()
+        {
+            InitializeYear();
+            currentRow = 0;
+            currentNr = 0;
+        }
         public FinancialStatementHelper(int _currentRow, int _currentNr)
         {
             InitializeYear();

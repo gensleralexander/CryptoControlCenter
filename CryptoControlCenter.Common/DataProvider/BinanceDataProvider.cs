@@ -147,7 +147,7 @@ namespace CryptoControlCenter.Common.DataProvider
 
         /// <inheritdoc />
         [Obsolete("This method is currently not reliable in 'getting all transactions', as the Binance API requires a specific list of trading pairs for which you want to query transactions. For now, use CSV-Import, until this method is fixed.")]
-        public async Task SynchronizeWallet(DateTime? startingPoint = null, IEnumerable<string> coins = null)
+        public async Task SynchronizeWallet(DateTime? startingPoint = null)
         {
             //Delays in this method are used to prevent API abuse.
 #if DEBUG
