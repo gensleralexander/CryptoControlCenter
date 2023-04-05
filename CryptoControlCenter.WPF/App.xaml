@@ -3,7 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:system="clr-namespace:System;assembly=System.Runtime"
              xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
-             xmlns:converter="clr-namespace:CryptoControlCenter.WPF.Helper"
+             xmlns:converter="clr-namespace:CryptoControlCenter.WPF.Converter"
              StartupUri="MainWindow.xaml">
     <Application.Resources>
         <system:Double x:Key="AppFontSize">16</system:Double>
@@ -19,6 +19,7 @@
         <SolidColorBrush x:Key="OnMouseOver" Color="#FF888888"/>
 
         <converter:HasSelectionConverter x:Key="HasSelectionConverter"/>
+        <converter:TitleConverter x:Key="TitleConverter"/>
 
         <Style TargetType="iconPacks:PackIconMaterial">
             <Setter Property="Width" Value="{DynamicResource ButtonSize}"/>

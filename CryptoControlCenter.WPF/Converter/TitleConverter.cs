@@ -2,17 +2,17 @@
 using System.Globalization;
 using System.Windows.Data;
 
-namespace CryptoControlCenter.WPF.Helper
+namespace CryptoControlCenter.WPF.Converter
 {
-    public class HasSelectionConverter : IValueConverter
+    internal class TitleConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            if (value == null)
+            if (string.IsNullOrWhiteSpace((string)value))
             {
-                return false;
+                return "CryptoControlCenter";
             }
-            else return true;
+            else return "CryptoControlCenter - " + value;
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)

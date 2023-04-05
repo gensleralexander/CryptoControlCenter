@@ -7,6 +7,7 @@ using OfficeOpenXml;
 using OfficeOpenXml.Style;
 using System;
 using System.Collections.Generic;
+using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -56,8 +57,9 @@ namespace CryptoControlCenter.Common
         /// Creates the crypto tax report (currently only german) for a given time period.
         /// </summary>
         /// <param name="toYear">Ending year. If NULL, then last year is used.</param>
+        /// <param name="language">Language for excel sheet.</param>
         /// <exception cref="InvalidOperationException">Occurs, when there is no valid worksheet found for Location.</exception>
-        public static async Task<string> GenerateCryptoTaxReport(int? toYear = null)
+        public static async Task<string> GenerateCryptoTaxReport(int? toYear = null, string language = "en")
         {
             DateTime to;
             if (toYear == null || toYear > DateTime.UtcNow.Year) //default is until end of last year

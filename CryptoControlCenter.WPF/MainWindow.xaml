@@ -11,11 +11,13 @@
         skin:SfSkinManager.Theme="{skin:SkinManagerExtension ThemeName=MaterialDark}" Background="{StaticResource Background}"
         mc:Ignorable="d"
         Closed="ChromelessWindow_Closed"
-        Title="CryptoControlCenter" Icon="/Resources/Logo48.png" d:DesignHeight="800" d:DesignWidth="1280" ResizeMode="CanResizeWithGrip" ResizeBorderThickness="5" ResizeBorderBrush="{StaticResource Background}" CornerRadius="10" AllowsTransparency="True" TitleFontSize="13" TitleTextAlignment="Left" TitleBarForeground="{StaticResource Foreground}" TitleBarBackground="{StaticResource Background}">
+        StateChanged="ChromelessWindow_StateChanged"
+        Title="{Binding SelectedItem, ElementName=NavigationMenuListBox,Converter={StaticResource TitleConverter}}" ResizeMode="CanResize" Icon="/Resources/Logo48.png" d:DesignHeight="800" d:DesignWidth="1280" TitleFontSize="13" TitleTextAlignment="Center" TitleBarForeground="{StaticResource Foreground}" TitleBarBackground="{StaticResource Background}" ResizeBorderThickness="5" ResizeBorderBrush="{StaticResource Background}" CornerRadius="10" AllowsTransparency="True">
     <Window.Resources>
         <x:Array x:Key="NavigationMenuItems" Type="system:String">
             <system:String>Dashboard</system:String>
             <system:String>Wallets</system:String>
+            <system:String>Database</system:String>
             <system:String>Settings</system:String>
             <system:String>Info</system:String>
         </x:Array>
@@ -25,6 +27,9 @@
         </DataTemplate>
         <DataTemplate x:Key="WalletsTemplate">
             <views:WalletView/>
+        </DataTemplate>
+        <DataTemplate x:Key="DatabaseTemplate">
+            <views:DatabaseView/>
         </DataTemplate>
         <DataTemplate x:Key="SettingsTemplate">
             <views:SettingsView/>
@@ -122,6 +127,10 @@
                              Value="Wallets">
                     <Setter Property="ContentTemplate" Value="{StaticResource WalletsTemplate}"/>
                 </DataTrigger>
+                <DataTrigger Binding="{Binding ElementName=NavigationMenuListBox, Path=SelectedItem}"
+                             Value="Database">
+                    <Setter Property="ContentTemplate" Value="{StaticResource DatabaseTemplate}"/>
+                </DataTrigger>
                 <DataTrigger Binding="{Binding ElementName=NavigationMenuListBox, Path=SelectedItem}" 
                              Value="Settings">
                     <Setter Property="ContentTemplate" Value="{StaticResource SettingsTemplate}"/>
@@ -142,6 +151,9 @@
                 <DataTrigger Binding="{Binding}" Value="Wallets">
                     <Setter TargetName="MenuItemIcon" Property="Kind" Value="Wallet"/>
                 </DataTrigger>
+                <DataTrigger Binding="{Binding}" Value="Database">
+                    <Setter TargetName="MenuItemIcon" Property="Kind" Value="Database"/>
+                </DataTrigger>
                 <DataTrigger Binding="{Binding}" Value="Settings">
                     <Setter TargetName="MenuItemIcon" Property="Kind" Value="Cog"/>
                 </DataTrigger>
@@ -152,7 +164,7 @@
         </DataTemplate>
     </Window.Resources>
     <!--End Resources-->
-    
+
     <Grid Margin="3">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="Auto"/>

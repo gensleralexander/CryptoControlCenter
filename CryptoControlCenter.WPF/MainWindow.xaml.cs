@@ -1,4 +1,5 @@
-﻿using Syncfusion.Windows.Shared;
+﻿using CryptoControlCenter.Common;
+using Syncfusion.Windows.Shared;
 using System;
 using System.Globalization;
 using System.Threading;
@@ -15,6 +16,9 @@ namespace CryptoControlCenter.WPF
 
         public MainWindow()
         {
+            //Set Language for Library (Log Language, etc.)
+            CryptoCenter.SetLanguage(Properties.Settings.Default.LanguageCode);
+            //Restore Settings
             App.Current.Resources["AppFontSize"] = Properties.Settings.Default.Zoom;
             App.Current.Resources["AppFontSizeHeaders"] = Properties.Settings.Default.Zoom + 4;
             App.Current.Resources["ButtonSize"] = Properties.Settings.Default.Zoom + 9;
@@ -23,6 +27,7 @@ namespace CryptoControlCenter.WPF
             if (Properties.Settings.Default.IsFullscreen)
             {
                 this.WindowState = WindowState.Maximized;
+                this.CornerRadius = new CornerRadius(0);
             }
             InitializeComponent();
         }
@@ -62,6 +67,19 @@ namespace CryptoControlCenter.WPF
             else
             {
                 App.Current.Shutdown();
+            }
+        }
+
+        private void ChromelessWindow_StateChanged(object sender, EventArgs e)
+        {
+            MainWindow wnd = sender as MainWindow;
+            if (wnd.WindowState == WindowState.Maximized)
+            {
+                this.CornerRadius = new CornerRadius(0);
+            }
+            else if(wnd.WindowState == WindowState.Normal)
+            {
+                this.CornerRadius = new CornerRadius(10);
             }
         }
     }

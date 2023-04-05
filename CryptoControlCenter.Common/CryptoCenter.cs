@@ -20,6 +20,8 @@ using System.Threading.Tasks;
 using CryptoControlCenter.Common.Models.Interfaces;
 using System.Threading;
 using Newtonsoft.Json;
+using System.Globalization;
+using System.Text.RegularExpressions;
 
 namespace CryptoControlCenter.Common
 {
@@ -31,6 +33,18 @@ namespace CryptoControlCenter.Common
     {
         internal static bool isInitialized = false;
 
+        /// <summary>
+        /// Set Culture of Library
+        /// </summary>
+        /// <param name="languageCode">ISO Language Code</param>
+        public static void SetLanguage(string languageCode)
+        {
+            Thread.CurrentThread.CurrentCulture = CultureInfo.CreateSpecificCulture(languageCode);
+            Thread.CurrentThread.CurrentUICulture = new CultureInfo(languageCode);
+        }
+        /// <summary>
+        /// Initializes the Library
+        /// </summary>
         public static void Initialize()
         {
             List<Task> taskList = new List<Task>();
@@ -39,6 +53,8 @@ namespace CryptoControlCenter.Common
             {
                 try
                 {
+                    InternalInstance.bitstampSymbols.Clear();
+                    InternalInstance.binanceSymbols.Clear();
                     InternalInstance.ActualizeSymbols();
                 }
                 catch (Exception ex)
@@ -51,6 +67,7 @@ namespace CryptoControlCenter.Common
             {
                 try
                 {
+                    InternalInstance.ExchangeWallets.Clear();
                     (await SQLiteDatabaseManager.Database.Table<ExchangeWallet>().ToListAsync()).ForEach(InternalInstance.ExchangeWallets.Add);
                 }
                 catch (Exception ex)
@@ -62,6 +79,7 @@ namespace CryptoControlCenter.Common
             {
                 try
                 {
+                    InternalInstance.Transactions.Clear();
                     var list = await SQLiteDatabaseManager.Database.Table<Transaction>().ToListAsync();
                     if (list != null) { list.ForEach(InternalInstance.Transactions.Add); }
                 }
@@ -79,7 +97,7 @@ namespace CryptoControlCenter.Common
             }
             isInitialized = true;
             #endregion
-            InternalInstance.AddLog("Initialization completed.", "Initialization");
+            InternalInstance.AddLog(Resources.Strings.InitCompleted, Resources.Strings.Initialization);
         }
 
         /// <summary>
@@ -246,13 +264,10 @@ namespace CryptoControlCenter.Common
                 while (InternalInstance.QueueRunning && retries < 5)
                 {
                     retries++;
-                    InternalInstance.AddLog("Trying to shutdown services... Attempt " + retries + "/5 before timeout.", "Shutdown", false);
+                    InternalInstance.AddLog(Resources.Strings.ShutdownP1 + retries + Resources.Strings.ShutdownP2, Resources.Strings.Shutdown, false);
                     Task.Delay(5000).Wait();
                 }
             }
-#if DEBUG
-            Console.WriteLine("AppClosure completed.");
-#endif
         }
         /// <summary>
         /// Actualize the binance symbols list
@@ -273,13 +288,13 @@ namespace CryptoControlCenter.Common
                 {
                     bitstampSymbols = JsonConvert.DeserializeObject<List<BitstampTradingPairInfo>>(dd.SerializedBitstamp);
                     binanceSymbols = JsonConvert.DeserializeObject<BinanceExchangeInfo>(dd.SerializedBinance).Symbols.ToList();
-                    InternalInstance.AddLog("Loaded cached symbols from Database.", "Initialization");
+                    InternalInstance.AddLog(Resources.Strings.CachedSymbols, Resources.Strings.Initialization);
                     return;
                 }
             }
             catch
             {
-                InternalInstance.AddLog("No Cached Data found.", "Initialization");
+                InternalInstance.AddLog(Resources.Strings.NoCachedSymbols, Resources.Strings.Initialization);
             }
             CachedData cachedData = new CachedData()
             {
@@ -290,7 +305,7 @@ namespace CryptoControlCenter.Common
             List<Task> taskList = new List<Task>();
             taskList.Add(Task.Run(async () =>
             {
-                InternalInstance.AddLog("Loading Binance symbols started.", "Symbols");
+                InternalInstance.AddLog(Resources.Strings.BinanceSymbols, Resources.Strings.Symbols);
                 var clientBinance = new BinanceClient((new BinanceClientOptions
                 {
                     SpotApiOptions = new BinanceApiClientOptions
@@ -305,11 +320,11 @@ namespace CryptoControlCenter.Common
                     successedBinance = true;
                     cachedData.SerializedBinance = resultBinance.OriginalData;
                 }
-                InternalInstance.AddLog("Loading Binance symbols ended.", "Symbols");
+                InternalInstance.AddLog(Resources.Strings.BinanceSymbolsEnd, Resources.Strings.Symbols);
             }));
             taskList.Add(Task.Run(async () =>
             {
-                InternalInstance.AddLog("Loading Bitstamp symbols started.", "Symbols");
+                InternalInstance.AddLog(Resources.Strings.BitstampSymbols, Resources.Strings.Symbols);
                 var clientBitstamp = new BitstampClient(new BitstampClientOptions
                 {
                     SpotApiOptions = new BitstampApiClientOptions
@@ -324,7 +339,7 @@ namespace CryptoControlCenter.Common
                     successedBitstamp = true;
                     cachedData.SerializedBitstamp = resultBitstamp.OriginalData;
                 }
-                InternalInstance.AddLog("Loading Bitstamp symbols ended.", "Symbols");
+                InternalInstance.AddLog(Resources.Strings.BitstampSymbolsEnd, Resources.Strings.Symbols);
             }));
             Task.Run(async () =>
             {
@@ -332,7 +347,7 @@ namespace CryptoControlCenter.Common
                 if (successedBinance == false || successedBitstamp == false)
                 {
                     cancelSource.Cancel();
-                    InternalInstance.AddLog("Symbol Loading Timeout - Cancellation requested.", "Symbols");
+                    InternalInstance.AddLog(Resources.Strings.SymbolsFailed, Resources.Strings.Symbols);
                     throw new InvalidOperationException("Loading symbols failed");
                 }
             });
@@ -340,7 +355,7 @@ namespace CryptoControlCenter.Common
             if (successedBinance && successedBitstamp)
             {
                 int i = SQLiteDatabaseManager.Database.InsertOrReplaceAsync(cachedData).Result;
-                InternalInstance.AddLog("Updated Cached Data", "Symbols");
+                InternalInstance.AddLog(Resources.Strings.CacheUpdated, Resources.Strings.Symbols);
             }
         }
         /// <summary>
@@ -413,7 +428,7 @@ namespace CryptoControlCenter.Common
             }
             catch (InvalidOperationException)
             {
-                InternalInstance.AddLog("Wallet not found.", wallet.WalletName);
+                throw new InvalidOperationException("Wallet not found: " + wallet.WalletName);
             }
 
         }
@@ -459,10 +474,10 @@ namespace CryptoControlCenter.Common
             {
                 case Enums.TransactionType.Buy:
                 case Enums.TransactionType.Sell:
-                    InternalInstance.AddLog("New Transaction added: " + transaction.GetTradingPair(), "Transaction Task");
+                    InternalInstance.AddLog(Resources.Strings.NewTransaction + transaction.GetTradingPair(), Resources.Strings.TransactionTask);
                     break;
                 default:
-                    InternalInstance.AddLog("New Transaction added: " + transaction.TransactionType.ToString() + " " + transaction.AssetStart, "Transaction Task");
+                    InternalInstance.AddLog(Resources.Strings.NewTransaction + transaction.TransactionType.ToString() + " " + transaction.AssetStart, Resources.Strings.TransactionTask);
                     break;
             }
 #endif
@@ -712,7 +727,7 @@ namespace CryptoControlCenter.Common
                         }
                         else
                         {
-                            InternalInstance.AddLog("Error@Bitstamp-GetOHLC: " + request.Asset + request.BaseAsset + Environment.NewLine + result.Error.Message);
+                            InternalInstance.AddLog(Resources.Strings.Error + "@Bitstamp-GetOHLC: " + request.Asset + request.BaseAsset + Environment.NewLine + result.Error.Message);
                         }
                         await Task.Delay(100);
                     }
@@ -736,7 +751,7 @@ namespace CryptoControlCenter.Common
                     }
                     else
                     {
-                        InternalInstance.AddLog("Error@Binance-GetKlines: " + request.Asset + request.BaseAsset + Environment.NewLine + result.Error.Message);
+                        InternalInstance.AddLog(Resources.Strings.Error + "@Binance-GetKlines: " + request.Asset + request.BaseAsset + Environment.NewLine + result.Error.Message);
                     }
                     await Task.Delay(900);
                 }
@@ -806,13 +821,13 @@ namespace CryptoControlCenter.Common
                                 {
                                     case Enums.TransactionType.Buy:
                                     case Enums.TransactionType.Sell:
-                                        InternalInstance.AddLog("Error@ParallelAddInformation: " + transaction.GetTradingPair() + " @ " + transaction.TransactionTime.ToString() + " ----- " + ex.Message);
+                                        InternalInstance.AddLog(Resources.Strings.Error + "@ParallelAddInformation: " + transaction.GetTradingPair() + " @ " + transaction.TransactionTime.ToString() + " ----- " + ex.Message);
                                         break;
                                     case Enums.TransactionType.Distribution:
                                         transaction.TransferValue = 0.0m; //Some Assets were distributed on Binance, before there were trading pairs for them -> add TransferValue = 0, since Distribution isn't counted as buy
                                         break;
                                     default:
-                                        InternalInstance.AddLog("Error@ParallelAddInformation: " + transaction.TransactionType.ToString() + " " + transaction.AssetStart + " ----- " + ex.Message);
+                                        InternalInstance.AddLog(Resources.Strings.Error + "@ParallelAddInformation: " + transaction.TransactionType.ToString() + " " + transaction.AssetStart + " ----- " + ex.Message);
                                         break;
                                 }
                             }
@@ -853,10 +868,10 @@ namespace CryptoControlCenter.Common
                                 {
                                     case Enums.TransactionType.Buy:
                                     case Enums.TransactionType.Sell:
-                                        InternalInstance.AddLog("Error@ParallelAddInformationFees: " + transaction.GetTradingPair() + " @ " + transaction.TransactionTime.ToString() + " ----- " + ex.Message);
+                                        InternalInstance.AddLog(Resources.Strings.Error + "@ParallelAddInformationFees: " + transaction.GetTradingPair() + " @ " + transaction.TransactionTime.ToString() + " ----- " + ex.Message);
                                         break;
                                     default:
-                                        InternalInstance.AddLog("Error@ParallelAddInformationFees: " + transaction.TransactionType.ToString() + " " + transaction.AssetStart + " ----- " + ex.Message);
+                                        InternalInstance.AddLog(Resources.Strings.Error + "@ParallelAddInformationFees: " + transaction.TransactionType.ToString() + " " + transaction.AssetStart + " ----- " + ex.Message);
                                         break;
                                 }
                             }
@@ -911,13 +926,13 @@ namespace CryptoControlCenter.Common
                                 {
                                     case Enums.TransactionType.Buy:
                                     case Enums.TransactionType.Sell:
-                                        InternalInstance.AddLog("Error@ParallelAddInformation: " + transaction.GetTradingPair() + " @ " + transaction.TransactionTime.ToString() + " ----- " + ex.Message);
+                                        InternalInstance.AddLog(Resources.Strings.Error + "@ParallelAddInformation: " + transaction.GetTradingPair() + " @ " + transaction.TransactionTime.ToString() + " ----- " + ex.Message);
                                         break;
                                     case Enums.TransactionType.Distribution:
                                         transaction.TransferValue = 0.0m;
                                         break;
                                     default:
-                                        InternalInstance.AddLog("Error@ParallelAddInformation: " + transaction.TransactionType.ToString() + " " + transaction.AssetStart + " ----- " + ex.Message);
+                                        InternalInstance.AddLog(Resources.Strings.Error + "@ParallelAddInformation: " + transaction.TransactionType.ToString() + " " + transaction.AssetStart + " ----- " + ex.Message);
                                         break;
                                 }
                             }
@@ -949,10 +964,10 @@ namespace CryptoControlCenter.Common
                                 {
                                     case Enums.TransactionType.Buy:
                                     case Enums.TransactionType.Sell:
-                                        InternalInstance.AddLog("Error@ParallelAddInformationFees: " + transaction.GetTradingPair() + " @ " + transaction.TransactionTime.ToString() + " ----- " + ex.Message);
+                                        InternalInstance.AddLog(Resources.Strings.Error + "@ParallelAddInformationFees: " + transaction.GetTradingPair() + " @ " + transaction.TransactionTime.ToString() + " ----- " + ex.Message);
                                         break;
                                     default:
-                                        InternalInstance.AddLog("Error@ParallelAddInformationFees: " + transaction.TransactionType.ToString() + " " + transaction.AssetStart + " ----- " + ex.Message);
+                                        InternalInstance.AddLog(Resources.Strings.Error + "@ParallelAddInformationFees: " + transaction.TransactionType.ToString() + " " + transaction.AssetStart + " ----- " + ex.Message);
                                         break;
                                 }
                             }
