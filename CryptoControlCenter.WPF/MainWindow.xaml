@@ -12,7 +12,7 @@
         mc:Ignorable="d"
         Closed="ChromelessWindow_Closed"
         StateChanged="ChromelessWindow_StateChanged"
-        Title="{Binding SelectedItem, ElementName=NavigationMenuListBox,Converter={StaticResource TitleConverter}}" ResizeMode="CanResize" Icon="/Resources/Logo48.png" d:DesignHeight="800" d:DesignWidth="1280" TitleFontSize="13" TitleTextAlignment="Center" TitleBarForeground="{StaticResource Foreground}" TitleBarBackground="{StaticResource Background}" ResizeBorderThickness="5" ResizeBorderBrush="{StaticResource Background}" CornerRadius="10" AllowsTransparency="True">
+        Title="{Binding SelectedItem, ElementName=NavigationMenuListBox,Converter={StaticResource TitleConverter}}" UseNativeChrome="True" ResizeMode="CanResize" Icon="/Resources/Logo48.png" d:DesignHeight="800" d:DesignWidth="1280" TitleFontSize="13" TitleTextAlignment="Center" TitleBarForeground="{StaticResource Foreground}" TitleBarBackground="{StaticResource Background}" ResizeBorderThickness="5" ResizeBorderBrush="{StaticResource Background}" CornerRadius="10" AllowsTransparency="True">
     <Window.Resources>
         <x:Array x:Key="NavigationMenuItems" Type="system:String">
             <system:String>Dashboard</system:String>
