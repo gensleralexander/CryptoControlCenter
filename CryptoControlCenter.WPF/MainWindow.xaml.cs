@@ -69,18 +69,5 @@ namespace CryptoControlCenter.WPF
                 App.Current.Shutdown();
             }
         }
-
-        private void ChromelessWindow_StateChanged(object sender, EventArgs e)
-        {
-            MainWindow wnd = sender as MainWindow;
-            if (wnd.WindowState == WindowState.Maximized)
-            {
-                this.CornerRadius = new CornerRadius(0);
-            }
-            else if(wnd.WindowState == WindowState.Normal)
-            {
-                this.CornerRadius = new CornerRadius(10);
-            }
-        }
     }
 }

@@ -11,8 +11,7 @@
         skin:SfSkinManager.Theme="{skin:SkinManagerExtension ThemeName=MaterialDark}" Background="{StaticResource Background}"
         mc:Ignorable="d"
         Closed="ChromelessWindow_Closed"
-        StateChanged="ChromelessWindow_StateChanged"
-        Title="{Binding SelectedItem, ElementName=NavigationMenuListBox,Converter={StaticResource TitleConverter}}" UseNativeChrome="True" ResizeMode="CanResize" Icon="/Resources/Logo48.png" d:DesignHeight="800" d:DesignWidth="1280" TitleFontSize="13" TitleTextAlignment="Center" TitleBarForeground="{StaticResource Foreground}" TitleBarBackground="{StaticResource Background}" ResizeBorderThickness="5" ResizeBorderBrush="{StaticResource Background}" CornerRadius="10" AllowsTransparency="True">
+        Title="{Binding SelectedItem, ElementName=NavigationMenuListBox,Converter={StaticResource TitleConverter}}" Icon="/Resources/Logo48.png" d:DesignHeight="800" d:DesignWidth="1280" TitleFontSize="12" TitleTextAlignment="Center" TitleBarForeground="{StaticResource Foreground}" TitleBarBackground="{StaticResource Background}" CornerRadius="6" AllowsTransparency="True" UseNativeChrome="True">
     <Window.Resources>
         <x:Array x:Key="NavigationMenuItems" Type="system:String">
             <system:String>Dashboard</system:String>
@@ -165,13 +164,13 @@
     </Window.Resources>
     <!--End Resources-->
 
-    <Grid Margin="3">
+    <Grid Margin="7">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="Auto"/>
             <ColumnDefinition/>
         </Grid.ColumnDefinitions>
 
-        <ListBox x:Name="NavigationMenuListBox" 
+        <ListBox x:Name="NavigationMenuListBox"
                  Style="{StaticResource NavigationListBoxStyle}"
                  ItemContainerStyle="{DynamicResource NavigationListBoxItemStyle}"
                  ItemTemplate="{DynamicResource NavigationDataTemplate}"
