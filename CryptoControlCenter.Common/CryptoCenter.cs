@@ -43,7 +43,7 @@ namespace CryptoControlCenter.Common
             Thread.CurrentThread.CurrentUICulture = new CultureInfo(languageCode);
         }
         /// <summary>
-        /// Initializes the Library
+        /// Initializes the Library. This method gets called automatically if you try to get an uninitialized Instance. However you can call this during your AppStartup to speedup loadup time.
         /// </summary>
         public static void Initialize()
         {

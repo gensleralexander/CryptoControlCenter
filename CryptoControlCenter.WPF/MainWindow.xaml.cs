@@ -27,7 +27,6 @@ namespace CryptoControlCenter.WPF
             if (Properties.Settings.Default.IsFullscreen)
             {
                 this.WindowState = WindowState.Maximized;
-                this.CornerRadius = new CornerRadius(0);
             }
             InitializeComponent();
         }
