@@ -4,7 +4,6 @@ using CryptoExchange.Net;
 using CryptoExchange.Net.Authentication;
 using CryptoExchange.Net.CommonObjects;
 using CryptoExchange.Net.Interfaces;
-using CryptoExchange.Net.Logging;
 using CryptoExchange.Net.Objects;
 using Newtonsoft.Json.Linq;
 using Newtonsoft.Json;
@@ -18,14 +17,13 @@ using System.Web;
 using System.Linq;
 using Microsoft.Extensions.Logging;
 using System.Data;
-using System.Diagnostics.CodeAnalysis;
 
 namespace Bitstamp.Net
 {
     public class BitstampApiClient : RestApiClient, IBitstampApiClient
     {
         #region fields 
-        internal new readonly BitstampClientOptions Options;
+        internal new readonly BitstampRestOptions Options;
         internal static double CalculatedTimeOffset;
 
         //internal BitstampTradingPairInfo? TradingPairInfo;
@@ -53,10 +51,9 @@ namespace Bitstamp.Net
         public event Action<OrderId>? OnOrderCanceled;
 
         #region constructor/destructor
-        internal BitstampApiClient(Log log, BitstampClientOptions options) : base(log, options, options.SpotApiOptions)
+        internal BitstampApiClient(ILogger log, BitstampRestOptions options) : base(log, null, options.Environment.SpotRestAddress, options, options.SpotOptions)
         {
             Options = options;
-            _log = log;
 
             Public = new BitstampApiPublicClient(this);
             Private = new BitstampApiPrivateClient(this);
@@ -198,9 +195,8 @@ namespace Bitstamp.Net
 
 
         #region helpers
-
         /// <inheritdoc />
-        protected override Error ParseErrorResponse(JToken error)
+        protected override async Task<ServerError?> TryParseErrorAsync(JToken error)
         {
             if (!error.HasValues)
                 return new ServerError(error.ToString());
@@ -224,7 +220,8 @@ namespace Bitstamp.Net
             return err;
         }
 
-        internal Error ParseErrorResponseInternal(JToken error) => ParseErrorResponse(error);
+
+        internal Error ParseErrorResponseInternal(JToken error) => TryParseErrorAsync(error).Result;
 
         internal Uri GetUrl(string endpoint, string api, string? version = null, string? pair = null)
         {
@@ -255,9 +252,9 @@ namespace Bitstamp.Net
         internal async Task<WebCallResult<T>> SendRequestInternal<T>(Uri uri, HttpMethod method, CancellationToken cancellationToken, Dictionary<string, object>? parameters = null, bool signed = false, bool checkResult = true, HttpMethodParameterPosition? postPosition = null, ArrayParametersSerialization? arraySerialization = null) where T : class
         {
             var result = await SendRequestAsync<T>(uri, method, cancellationToken, parameters, signed, postPosition, arraySerialization, 1, ignoreRatelimit: false).ConfigureAwait(false);
-            if (!result && result.Error!.Code == -1021 && Options.SpotApiOptions.AutoTimestamp)
+            if (!result && result.Error!.Code == -1021 && (Options.SpotOptions.AutoTimestamp ?? ClientOptions.AutoTimestamp))
             {
-                _log.Write(LogLevel.Debug, "Received Invalid Timestamp error, triggering new time sync");
+                //log.Write(LogLevel.Debug, "Received Invalid Timestamp error, triggering new time sync");
                 TimeSyncState.LastSyncTime = DateTime.MinValue;
             }
             return result;
@@ -290,7 +287,7 @@ namespace Bitstamp.Net
         #region Base Class Not Implemented Methods
         public override TimeSyncInfo GetTimeSyncInfo()
         {
-            return new TimeSyncInfo(_log, Options.SpotApiOptions.AutoTimestamp, Options.SpotApiOptions.TimestampRecalculationInterval, TimeSyncState);
+            return new TimeSyncInfo(_logger, Options.SpotOptions.AutoTimestamp ?? ClientOptions.AutoTimestamp, Options.SpotOptions.TimestampRecalculationInterval ?? ClientOptions.TimestampRecalculationInterval, TimeSyncState);
         }
 
         public override TimeSpan? GetTimeOffset()
@@ -308,6 +305,7 @@ namespace Bitstamp.Net
             return new WebCallResult<DateTime>(System.Net.HttpStatusCode.OK,
                 null,
                 new TimeSpan(0, 0, 0),
+                null,
                 string.Empty,
                 null,
                 null,

@@ -27,7 +27,7 @@ namespace CryptoControlCenter.Common.DataProvider
         public BitstampDataProvider(IExchangeWalletViewer wallet)
         {
             Wallet = wallet;
-            Client = new BitstampClient();
+            Client = new BitstampRestClient();
             SecuredCredentials credentials = SQLiteDatabaseManager.Database.FindAsync<SecuredCredentials>(x => x.ID == Wallet.SecureCredentialID).Result;
             if (credentials != null)
             {

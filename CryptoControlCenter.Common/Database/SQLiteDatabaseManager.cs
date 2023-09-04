@@ -3,6 +3,7 @@ using System.IO;
 using System.Threading.Tasks;
 using System.Globalization;
 using CryptoControlCenter.Common.Models;
+using System;
 
 namespace CryptoControlCenter.Common.Database
 {
@@ -21,11 +22,11 @@ namespace CryptoControlCenter.Common.Database
             {
                 if (database == null)
                 {
+                    Directory.CreateDirectory(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "CryptoControlCenter"));
 #if DEBUG
-                    database = new SQLiteAsyncConnection(Path.Combine(Path.GetDirectoryName(System.Reflection.Assembly.GetEntryAssembly().Location),"CryptoControlCenter_Database_DEBUG.db3"), SQLiteOpenFlags.ReadWrite | SQLiteOpenFlags.Create);
-
+                    database = new SQLiteAsyncConnection(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "CryptoControlCenter\\CryptoControlCenter_Database_DEBUG.db3"), SQLiteOpenFlags.ReadWrite | SQLiteOpenFlags.Create);
 #else
-                    database = new SQLiteAsyncConnection(Path.Combine(Path.GetDirectoryName(System.Reflection.Assembly.GetEntryAssembly().Location), "CryptoControlCenter_Database.db3"), SQLiteOpenFlags.ReadWrite | SQLiteOpenFlags.Create);
+                    database = new SQLiteAsyncConnection(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "CryptoControlCenter\\CryptoControlCenter_Database.db3"), SQLiteOpenFlags.ReadWrite | SQLiteOpenFlags.Create);
 #endif
                     database.CreateTableAsync<CachedData>().Wait();
                     database.CreateTableAsync<Transaction>().Wait();

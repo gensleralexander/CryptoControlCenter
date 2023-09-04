@@ -42,7 +42,7 @@ namespace Bitstamp.Net
         internal BitstampApiPrivateClient(BitstampApiClient baseClient)
         {
             _baseClient = baseClient;
-            _baseClient.Options.SpotApiOptions.OutputOriginalData = true;
+            _baseClient.Options.SpotOptions.OutputOriginalData = true;
         }
 
         #region UserTransactions

@@ -1,8 +1,6 @@
 ﻿using Binance.Net.Clients;
 using Binance.Net.Enums;
 using Binance.Net.Interfaces;
-using Binance.Net.Interfaces.Clients;
-using Binance.Net.Objects;
 using Binance.Net.Objects.Models.Spot;
 using Bitstamp.Net;
 using Bitstamp.Net.Interfaces;
@@ -21,7 +19,8 @@ using CryptoControlCenter.Common.Models.Interfaces;
 using System.Threading;
 using Newtonsoft.Json;
 using System.Globalization;
-using System.Text.RegularExpressions;
+using Binance.Net.Objects.Options;
+using Binance.Net.Interfaces.Clients;
 
 namespace CryptoControlCenter.Common
 {
@@ -306,13 +305,11 @@ namespace CryptoControlCenter.Common
             taskList.Add(Task.Run(async () =>
             {
                 InternalInstance.AddLog(Resources.Strings.BinanceSymbols, Resources.Strings.Symbols);
-                var clientBinance = new BinanceClient((new BinanceClientOptions
+                BinanceRestClient.SetDefaultOptions(options =>
                 {
-                    SpotApiOptions = new BinanceApiClientOptions
-                    {
-                        OutputOriginalData = true
-                    }
-                }));
+                    options.OutputOriginalData = true;
+                });
+                var clientBinance = new BinanceRestClient();
                 var resultBinance = await clientBinance.SpotApi.ExchangeData.GetExchangeInfoAsync(cancelSource.Token);
                 if (resultBinance.Success)
                 {
@@ -325,13 +322,11 @@ namespace CryptoControlCenter.Common
             taskList.Add(Task.Run(async () =>
             {
                 InternalInstance.AddLog(Resources.Strings.BitstampSymbols, Resources.Strings.Symbols);
-                var clientBitstamp = new BitstampClient(new BitstampClientOptions
+                BitstampRestClient.SetDefaultOptions(options =>
                 {
-                    SpotApiOptions = new BitstampApiClientOptions
-                    {
-                        OutputOriginalData = true
-                    }
+                    options.OutputOriginalData = true;
                 });
+                var clientBitstamp = new BitstampRestClient();
                 var resultBitstamp = await clientBitstamp.Api.Public.GetTradingPairInfo(cancelSource.Token);
                 if (resultBitstamp.Success)
                 {
@@ -712,7 +707,7 @@ namespace CryptoControlCenter.Common
             #region Bitstamp
             taskList.Add(Task.Run(async () =>
                 {
-                    IBitstampClient client = new BitstampClient();
+                    IBitstampClient client = new BitstampRestClient();
                     foreach (ExchangeRateRequest request in bitstampSet)
                     {
                         var result = await client.Api.Public.GetOHLCDataAsync(request.Asset == "BTC" ? "btceur" : request.Asset == "USD" ? "eurusd" : request.Asset.ToLower() + request.BaseAsset.ToLower(), 60, 1000, request.DateTime, request.DateTime.AddHours(16).AddMinutes(40));
@@ -736,7 +731,7 @@ namespace CryptoControlCenter.Common
             #region Binance
             taskList.Add(Task.Run(async () =>
             {
-                IBinanceClient Client = new BinanceClient(new BinanceClientOptions());
+                IBinanceRestClient Client = new BinanceRestClient();
                 foreach (ExchangeRateRequest request in binanceSet)
                 {
                     var result = await Client.SpotApi.ExchangeData.GetKlinesAsync(request.Asset + request.BaseAsset, KlineInterval.OneMinute, request.DateTime, request.DateTime.AddHours(16).AddMinutes(40), 1000); //16h40min == 1000 min -> 1000 limited klines @ 1 Minute Interval

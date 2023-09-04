@@ -37,10 +37,10 @@ namespace Bitstamp.Net
             if (!auth)
                 return;
 
-            if (Credentials.Key == null)
+            if (_credentials.Key == null)
                 throw new ArgumentException("No valid API credentials provided. Key/Secret needed.");
 
-            string xauth = "BITSTAMP " + Credentials.Key.GetString();
+            string xauth = "BITSTAMP " + _credentials.Key.GetString();
             string httpVerb = method.Method;
             string contentType = Constants.FormContentHeader;
             string nonce = _nonceProvider.GetNonce().ToString("D");

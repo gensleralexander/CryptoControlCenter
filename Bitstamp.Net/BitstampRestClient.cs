@@ -3,13 +3,15 @@ using Bitstamp.Net.Interfaces.SubClients;
 using Bitstamp.Net.Objects;
 using CryptoExchange.Net;
 using CryptoExchange.Net.Authentication;
+using Microsoft.Extensions.Logging;
+using System;
 
 namespace Bitstamp.Net
 {
     /// <summary>
     /// Client providing access to the Bitstam REST Api
     /// </summary>
-    public class BitstampClient : BaseRestClient, IBitstampClient
+    public class BitstampRestClient : BaseRestClient, IBitstampClient
     {
         /// <summary>
         /// Public endpoints
@@ -21,16 +23,23 @@ namespace Bitstamp.Net
         /// <summary>
         /// Create a new instance of BitstampClient using the default options
         /// </summary>
-        public BitstampClient() : this(BitstampClientOptions.Default)
+        public BitstampRestClient() : this(null, null)
         {
         }
         /// <summary>
         /// Create a new instance of BitstampClient using provided options
         /// </summary>
-        /// <param name="options">The options to use for this client</param>
-        public BitstampClient(BitstampClientOptions options) : base("Bitstamp", options)
+        /// <param name="optionsDelegate">The options to use for this client</param>
+        public BitstampRestClient(ILoggerFactory? loggerFactory = null, Action<BitstampRestOptions>? optionsDelegate = null) : base(loggerFactory, "Bitstamp")
         {
-            Api = AddApiClient(new BitstampApiClient(log, options));
+            var options = BitstampRestOptions.Default.Copy();
+            if(optionsDelegate != null)
+            {
+                optionsDelegate(options);
+            }
+            Initialize(options);
+
+            Api = AddApiClient(new BitstampApiClient(_logger, options));
         }
         #endregion
 
@@ -38,9 +47,11 @@ namespace Bitstamp.Net
         /// Set the default options to be used when creating new clients
         /// </summary>
         /// <param name="options"></param>
-        public static void SetDefaultOptions(BitstampClientOptions options)
+        public static void SetDefaultOptions(Action<BitstampRestOptions> optionsDelegate)
         {
-            BitstampClientOptions.Default = options;
+            var options = BitstampRestOptions.Default.Copy();
+            optionsDelegate(options);
+            BitstampRestOptions.Default = options;
         }
 
         /// <summary>

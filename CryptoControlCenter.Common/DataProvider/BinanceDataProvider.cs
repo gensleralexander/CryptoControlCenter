@@ -6,6 +6,7 @@ using Binance.Net.Objects.Models.Spot;
 using CryptoControlCenter.Common.Database;
 using CryptoControlCenter.Common.Models;
 using CryptoControlCenter.Common.Models.Interfaces;
+using CryptoExchange.Net.Authentication;
 using CsvHelper;
 using System;
 using System.Collections.Generic;
@@ -22,7 +23,7 @@ namespace CryptoControlCenter.Common.DataProvider
     /// </summary>
     public class BinanceDataProvider : IDataProvider
     {
-        private IBinanceClient Client;
+        private IBinanceRestClient Client;
         /// <inheritdoc/>
         public IExchangeWalletViewer Wallet { get; }
 
@@ -32,12 +33,16 @@ namespace CryptoControlCenter.Common.DataProvider
         public BinanceDataProvider(IExchangeWalletViewer wallet)
         {
             Wallet = wallet;
-            Client = new BinanceClient();
             SecuredCredentials credentials = SQLiteDatabaseManager.Database.FindAsync<SecuredCredentials>(x => x.ID == Wallet.SecureCredentialID).Result;
             if (credentials != null)
             {
-                Client.SetApiCredentials(new BinanceApiCredentials(credentials.Key, credentials.GetDecryptedSecret()));
+                BinanceRestClient.SetDefaultOptions(options =>
+                {
+                    options.ApiCredentials = new ApiCredentials(credentials.Key, credentials.GetDecryptedSecret());
+                });
             }
+            Client = new BinanceRestClient();
+
         }
         /// <inheritdoc/>
         public void ImportFromCSV(string csvFilePathTransactions, string csvFilePathWithdrawalDeposits, string csvFilePathDistribution)
