@@ -187,6 +187,7 @@ namespace Bitstamp.Net
                 var stringData = formData.ToString();
                 request.SetContent(stringData, contentType);
                 var field = request.GetType().GetField("_request", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.GetField);
+                //If exception after Library Update occurs here, check JKorfs Cryptoexchange Library Request.cs for changed field name _request
                 var requestMsg = (HttpRequestMessage)field.GetValue(request);
                 requestMsg.Content.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue(contentType);
             }
