@@ -186,7 +186,7 @@ namespace Bitstamp.Net
                 }
                 var stringData = formData.ToString();
                 request.SetContent(stringData, contentType);
-                var field = request.GetType().GetField("request", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.GetField);
+                var field = request.GetType().GetField("_request", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.GetField);
                 var requestMsg = (HttpRequestMessage)field.GetValue(request);
                 requestMsg.Content.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue(contentType);
             }

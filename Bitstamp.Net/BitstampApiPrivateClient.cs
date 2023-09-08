@@ -57,7 +57,7 @@ namespace Bitstamp.Net
         /// <param name="since_id">	Show only transactions from specified transaction id. If since_id parameter is used, limit parameter is set to 1000.</param>
         /// <param name="ct">Task Cancellation Token</param>
         /// <returns>IEnumerable of UserTransactions</returns>
-        public async Task<WebCallResult<IEnumerable<BitstampUserTransaction>>> GetUserTransactionsAsync(string tradingpair = null, int offset = 0, int limit = 100, SortingOrder sort = SortingOrder.Descending, DateTime? since_timestamp = null, long? since_id = null, CancellationToken ct = default)
+        public async Task<WebCallResult<IEnumerable<BitstampUserTransaction>>> GetUserTransactionsAsync(string tradingpair = null, int offset = 0, int limit = 1000, SortingOrder sort = SortingOrder.Descending, DateTime? since_timestamp = null, long? since_id = null, CancellationToken ct = default)
         {
             limit.ValidateIntBetween(nameof(limit), 1, 1000);
             offset.ValidateIntBetween(nameof(offset), 0, 200000);
@@ -153,7 +153,7 @@ namespace Bitstamp.Net
         /// <param name="includeRippleIOUs">Shows also ripple IOU transactions</param>
         /// <param name="ct">Task Cancellation Token</param>
         /// <returns>IEnumerable of UserTransactions</returns>
-        public async Task<WebCallResult<BitstampCryptoTransactions>> GetCryptoDepositsAndWithdrawalsAsync(int offset = 0, int limit = 100, bool includeRippleIOUs = true, CancellationToken ct = default)
+        public async Task<WebCallResult<BitstampCryptoTransactions>> GetCryptoDepositsAndWithdrawalsAsync(int offset = 0, int limit = 1000, bool includeRippleIOUs = true, CancellationToken ct = default)
         {
             limit.ValidateIntBetween(nameof(limit), 1, 1000);
             offset.ValidateIntBetween(nameof(offset), 0, 200000);
