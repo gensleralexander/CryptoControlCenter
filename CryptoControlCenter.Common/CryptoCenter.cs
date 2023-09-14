@@ -19,7 +19,6 @@ using CryptoControlCenter.Common.Models.Interfaces;
 using System.Threading;
 using Newtonsoft.Json;
 using System.Globalization;
-using Binance.Net.Objects.Options;
 using Binance.Net.Interfaces.Clients;
 
 namespace CryptoControlCenter.Common
@@ -172,21 +171,27 @@ namespace CryptoControlCenter.Common
                     List<WalletBalance> list = new List<WalletBalance>();
                     currentAssets = new ObservableCollection<IBalanceViewer>();
                     WalletBalance item;
+                    bool isLeapYear;
                     foreach (HodledAsset asset in GetHodledAssets().Value)
                     {
+                        if ((DateTime.IsLeapYear(asset.Received.Year) && asset.Received < new DateTime(asset.Received.Year, 2, 29)) || (DateTime.IsLeapYear(DateTime.UtcNow.Year) && DateTime.UtcNow > new DateTime(DateTime.UtcNow.Year, 3, 1)))
+                        {
+                            isLeapYear = true;
+                        }
+                        else
+                        {
+                            isLeapYear = false;
+                        }
+                        bool taxfree = asset.Received.IsWithinTimeSpan(DateTime.UtcNow, new TimeSpan(isLeapYear ? -366 : -365, 0, 0, 0));
                         try
                         {
-                            item = list.First(x => x.Asset == asset.Asset);
+                            item = list.First(x => x.Asset == asset.Asset && x.IsTaxfree == taxfree);
+                            item.CurrentAmount += (double)asset.CurrentAmount;
                         }
                         catch
                         {
-                            item = null;
+                            list.Add(new WalletBalance(asset.Location, asset.Asset, (double)asset.CurrentAmount, taxfree));
                         }
-                        if (item != null)
-                        {
-                            item.CurrentAmount += (double)asset.CurrentAmount;
-                        }
-                        else list.Add(new WalletBalance(asset.Location, asset.Asset, (double)asset.CurrentAmount));
                     }
                     list.ForEach(currentAssets.Add);
                 }
@@ -322,11 +327,11 @@ namespace CryptoControlCenter.Common
             taskList.Add(Task.Run(async () =>
             {
                 InternalInstance.AddLog(Resources.Strings.BitstampSymbols, Resources.Strings.Symbols);
-                BitstampRestClient.SetDefaultOptions(options =>
+                BitstampClient.SetDefaultOptions(options =>
                 {
                     options.OutputOriginalData = true;
                 });
-                var clientBitstamp = new BitstampRestClient();
+                var clientBitstamp = new BitstampClient();
                 var resultBitstamp = await clientBitstamp.Api.Public.GetTradingPairInfo(cancelSource.Token);
                 if (resultBitstamp.Success)
                 {
@@ -707,7 +712,7 @@ namespace CryptoControlCenter.Common
             #region Bitstamp
             taskList.Add(Task.Run(async () =>
                 {
-                    IBitstampClient client = new BitstampRestClient();
+                    IBitstampClient client = new BitstampClient();
                     foreach (ExchangeRateRequest request in bitstampSet)
                     {
                         var result = await client.Api.Public.GetOHLCDataAsync(request.Asset == "BTC" ? "btceur" : request.Asset == "USD" ? "eurusd" : request.Asset.ToLower() + request.BaseAsset.ToLower(), 60, 1000, request.DateTime, request.DateTime.AddHours(16).AddMinutes(40));

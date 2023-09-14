@@ -68,8 +68,8 @@ namespace CryptoControlCenter.WPF.ViewModels
             }
         }
 
-        private IExchangeWalletViewer selectedWallet;
-        public IExchangeWalletViewer SelectedWallet
+        private IExchangeWalletViewer? selectedWallet;
+        public IExchangeWalletViewer? SelectedWallet
         {
             get
             {
@@ -95,8 +95,11 @@ namespace CryptoControlCenter.WPF.ViewModels
 
         private void DeleteExecute()
         {
-            CryptoCenter.Instance.RemoveWallet(SelectedWallet);
-            SelectedWallet = null;
+            if (SelectedWallet != null)
+            {
+                CryptoCenter.Instance.RemoveWallet(SelectedWallet);
+                SelectedWallet = null;
+            }
         }
     }
 }

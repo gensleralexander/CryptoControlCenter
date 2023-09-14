@@ -77,6 +77,31 @@ namespace Bitstamp.Net
 
         #endregion
 
+        #region Symbol Price Ticker
+
+        /// <summary>
+        /// Gets the ticker for specific pair
+        /// </summary>
+        /// <param name="pair">The pari to get the ticker for</param>
+        /// <param name="ct">Cancellation token</param>
+        /// <returns>Ticker of pair</returns>
+        public async Task<WebCallResult<BitstampTicker>> GetTickerAsync(string pair, CancellationToken ct = default)
+        {
+                return await _baseClient.SendRequestInternal<BitstampTicker>(_baseClient.GetUrl(tickerEndpoint, api, version, pair), HttpMethod.Get, ct).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Get a list of tickers of all pairs
+        /// </summary>
+        /// <param name="ct">Cancellation token</param>
+        /// <returns>List of tickers</returns>
+        public async Task<WebCallResult<IEnumerable<BitstampTicker>>> GetAllTickersAsync(CancellationToken ct = default)
+        {
+            return await _baseClient.SendRequestInternal<IEnumerable<BitstampTicker>>(_baseClient.GetUrl(tickerEndpoint, api, version, null), HttpMethod.Get, ct).ConfigureAwait(false);
+        }
+
+        #endregion
+
         #region Order Book
         ///// <summary>
         ///// Gets the order book for the provided symbol

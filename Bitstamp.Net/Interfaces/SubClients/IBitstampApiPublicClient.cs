@@ -1,5 +1,4 @@
-﻿using Bitstamp.Net.Enums;
-using Bitstamp.Net.Objects;
+﻿using Bitstamp.Net.Objects;
 using Bitstamp.Net.Objects.Helper;
 using CryptoExchange.Net.Objects;
 using System;
@@ -31,5 +30,18 @@ namespace Bitstamp.Net.Interfaces.SubClients
         /// <param name="ct">Cancellation token</param>
         /// <returns>Collection of trading pairs</returns>
         Task<WebCallResult<IEnumerable<BitstampTradingPairInfo>>> GetTradingPairInfo(CancellationToken ct = default);
+        /// <summary>
+        /// Gets the ticker for specific pair
+        /// </summary>
+        /// <param name="pair">The pari to get the ticker for</param>
+        /// <param name="ct">Cancellation token</param>
+        /// <returns>Ticker of pair</returns>
+        Task<WebCallResult<BitstampTicker>> GetTickerAsync(string pair, CancellationToken ct = default);
+        /// <summary>
+        /// Get a list of tickers of all pairs
+        /// </summary>
+        /// <param name="ct">Cancellation token</param>
+        /// <returns>List of tickers</returns>
+        Task<WebCallResult<IEnumerable<BitstampTicker>>> GetAllTickersAsync(CancellationToken ct = default);
     }
 }

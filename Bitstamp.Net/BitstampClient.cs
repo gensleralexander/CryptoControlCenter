@@ -11,7 +11,7 @@ namespace Bitstamp.Net
     /// <summary>
     /// Client providing access to the Bitstam REST Api
     /// </summary>
-    public class BitstampRestClient : BaseRestClient, IBitstampClient
+    public class BitstampClient : BaseRestClient, IBitstampClient
     {
         /// <summary>
         /// Public endpoints
@@ -23,14 +23,14 @@ namespace Bitstamp.Net
         /// <summary>
         /// Create a new instance of BitstampClient using the default options
         /// </summary>
-        public BitstampRestClient() : this(null, null)
+        public BitstampClient() : this(null, null)
         {
         }
         /// <summary>
         /// Create a new instance of BitstampClient using provided options
         /// </summary>
         /// <param name="optionsDelegate">The options to use for this client</param>
-        public BitstampRestClient(ILoggerFactory? loggerFactory = null, Action<BitstampRestOptions>? optionsDelegate = null) : base(loggerFactory, "Bitstamp")
+        public BitstampClient(ILoggerFactory? loggerFactory = null, Action<BitstampRestOptions>? optionsDelegate = null) : base(loggerFactory, "Bitstamp")
         {
             var options = BitstampRestOptions.Default.Copy();
             if(optionsDelegate != null)

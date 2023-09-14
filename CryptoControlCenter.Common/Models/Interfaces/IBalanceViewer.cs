@@ -20,5 +20,9 @@ namespace CryptoControlCenter.Common.Models.Interfaces
         /// Value of Asset
         /// </summary>
         public double CurrentValue { get; }
+        /// <summary>
+        /// Determines, wether a balance is taxfree (§23 EStG, german tax law)
+        /// </summary>
+        public bool IsTaxfree { get; }
     }
 }

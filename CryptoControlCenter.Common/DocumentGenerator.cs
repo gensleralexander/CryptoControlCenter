@@ -21,10 +21,9 @@ namespace CryptoControlCenter.Common
     /// </summary>
     public static class DocumentGenerator
     {
-        public static async Task<string> GenerateLogs()
+        public static async Task<string> GenerateLogs(string path)
         {
-            var path = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-            var logFile = new FileInfo(Path.Combine(path, "CryptoControlCenter.log"));
+            var logFile = new FileInfo(path);
             List<LogEntry> logs = await SQLiteDatabaseManager.Database.Table<LogEntry>().ToListAsync();
             try
             {

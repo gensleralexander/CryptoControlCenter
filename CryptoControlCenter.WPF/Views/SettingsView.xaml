@@ -19,6 +19,7 @@
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
         <StackPanel Grid.Row="0">
             <TextBlock Text="{x:Static res:Strings.Zoom}" FontSize="{DynamicResource AppFontSizeHeaders}"/>
@@ -60,6 +61,18 @@
                     <Button.Content>
                         <StackPanel Orientation="Horizontal">
                             <TextBlock Text="Euro €" Margin="10"/>
+                        </StackPanel>
+                    </Button.Content>
+                </Button>
+            </StackPanel>
+        </StackPanel>
+        <StackPanel Grid.Row="3">
+            <TextBlock Text="{x:Static res:Strings.Logs}" FontSize="{DynamicResource AppFontSizeHeaders}"/>
+            <StackPanel Orientation="Horizontal">
+                <Button Command="{Binding ExportLogsCommand}" Margin="10">
+                    <Button.Content>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="{x:Static res:Strings.LogExport}" Margin="10"/>
                         </StackPanel>
                     </Button.Content>
                 </Button>

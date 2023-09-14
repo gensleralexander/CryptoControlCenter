@@ -1,5 +1,7 @@
 ﻿using CryptoControlCenter.Common.Helper;
 using CryptoControlCenter.WPF.Helper;
+using Microsoft.Win32;
+using System;
 using System.Windows.Input;
 
 namespace CryptoControlCenter.WPF.ViewModels
@@ -11,6 +13,7 @@ namespace CryptoControlCenter.WPF.ViewModels
         private ICommand germanCommand;
         private ICommand dollarCommand;
         private ICommand euroCommand;
+        private ICommand exportLogsCommand;
 
         public ICommand EnglishCommand
         {
@@ -38,6 +41,13 @@ namespace CryptoControlCenter.WPF.ViewModels
             get
             {
                 return euroCommand ?? (euroCommand = new RelayCommand(EuroExecute));
+            }
+        }
+        public ICommand ExportLogsCommand
+        {
+            get
+            {
+                return exportLogsCommand ?? (exportLogsCommand = new RelayCommand(ExportLogsExecute));
             }
         }
         #endregion
@@ -164,6 +174,17 @@ namespace CryptoControlCenter.WPF.ViewModels
             Properties.Settings.Default.Save();
             EuroCanExecute = false;
             DollarCanExecute = true;
+        }
+
+        private async void ExportLogsExecute()
+        {
+            SaveFileDialog saveFileDialog = new SaveFileDialog();
+            saveFileDialog.Filter = "Logs (*.log)|*.log";
+            saveFileDialog.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+            if (saveFileDialog.ShowDialog() == true)
+            {
+                await Common.DocumentGenerator.GenerateLogs(saveFileDialog.FileName);
+            }
         }
     }
 }
