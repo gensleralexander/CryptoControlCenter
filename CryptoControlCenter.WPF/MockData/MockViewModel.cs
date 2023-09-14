@@ -32,15 +32,15 @@ namespace CryptoControlCenter.WPF.MockData
 
         private ObservableCollection<IBalanceViewer> balances = new ObservableCollection<IBalanceViewer>
                 {
-                    new WalletBalance("Test", "BTC", 500.0, 500.0),
-                    new WalletBalance("Test", "ETH", 200.0, 200.0),
-                    new WalletBalance("Test", "XRP", 300.0, 300.0),
-                    new WalletBalance("Test2", "BTC", 100.0, 100.0),
-                    new WalletBalance("Test2", "ETH", 1000.0, 1000.0),
-                    new WalletBalance("Test2", "XRP", 800.0, 800.0),
-                    new WalletBalance("Test3", "ETH", 300.0, 300.0),
-                    new WalletBalance("Test3", "ONT", 2000.0, 2000.0),
-                    new WalletBalance("Test3", "DOT", 300.0, 300.0),
+                    new WalletBalance("Test", "BTC", 500.0, false, 500.0),
+                    new WalletBalance("Test", "ETH", 200.0, false,200.0),
+                    new WalletBalance("Test", "XRP", 300.0, false, 300.0),
+                    new WalletBalance("Test2", "BTC", 100.0, true, 100.0),
+                    new WalletBalance("Test2", "ETH", 1000.0, true, 1000.0),
+                    new WalletBalance("Test2", "XRP", 800.0, false, 800.0),
+                    new WalletBalance("Test3", "ETH", 300.0, false, 300.0),
+                    new WalletBalance("Test3", "ONT", 2000.0, false, 2000.0),
+                    new WalletBalance("Test3", "DOT", 300.0, true, 300.0),
                 };
 
         public ICollectionView Balances

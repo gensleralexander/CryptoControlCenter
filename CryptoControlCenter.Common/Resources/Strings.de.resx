@@ -138,6 +138,9 @@
   <data name="Error" xml:space="preserve">
     <value>Fehler</value>
   </data>
+  <data name="FetchPrices" xml:space="preserve">
+    <value>Lade Marktpreise</value>
+  </data>
   <data name="InitCompleted" xml:space="preserve">
     <value>Initialisierung abgeschlossen.</value>
   </data>

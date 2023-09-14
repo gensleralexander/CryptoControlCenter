@@ -6,8 +6,8 @@
     <Nullable>enable</Nullable>
     <UseWPF>true</UseWPF>
     <AssemblyName>CryptoControlCenter</AssemblyName>
-    <AssemblyVersion>1.0.142.8657</AssemblyVersion>
-    <FileVersion>1.0.142.8657</FileVersion>
+    <AssemblyVersion>1.0.146.8657</AssemblyVersion>
+    <FileVersion>1.0.146.8657</FileVersion>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">

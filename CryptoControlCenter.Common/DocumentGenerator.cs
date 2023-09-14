@@ -367,7 +367,7 @@ namespace CryptoControlCenter.Common
                 worksheet.Cells[fsHelper.currentRow, 11].Value = "- Werbungskosten (gesamt)";
                 worksheet.Cells[fsHelper.currentRow, 12].Value = fsHelper.summedFees23;
                 fsHelper.currentRow++;
-                worksheet.Cells[fsHelper.currentRow, 11].Value = "Gewinn/Verlust" + year + "(gesamt)";
+                worksheet.Cells[fsHelper.currentRow, 11].Value = "Gewinn/Verlust " + year + " (gesamt)";
                 worksheet.Cells[fsHelper.currentRow, 12].Value = fsHelper.summedSells23 - fsHelper.summedBuys23 - fsHelper.summedFees23;
                 worksheet.Cells[fsHelper.currentRow, 11, fsHelper.currentRow, 12].Style.Border.Top.Style = ExcelBorderStyle.Medium;
                 //Conditional Format for Positive/Negative

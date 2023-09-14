@@ -25,9 +25,9 @@ namespace CryptoControlCenter.Common
         /// </summary>
         public ObservableCollection<ITransactionViewer> Transactions { get; }
         /// <summary>
-        /// Returns all current assets
+        /// Returns all current assets. The current value will be updated every 5 minutes.
         /// </summary>
-        public ObservableCollection<IBalanceViewer> CurrentAssets { get; }
+        public List<IBalanceViewer> CurrentAssets { get; }
         /// <summary>
         /// Indicates the status of the queue
         /// </summary>

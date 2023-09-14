@@ -124,6 +124,15 @@ namespace CryptoControlCenter.Common.Resources {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Fetching Prices ähnelt.
+        /// </summary>
+        internal static string FetchPrices {
+            get {
+                return ResourceManager.GetString("FetchPrices", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Initialization completed. ähnelt.
         /// </summary>
         internal static string InitCompleted {

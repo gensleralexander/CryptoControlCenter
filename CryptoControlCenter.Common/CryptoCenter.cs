@@ -29,7 +29,9 @@ namespace CryptoControlCenter.Common
     /// </summary>
     public sealed class CryptoCenter : AbstractPropertyChanged, ICryptoCenter
     {
+        private System.Timers.Timer priceTimer;
         internal static bool isInitialized = false;
+        internal static Currency currency = Currency.USDollar;
 
         /// <summary>
         /// Set Culture of Library
@@ -39,6 +41,18 @@ namespace CryptoControlCenter.Common
         {
             Thread.CurrentThread.CurrentCulture = CultureInfo.CreateSpecificCulture(languageCode);
             Thread.CurrentThread.CurrentUICulture = new CultureInfo(languageCode);
+        }
+        /// <summary>
+        /// Set Currency
+        /// </summary>
+        /// <param name="languageCode">ISO Language Code</param>
+        public static void SetCurrency(Currency _currency)
+        {
+            currency = _currency;
+            if (isInitialized)
+            {
+                InternalInstance.RefreshBalanceValues();
+            }
         }
         /// <summary>
         /// Initializes the Library. This method gets called automatically if you try to get an uninitialized Instance. However you can call this during your AppStartup to speedup loadup time.
@@ -51,14 +65,28 @@ namespace CryptoControlCenter.Common
             {
                 try
                 {
-                    InternalInstance.bitstampSymbols.Clear();
-                    InternalInstance.binanceSymbols.Clear();
+                    InternalInstance.BitstampSymbols.Clear();
+                    InternalInstance.BinanceSymbols.Clear();
                     InternalInstance.ActualizeSymbols();
                 }
                 catch (Exception ex)
                 {
                     exceptionBag.Add(ex);
                 }
+            }));
+            taskList.Add(Task.Run(() =>
+            {
+                //I've decided to not use Binance WebSocket but rather do a refresh of Balance Values and Binance Prices every 5 minutes as
+                //Binance Websocket only offers updates per symbol in a specific interval (too many subscriptions would be necessary) or 
+                //updates, whenever a symbol price changes (too many updates because no possibility of a specific interval)
+                InternalInstance.FetchPrices();
+                InternalInstance.priceTimer.Elapsed += (source, e) =>
+                {
+                    InternalInstance.FetchPrices();
+                    InternalInstance.RefreshBalanceValues();
+                };
+                InternalInstance.priceTimer.Interval = 300000;
+                InternalInstance.priceTimer.Start();
             }));
             #region Load existing entries from database
             taskList.Add(Task.Run(async () =>
@@ -90,12 +118,13 @@ namespace CryptoControlCenter.Common
             Task.WhenAll(taskList).Wait();
             foreach (Exception ex in exceptionBag)
             {
-                InternalInstance.AddLog(ex.Message);
+                InternalInstance.AddLog(ex.Message, Resources.Strings.Initialization);
                 //TODO
             }
             isInitialized = true;
             #endregion
-            InternalInstance.AddLog(Resources.Strings.InitCompleted, Resources.Strings.Initialization);
+            InternalInstance.RefreshBalanceValues();
+            InternalInstance.AddLog(Resources.Strings.InitCompleted, Resources.Strings.Initialization, false);
         }
 
         /// <summary>
@@ -104,6 +133,7 @@ namespace CryptoControlCenter.Common
         private CryptoCenter()
         {
             #region Instanciation
+            priceTimer = new System.Timers.Timer();
             taskQueue = new ObservableTaskQueue();
             taskQueue.StartWorking += () =>
             {
@@ -114,8 +144,9 @@ namespace CryptoControlCenter.Common
                 QueueRunning = false;
             };
             Logs = new ObservableCollection<ILogEntry>();
-            binanceSymbols = new List<BinanceSymbol>();
-            bitstampSymbols = new List<BitstampTradingPairInfo>();
+            BinanceSymbols = new List<BinanceSymbol>();
+            BitstampSymbols = new List<BitstampTradingPairInfo>();
+            BinancePrices = new ObservableCollection<BinancePrice>();
             ExchangeWallets = new ObservableCollection<IExchangeWalletViewer>();
             Transactions = new ObservableCollection<ITransactionViewer>();
             #endregion
@@ -154,22 +185,22 @@ namespace CryptoControlCenter.Common
             }
         }
         /// <inheritdoc/>
-        public ObservableCollection<ILogEntry> Logs { get; }
+        public ObservableCollection<ILogEntry> Logs { get; private set; }
         /// <inheritdoc/>
-        public ObservableCollection<IExchangeWalletViewer> ExchangeWallets { get; }
+        public ObservableCollection<IExchangeWalletViewer> ExchangeWallets { get; private set; }
         /// <inheritdoc/>
         public ObservableCollection<ITransactionViewer> Transactions { get; private set; }
 
-        private ObservableCollection<IBalanceViewer> currentAssets;
+        private ObservableCollection<WalletBalance> currentAssets;
         /// <inheritdoc/>
-        public ObservableCollection<IBalanceViewer> CurrentAssets
+        public List<IBalanceViewer> CurrentAssets
         {
             get
             {
                 if (currentAssets == null)
                 {
                     List<WalletBalance> list = new List<WalletBalance>();
-                    currentAssets = new ObservableCollection<IBalanceViewer>();
+                    currentAssets = new ObservableCollection<WalletBalance>();
                     WalletBalance item;
                     bool isLeapYear;
                     foreach (HodledAsset asset in GetHodledAssets().Value)
@@ -195,7 +226,7 @@ namespace CryptoControlCenter.Common
                     }
                     list.ForEach(currentAssets.Add);
                 }
-                return currentAssets;
+                return currentAssets.ToList<IBalanceViewer>();
             }
         }
 
@@ -221,36 +252,18 @@ namespace CryptoControlCenter.Common
         /// </summary>
         private ObservableTaskQueue taskQueue { get; }
         #endregion
-        #region Symbols
         /// <summary>
         /// List of available binance symbols
         /// </summary>
-        private List<BinanceSymbol> binanceSymbols { get; set; }
-        /// <summary>
-        /// List of available binance symbols
-        /// </summary>
-        internal List<BinanceSymbol> BinanceSymbols
-        {
-            get
-            {
-                return binanceSymbols;
-            }
-        }
+        internal List<BinanceSymbol> BinanceSymbols { get; set; }
         /// <summary>
         /// List of available bitstamp symbols
         /// </summary>
-        private List<BitstampTradingPairInfo> bitstampSymbols { get; set; }
+        internal List<BitstampTradingPairInfo> BitstampSymbols { get; set; }
         /// <summary>
-        /// List of available bitstamp symbols
+        /// Collection of all current symbol prices
         /// </summary>
-        internal List<BitstampTradingPairInfo> BitstampSymbols
-        {
-            get
-            {
-                return bitstampSymbols;
-            }
-        }
-        #endregion
+        internal ObservableCollection<BinancePrice> BinancePrices { get; set; }
 
 
         /// <summary>
@@ -261,6 +274,7 @@ namespace CryptoControlCenter.Common
             if (isInitialized)
             {
                 //TODO Add all services here, which need special shutdown handling
+                InternalInstance.priceTimer.Stop();
                 InternalInstance.taskQueue.Enqueue(async () => await SQLiteDatabaseManager.AppClosureHandling());
 
                 Task.Delay(3000).Wait();
@@ -290,8 +304,8 @@ namespace CryptoControlCenter.Common
                     if (dd.LastSync.IsWithinTimeSpan(DateTime.Now, new TimeSpan(-1, 0, 0, 0)))
 #endif
                 {
-                    bitstampSymbols = JsonConvert.DeserializeObject<List<BitstampTradingPairInfo>>(dd.SerializedBitstamp);
-                    binanceSymbols = JsonConvert.DeserializeObject<BinanceExchangeInfo>(dd.SerializedBinance).Symbols.ToList();
+                    BitstampSymbols = JsonConvert.DeserializeObject<List<BitstampTradingPairInfo>>(dd.SerializedBitstamp);
+                    BinanceSymbols = JsonConvert.DeserializeObject<BinanceExchangeInfo>(dd.SerializedBinance).Symbols.ToList();
                     InternalInstance.AddLog(Resources.Strings.CachedSymbols, Resources.Strings.Initialization);
                     return;
                 }
@@ -318,7 +332,7 @@ namespace CryptoControlCenter.Common
                 var resultBinance = await clientBinance.SpotApi.ExchangeData.GetExchangeInfoAsync(cancelSource.Token);
                 if (resultBinance.Success)
                 {
-                    binanceSymbols = resultBinance.Data.Symbols.ToList();
+                    BinanceSymbols = resultBinance.Data.Symbols.ToList();
                     successedBinance = true;
                     cachedData.SerializedBinance = resultBinance.OriginalData;
                 }
@@ -335,7 +349,7 @@ namespace CryptoControlCenter.Common
                 var resultBitstamp = await clientBitstamp.Api.Public.GetTradingPairInfo(cancelSource.Token);
                 if (resultBitstamp.Success)
                 {
-                    bitstampSymbols = resultBitstamp.Data.ToList();
+                    BitstampSymbols = resultBitstamp.Data.ToList();
                     successedBitstamp = true;
                     cachedData.SerializedBitstamp = resultBitstamp.OriginalData;
                 }
@@ -358,6 +372,57 @@ namespace CryptoControlCenter.Common
                 InternalInstance.AddLog(Resources.Strings.CacheUpdated, Resources.Strings.Symbols);
             }
         }
+        /// <summary>
+        /// Fetches current prices of Binance
+        /// </summary>
+        private async void FetchPrices()
+        {
+            var client = new BinanceRestClient();
+            var result = await client.SpotApi.ExchangeData.GetPricesAsync();
+            if (result.Success)
+            {
+                BinancePrices.Clear();
+                foreach (BinancePrice price in result.Data)
+                {
+                    BinancePrices.Add(price);
+                }
+            }
+            else
+            {
+                InternalInstance.AddLog(result.Error.Message, Resources.Strings.FetchPrices);
+            }
+        }
+
+        private void RefreshBalanceValues()
+        {
+            if (BinancePrices != null && BinancePrices.Count > 0 && CurrentAssets != null && CurrentAssets.Count > 0)
+            {
+                double conversionRateBTC = 1.0;
+                switch (currency)
+                {
+                    case Currency.USDollar:
+                        conversionRateBTC = (double)BinancePrices.First(x => x.Symbol == "BTCUSDT").Price;
+                        break;
+                    case Currency.Euro:
+                        conversionRateBTC = (double)BinancePrices.First(x => x.Symbol == "BTCEUR").Price;
+                        break;
+                }
+                Parallel.ForEach(currentAssets, balance =>
+                {
+                    try
+                    {
+                        double conversionRate = (double)BinancePrices.First(x => x.Symbol == balance.Asset + "BTC").Price;
+                        balance.CurrentValue = balance.CurrentAmount * conversionRate * conversionRateBTC;
+                    }
+                    catch
+                    {
+                        //TODO
+                    };
+                });
+                OnPropertyChanged("CurrentAssets");
+            }
+        }
+
         /// <summary>
         /// Get all hodled assets grouped by WalletNames based on the current transactions collection
         /// </summary>
@@ -410,7 +475,7 @@ namespace CryptoControlCenter.Common
             taskQueue.Enqueue(async () => await removeWalletTask(wallet));
         }
         /// <summary>
-        /// Task to remove an Agent and the connected wallet.
+        /// Task to remove a Wallet.
         /// </summary>
         /// <param name="wallet">Wallet to be deleted</param>
         private async Task removeWalletTask(IExchangeWalletViewer wallet)
@@ -579,7 +644,7 @@ namespace CryptoControlCenter.Common
                             }
                             else  //Else request feeAsset/BTC-Pair from Binance and BTC/EUR-Pair from Bitstamp
                             {
-                                if ((!binanceSet.Any(x => x.Asset == transaction.FeeAsset && transaction.TransactionTime - x.DateTime <= new TimeSpan(16, 39, 59))) && binanceSymbols.Any(x => x.Name == (transaction.FeeAsset + "BTC")))  //...and entry does not already exists + is a valid symbol
+                                if ((!binanceSet.Any(x => x.Asset == transaction.FeeAsset && transaction.TransactionTime - x.DateTime <= new TimeSpan(16, 39, 59))) && BinanceSymbols.Any(x => x.Name == (transaction.FeeAsset + "BTC")))  //...and entry does not already exists + is a valid symbol
                                 {
                                     binanceSet.Add(new ExchangeRateRequest(transaction.TransactionTime.AddHours(-1), transaction.FeeAsset, "BTC"));
                                 }
@@ -617,11 +682,11 @@ namespace CryptoControlCenter.Common
                             }
                             else  //Else request startAsset/BTC-Pair from Binance and BTC/EUR-Pair from Bitstamp - except if not a valid pair exists, then use destinationAsset/BTC
                             {
-                                if ((!binanceSet.Any(x => x.Asset == transaction.AssetStart && transaction.TransactionTime - x.DateTime <= new TimeSpan(16, 39, 59))) && binanceSymbols.Any(x => x.Name == (transaction.AssetStart + "BTC")))  //...and entry does not already exists + is a valid symbol
+                                if ((!binanceSet.Any(x => x.Asset == transaction.AssetStart && transaction.TransactionTime - x.DateTime <= new TimeSpan(16, 39, 59))) && BinanceSymbols.Any(x => x.Name == (transaction.AssetStart + "BTC")))  //...and entry does not already exists + is a valid symbol
                                 {
                                     binanceSet.Add(new ExchangeRateRequest(transaction.TransactionTime.AddHours(-1), transaction.AssetStart, "BTC"));
                                 }
-                                else if ((!binanceSet.Any(x => x.Asset == transaction.AssetDestination && transaction.TransactionTime - x.DateTime <= new TimeSpan(16, 39, 59))) && binanceSymbols.Any(x => x.Name == (transaction.AssetDestination + "BTC")))  //...and entry does not already exists + is a valid symbol
+                                else if ((!binanceSet.Any(x => x.Asset == transaction.AssetDestination && transaction.TransactionTime - x.DateTime <= new TimeSpan(16, 39, 59))) && BinanceSymbols.Any(x => x.Name == (transaction.AssetDestination + "BTC")))  //...and entry does not already exists + is a valid symbol
                                 {
                                     binanceSet.Add(new ExchangeRateRequest(transaction.TransactionTime.AddHours(-1), transaction.AssetDestination, "BTC"));
                                 }

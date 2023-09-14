@@ -2,6 +2,7 @@
 using CryptoControlCenter.Common.Helper;
 using CryptoControlCenter.Common.Models.Interfaces;
 using CryptoControlCenter.WPF.Helper;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
@@ -33,13 +34,6 @@ namespace CryptoControlCenter.WPF.ViewModels
         }
         #endregion
 
-        private ObservableCollection<IBalanceViewer> balances
-        {
-            get
-            {
-                return CryptoCenter.Instance.CurrentAssets;
-            }
-        }
         public ICollectionView Balances
         {
             get
@@ -50,7 +44,7 @@ namespace CryptoControlCenter.WPF.ViewModels
                 }
                 else
                 {
-                    var source = CollectionViewSource.GetDefaultView(balances);
+                    var source = CollectionViewSource.GetDefaultView(CryptoCenter.Instance.CurrentAssets);
                     source.Filter = item =>
                     {
                         return ((IBalanceViewer)item).Wallet == SelectedWallet.WalletName;
