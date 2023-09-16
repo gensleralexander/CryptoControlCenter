@@ -153,6 +153,9 @@
   <data name="NoCachedSymbols" xml:space="preserve">
     <value>No Cached Data found.</value>
   </data>
+  <data name="Not" xml:space="preserve">
+    <value>Not</value>
+  </data>
   <data name="Shutdown" xml:space="preserve">
     <value>Shutdown</value>
   </data>
@@ -167,6 +170,9 @@
   </data>
   <data name="SymbolsFailed" xml:space="preserve">
     <value>Symbol Loading Timeout - Cancellation requested.</value>
+  </data>
+  <data name="Taxfree" xml:space="preserve">
+    <value>Taxfree</value>
   </data>
   <data name="TransactionTask" xml:space="preserve">
     <value>Transaction Task</value>

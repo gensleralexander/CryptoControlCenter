@@ -24,5 +24,9 @@ namespace CryptoControlCenter.Common.Models.Interfaces
         /// Determines, wether a balance is taxfree (§23 EStG, german tax law)
         /// </summary>
         public bool IsTaxfree { get; }
+        /// <summary>
+        /// Returns the boolean Taxfree as string
+        /// </summary>
+        public string TaxfreeString { get; }
     }
 }

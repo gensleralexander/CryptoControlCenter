@@ -166,6 +166,7 @@ namespace CryptoControlCenter.WPF.ViewModels
             Properties.Settings.Default.Save();
             DollarCanExecute = false;
             EuroCanExecute = true;
+            Common.CryptoCenter.SetCurrency(Common.Enums.Currency.USDollar);
         }
 
         private void EuroExecute()
@@ -174,6 +175,7 @@ namespace CryptoControlCenter.WPF.ViewModels
             Properties.Settings.Default.Save();
             EuroCanExecute = false;
             DollarCanExecute = true;
+            Common.CryptoCenter.SetCurrency(Common.Enums.Currency.Euro);
         }
 
         private async void ExportLogsExecute()

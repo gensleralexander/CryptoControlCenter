@@ -31,6 +31,7 @@ namespace CryptoControlCenter.Common
     {
         private System.Timers.Timer priceTimer;
         internal static bool isInitialized = false;
+        internal static bool initialzationRunning = false;
         internal static Currency currency = Currency.USDollar;
 
         /// <summary>
@@ -59,6 +60,7 @@ namespace CryptoControlCenter.Common
         /// </summary>
         public static void Initialize()
         {
+            initialzationRunning = true;
             List<Task> taskList = new List<Task>();
             ConcurrentBag<Exception> exceptionBag = new ConcurrentBag<Exception>();
             taskList.Add(Task.Run(() =>
@@ -121,9 +123,10 @@ namespace CryptoControlCenter.Common
                 InternalInstance.AddLog(ex.Message, Resources.Strings.Initialization);
                 //TODO
             }
-            isInitialized = true;
             #endregion
             InternalInstance.RefreshBalanceValues();
+            isInitialized = true;
+            initialzationRunning = false;
             InternalInstance.AddLog(Resources.Strings.InitCompleted, Resources.Strings.Initialization, false);
         }
 
@@ -163,15 +166,19 @@ namespace CryptoControlCenter.Common
         {
             get
             {
-                if (isInitialized)
+                if (!isInitialized)
                 {
-                    return lazy.Value;
+                    if (!initialzationRunning)
+                    {
+                        Task.Run(Initialize);
+                    }
+                    Task.Delay(100);
+                    while (initialzationRunning)
+                    {
+                        Task.Delay(1000);
+                    }
                 }
-                else
-                {
-                    Initialize();
-                    return lazy.Value;
-                }
+                return lazy.Value;
             }
         }
         /// <summary>

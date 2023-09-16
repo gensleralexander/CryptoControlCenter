@@ -97,15 +97,6 @@ namespace CryptoControlCenter.WPF.Resources {
         }
         
         /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die $ ähnelt.
-        /// </summary>
-        public static string CurrentCurrency {
-            get {
-                return ResourceManager.GetString("CurrentCurrency", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Delete ähnelt.
         /// </summary>
         public static string Delete {
@@ -160,11 +151,29 @@ namespace CryptoControlCenter.WPF.Resources {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Not ähnelt.
+        /// </summary>
+        public static string Not {
+            get {
+                return ResourceManager.GetString("Not", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die THE SOFTWARE IS PROVIDED &quot;AS IS&quot;, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE. ähnelt.
         /// </summary>
         public static string SoftwareLicense {
             get {
                 return ResourceManager.GetString("SoftwareLicense", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Taxfree ähnelt.
+        /// </summary>
+        public static string Taxfree {
+            get {
+                return ResourceManager.GetString("Taxfree", resourceCulture);
             }
         }
         

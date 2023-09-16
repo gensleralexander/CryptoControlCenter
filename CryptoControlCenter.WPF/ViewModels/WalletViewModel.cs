@@ -2,10 +2,8 @@
 using CryptoControlCenter.Common.Helper;
 using CryptoControlCenter.Common.Models.Interfaces;
 using CryptoControlCenter.WPF.Helper;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Linq;
 using System.Windows.Data;
 using System.Windows.Input;
 

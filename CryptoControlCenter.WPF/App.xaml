@@ -20,6 +20,7 @@
 
         <converter:HasSelectionConverter x:Key="HasSelectionConverter"/>
         <converter:TitleConverter x:Key="TitleConverter"/>
+        <converter:SunburstLabelConverter x:Key="SunburstLabelConverter"/>
 
         <Style TargetType="iconPacks:PackIconMaterial">
             <Setter Property="Width" Value="{DynamicResource ButtonSize}"/>

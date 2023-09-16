@@ -3,6 +3,7 @@ using Syncfusion.Windows.Shared;
 using System;
 using System.Globalization;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Windows;
 
 namespace CryptoControlCenter.WPF
@@ -18,6 +19,11 @@ namespace CryptoControlCenter.WPF
         {
             //Set Language for Library (Log Language, etc.)
             CryptoCenter.SetLanguage(Properties.Settings.Default.LanguageCode);
+            if (Properties.Settings.Default.CurrencyIsDollar)
+            {
+                CryptoCenter.SetCurrency(Common.Enums.Currency.USDollar);
+            }
+            else { CryptoCenter.SetCurrency(Common.Enums.Currency.Euro); }
             //Restore Settings
             App.Current.Resources["AppFontSize"] = Properties.Settings.Default.Zoom;
             App.Current.Resources["AppFontSizeHeaders"] = Properties.Settings.Default.Zoom + 4;
@@ -28,6 +34,7 @@ namespace CryptoControlCenter.WPF
             {
                 this.WindowState = WindowState.Maximized;
             }
+            Task.Run(CryptoCenter.Initialize);
             InitializeComponent();
         }
 

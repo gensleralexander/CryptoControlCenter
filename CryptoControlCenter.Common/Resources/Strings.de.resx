@@ -153,6 +153,9 @@
   <data name="NoCachedSymbols" xml:space="preserve">
     <value>Keine gespeicherten Handelspaare gefunden.</value>
   </data>
+  <data name="Not" xml:space="preserve">
+    <value>Nicht</value>
+  </data>
   <data name="Shutdown" xml:space="preserve">
     <value>Schließen</value>
   </data>
@@ -167,6 +170,9 @@
   </data>
   <data name="SymbolsFailed" xml:space="preserve">
     <value>Handelspaare konnten nicht geladen werden - Abbruch angefordert.</value>
+  </data>
+  <data name="Taxfree" xml:space="preserve">
+    <value>Steuerfrei</value>
   </data>
   <data name="TransactionTask" xml:space="preserve">
     <value>Transaktionen</value>

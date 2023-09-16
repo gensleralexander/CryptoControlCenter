@@ -11,17 +11,11 @@ namespace CryptoControlCenter.Common.Models
         private double currentValue;
         private bool isTaxfree;
 
-        /// <summary>
-        /// Parent Wallet
-        /// </summary>
+        /// <inheritdoc />
         public string Wallet { get { return wallet; } }
-        /// <summary>
-        /// Asset Symbol
-        /// </summary>
+        /// <inheritdoc />
         public string Asset { get { return asset; } }
-        /// <summary>
-        /// Amount of Asset
-        /// </summary>
+        /// <inheritdoc />
         public double CurrentAmount
         {
             get
@@ -34,9 +28,7 @@ namespace CryptoControlCenter.Common.Models
                 OnPropertyChanged();
             }
         }
-        /// <summary>
-        /// Value of Asset
-        /// </summary>
+        /// <inheritdoc />
         public double CurrentValue
         {
             get
@@ -49,10 +41,20 @@ namespace CryptoControlCenter.Common.Models
                 OnPropertyChanged();
             }
         }
-        /// <summary>
-        /// Determines, wether a balance is taxfree (§23 EStG, german tax law)
-        /// </summary>
+        /// <inheritdoc />
         public bool IsTaxfree { get { return isTaxfree; } }
+        /// <inheritdoc />
+        public string TaxfreeString
+        {
+            get
+            {
+                if (IsTaxfree)
+                {
+                    return Resources.Strings.Taxfree;
+                }
+                else return Resources.Strings.Not + " " + Resources.Strings.Taxfree;
+            }
+        }
 
         public WalletBalance(string _wallet, string _asset, double _currentAmount, bool _isTaxfree, double _currentValue = 0.0)
         {

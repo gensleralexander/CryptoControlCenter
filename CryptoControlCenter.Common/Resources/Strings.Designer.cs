@@ -169,6 +169,15 @@ namespace CryptoControlCenter.Common.Resources {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Not ähnelt.
+        /// </summary>
+        internal static string Not {
+            get {
+                return ResourceManager.GetString("Not", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Shutdown ähnelt.
         /// </summary>
         internal static string Shutdown {
@@ -210,6 +219,15 @@ namespace CryptoControlCenter.Common.Resources {
         internal static string SymbolsFailed {
             get {
                 return ResourceManager.GetString("SymbolsFailed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Taxfree ähnelt.
+        /// </summary>
+        internal static string Taxfree {
+            get {
+                return ResourceManager.GetString("Taxfree", resourceCulture);
             }
         }
         

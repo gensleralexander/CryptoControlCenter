@@ -64,7 +64,7 @@
                 <sunburst:SfSunburstChart.Levels>
                     <!--<sunburst:SunburstHierarchicalLevel GroupMemberPath="Wallet"/>-->
                     <sunburst:SunburstHierarchicalLevel GroupMemberPath="Asset"/>
-                    <sunburst:SunburstHierarchicalLevel GroupMemberPath="IsTaxfree"/>
+                    <sunburst:SunburstHierarchicalLevel GroupMemberPath="TaxfreeString"/>
                 </sunburst:SfSunburstChart.Levels>
                 <!--<sunburst:SfSunburstChart.Legend>
                 <sunburst:SunburstLegend DockPosition="Top" Foreground="{StaticResource Foreground}" ClickAction="ToggleSegmentVisibility"/>
@@ -84,11 +84,7 @@
                             <DataTemplate>
                                 <Border Background="{Binding Interior}" BorderThickness="0">
                                     <StackPanel Orientation="Horizontal">
-                                        <TextBlock Foreground="Black">
-                                            <Run Text="{Binding Value}"/>
-                                            <Run Text=" "/>
-                                            <Run Text="{x:Static res:Strings.CurrentCurrency}"/>
-                                        </TextBlock>
+                                        <TextBlock Foreground="Black" Text="{Binding Value, Converter={StaticResource SunburstLabelConverter}}"/>
                                     </StackPanel>
                                 </Border>
                             </DataTemplate>

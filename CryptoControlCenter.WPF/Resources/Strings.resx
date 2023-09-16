@@ -129,9 +129,6 @@
   <data name="Currency" xml:space="preserve">
     <value>Currency</value>
   </data>
-  <data name="CurrentCurrency" xml:space="preserve">
-    <value>$</value>
-  </data>
   <data name="Delete" xml:space="preserve">
     <value>Delete</value>
   </data>
@@ -150,8 +147,14 @@
   <data name="Logs" xml:space="preserve">
     <value>Logging</value>
   </data>
+  <data name="Not" xml:space="preserve">
+    <value>Not</value>
+  </data>
   <data name="SoftwareLicense" xml:space="preserve">
     <value>THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.</value>
+  </data>
+  <data name="Taxfree" xml:space="preserve">
+    <value>Taxfree</value>
   </data>
   <data name="Wallets" xml:space="preserve">
     <value>Wallets</value>
