@@ -120,8 +120,14 @@
   <data name="Add" xml:space="preserve">
     <value>Hinzufügen</value>
   </data>
+  <data name="AddNewWallet" xml:space="preserve">
+    <value>Neues Wallet erzeugen</value>
+  </data>
   <data name="Assets" xml:space="preserve">
     <value>Vermögenswerte</value>
+  </data>
+  <data name="Cancel" xml:space="preserve">
+    <value>Abbrechen</value>
   </data>
   <data name="CryptoDisclaimer" xml:space="preserve">
     <value>KRYPTOWÄHRUNGEN SIND EINE INVESTITION MIT HOHEM RISIKO UND SIND DAHER MÖGLICHERWEISE NICHT FÜR ALLE MITGLIEDER DER ÖFFENTLICHKEIT UND ALLE ARTEN VON ANLEGERN GEEIGNET. BEVOR SIE MIT KRYPTOWÄHRUNGEN HANDELN, STELLEN SIE SICHER, DASS SIE DEREN ART, KOMPLEXITÄT UND RISIKEN VERSTEHEN.</value>
@@ -138,6 +144,9 @@
   <data name="Example" xml:space="preserve">
     <value>Dies ist ein Beispieltext.</value>
   </data>
+  <data name="Exchange" xml:space="preserve">
+    <value>Kryptobörse</value>
+  </data>
   <data name="Language" xml:space="preserve">
     <value>Sprache</value>
   </data>
@@ -149,6 +158,9 @@
   </data>
   <data name="Not" xml:space="preserve">
     <value>Nicht</value>
+  </data>
+  <data name="Save" xml:space="preserve">
+    <value>Speichern</value>
   </data>
   <data name="SoftwareLicense" xml:space="preserve">
     <value>DIE SOFTWARE WIRD OHNE MÄNGELGEWÄHR BEREITGESTELLT, OHNE AUSDRÜCKLICHE ODER STILLSCHWEIGENDE GEWÄHRLEISTUNG, EINSCHLIESSLICH, ABER NICHT BESCHRÄNKT AUF GEWÄHRLEISTUNGEN DER MARKTFÄHIGKEIT, EIGNUNG FÜR EINEN BESTIMMTEN ZWECK UND NICHTVERLETZUNG VON RECHTEN DRITTER. DIE AUTOREN ODER URHEBERRECHTSINHABER SIND IN KEINEM FALL HAFTBAR FÜR ANSPRÜCHE, SCHÄDEN ODER SONSTIGE HAFTUNG, OB AUS VERTRAG, UNERLAUBTER HANDLUNG ODER ANDERWEITIG, DIE SICH AUS DER NUTZUNG ODER IM ZUSAMMENHANG MIT DER SOFTWARE ODER ANDEREN HANDLUNGEN MIT DER SOFTWARE ERGEBEN.</value>

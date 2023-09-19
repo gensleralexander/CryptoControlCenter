@@ -120,8 +120,14 @@
   <data name="Add" xml:space="preserve">
     <value>Add</value>
   </data>
+  <data name="AddNewWallet" xml:space="preserve">
+    <value>Add new Wallet</value>
+  </data>
   <data name="Assets" xml:space="preserve">
     <value>Assets</value>
+  </data>
+  <data name="Cancel" xml:space="preserve">
+    <value>Cancel</value>
   </data>
   <data name="CryptoDisclaimer" xml:space="preserve">
     <value>CRYPTOCURRENCIES ARE A HIGH RISK INVESTMENT AND THEREFORE MAY NOT BE SUITABLE FOR ALL MEMBERS OF THE PUBLIC AND ALL TYPES OF INVESTORS. BEFORE TRADING WITH CRYPTOCURRENCIES, MAKE SURE YOU UNDERSTAND THE NATURE, COMPLEXITY AND RISKS INHERENT IN THEM.</value>
@@ -138,6 +144,9 @@
   <data name="Example" xml:space="preserve">
     <value>This is an example text.</value>
   </data>
+  <data name="Exchange" xml:space="preserve">
+    <value>Cryptoexchange</value>
+  </data>
   <data name="Language" xml:space="preserve">
     <value>Language</value>
   </data>
@@ -149,6 +158,9 @@
   </data>
   <data name="Not" xml:space="preserve">
     <value>Not</value>
+  </data>
+  <data name="Save" xml:space="preserve">
+    <value>Save</value>
   </data>
   <data name="SoftwareLicense" xml:space="preserve">
     <value>THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.</value>

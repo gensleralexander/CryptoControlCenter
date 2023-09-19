@@ -43,6 +43,17 @@ namespace CryptoControlCenter.Common
         /// <exception cref="InvalidOperationException">Thrown, when Wallet Name or API credentials are already in use.</exception>
         public Task CreateWallet(string walletName, Exchange exchange, string exchangeApiKey, string exchangeApiSecret);
         /// <summary>
+        /// Task to create a new Wallet and adds them to the Lists. Instead of API-sync, this method uses CSV-Import
+        /// </summary>
+        /// <param name="walletName">Name of the new Wallet</param>
+        /// <param name="exchange">Exchange used</param>
+        /// <param name="csvFilePathTransactions">File Path to Transactions File</param>
+        /// <param name="csvFilePathWithdrawalDeposits">File Path to Withdrawal/Deposits File</param>
+        /// <param name="csvFilePathDistribution">File Path to Distribution File</param>
+        /// <exception cref="ArgumentException">Thrown, when csv paths are empty or whitespace.</exception>
+        /// <exception cref="InvalidOperationException">Thrown, when Wallet Name is already in use.</exception>
+        public Task CreateWallet(string walletName, Exchange exchange, string csvFilePathTransactions, string csvFilePathWithdrawalDeposits, string csvFilePathDistribution);
+        /// <summary>
         /// Removes an Agent and the connected wallet. Gets executed via internal TaskQueue to avoid conflicts with existing wallet update tasks.
         /// </summary>
         /// <param name="wallet">Wallet to be deleted</param>

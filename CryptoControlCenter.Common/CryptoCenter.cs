@@ -150,6 +150,7 @@ namespace CryptoControlCenter.Common
             BinanceSymbols = new List<BinanceSymbol>();
             BitstampSymbols = new List<BitstampTradingPairInfo>();
             BinancePrices = new ObservableCollection<BinancePrice>();
+            BitstampPrices = new ObservableCollection<BitstampTicker>();
             ExchangeWallets = new ObservableCollection<IExchangeWalletViewer>();
             Transactions = new ObservableCollection<ITransactionViewer>();
             #endregion
@@ -268,9 +269,13 @@ namespace CryptoControlCenter.Common
         /// </summary>
         internal List<BitstampTradingPairInfo> BitstampSymbols { get; set; }
         /// <summary>
-        /// Collection of all current symbol prices
+        /// Collection of all current symbol prices on Binance
         /// </summary>
         internal ObservableCollection<BinancePrice> BinancePrices { get; set; }
+        /// <summary>
+        /// Collection of all current symbol prices on Bitstamp
+        /// </summary>
+        internal ObservableCollection<BitstampTicker> BitstampPrices { get; set; }
 
 
         /// <summary>
@@ -380,46 +385,78 @@ namespace CryptoControlCenter.Common
             }
         }
         /// <summary>
-        /// Fetches current prices of Binance
+        /// Fetches current prices of Binance and Bitstamp
         /// </summary>
         private async void FetchPrices()
         {
-            var client = new BinanceRestClient();
-            var result = await client.SpotApi.ExchangeData.GetPricesAsync();
-            if (result.Success)
+            List<Task> taskList = new List<Task>();
+            taskList.Add(Task.Run(async () => { 
+            var clientBitstamp = new BitstampClient();
+            var resultBitstamp = await clientBitstamp.Api.Public.GetAllTickersAsync();
+            if (resultBitstamp.Success)
+            {
+                BitstampPrices.Clear();
+                foreach(BitstampTicker price in resultBitstamp.Data)
+                {
+                    BitstampPrices.Add(price);
+                }
+            }
+            else { InternalInstance.AddLog(resultBitstamp.Error.Message, Resources.Strings.FetchPrices); }
+            }));
+            taskList.Add(Task.Run(async () => { 
+            var clientBinance = new BinanceRestClient();
+            var resultBinance = await clientBinance.SpotApi.ExchangeData.GetPricesAsync();
+            if (resultBinance.Success)
             {
                 BinancePrices.Clear();
-                foreach (BinancePrice price in result.Data)
+                foreach (BinancePrice price in resultBinance.Data)
                 {
                     BinancePrices.Add(price);
                 }
             }
             else
             {
-                InternalInstance.AddLog(result.Error.Message, Resources.Strings.FetchPrices);
+                InternalInstance.AddLog(resultBinance.Error.Message, Resources.Strings.FetchPrices);
             }
+            }));
+            await Task.WhenAll(taskList);
         }
 
         private void RefreshBalanceValues()
         {
-            if (BinancePrices != null && BinancePrices.Count > 0 && CurrentAssets != null && CurrentAssets.Count > 0)
+            if (BinancePrices != null && BinancePrices.Count > 0 && BitstampPrices != null && BitstampPrices.Count > 0 && CurrentAssets != null && CurrentAssets.Count > 0)
             {
-                double conversionRateBTC = 1.0;
+                double conversionRateBTCBinance = 1.0;
+                double conversionRateBTCBitstamp = 1.0;
                 switch (currency)
                 {
                     case Currency.USDollar:
-                        conversionRateBTC = (double)BinancePrices.First(x => x.Symbol == "BTCUSDT").Price;
+                        conversionRateBTCBinance = (double)BinancePrices.First(x => x.Symbol == "BTCUSDT").Price;
+                        conversionRateBTCBitstamp = (double)BitstampPrices.First(x => x.Pair == "btcusd").Last;
                         break;
                     case Currency.Euro:
-                        conversionRateBTC = (double)BinancePrices.First(x => x.Symbol == "BTCEUR").Price;
+                        conversionRateBTCBinance = (double)BinancePrices.First(x => x.Symbol == "BTCEUR").Price;
+                        conversionRateBTCBitstamp = (double)BitstampPrices.First(x => x.Pair == "btceur").Last;
                         break;
                 }
                 Parallel.ForEach(currentAssets, balance =>
                 {
                     try
                     {
-                        double conversionRate = (double)BinancePrices.First(x => x.Symbol == balance.Asset + "BTC").Price;
-                        balance.CurrentValue = balance.CurrentAmount * conversionRate * conversionRateBTC;
+                        double conversionRate = 1.0;
+                        switch(InternalInstance.ExchangeWallets.First(x => x.WalletName == balance.Wallet).Exchange)
+                        {
+                            case Exchange.Binance:
+                                conversionRate = (double)BinancePrices.First(x => x.Symbol == balance.Asset + "BTC").Price;
+                                balance.CurrentValue = balance.CurrentAmount * conversionRate * conversionRateBTCBinance;
+                                break;
+                            case Exchange.Bitstamp:
+                                conversionRate = (double)BitstampPrices.First(x => x.Pair == balance.Asset.ToLower() + "btc").Last;
+                                balance.CurrentValue = balance.CurrentAmount * conversionRate * conversionRateBTCBitstamp;
+                                break;
+                            default:
+                                throw new NotImplementedException();
+                        }
                     }
                     catch
                     {
@@ -451,6 +488,29 @@ namespace CryptoControlCenter.Common
             return new KeyValuePair<Dictionary<string, FinancialStatementHelper>, SortedSet<HodledAsset>>(fshelper, hodledAssets);
         }
         /// <inheritdoc/>
+        public async Task CreateWallet(string walletName, Exchange exchange, string csvFilePathTransactions, string csvFilePathWithdrawalDeposits, string csvFilePathDistribution)
+        {
+            if (string.IsNullOrWhiteSpace(csvFilePathTransactions) || string.IsNullOrWhiteSpace(csvFilePathWithdrawalDeposits) || string.IsNullOrWhiteSpace(csvFilePathDistribution))
+            {
+                throw new ArgumentException("File paths can't be empty or whitespace.");
+            }
+            else
+            {
+                var resultW = await SQLiteDatabaseManager.Database.FindAsync<ExchangeWallet>(x => x.WalletName == walletName);
+                if (resultW == null)
+                {
+                    IExchangeWalletViewer wallet = new ExchangeWallet(walletName, exchange, -1);
+                    await SQLiteDatabaseManager.Database.InsertAsync(wallet);
+                    ExchangeWallets.Add(wallet);
+                    wallet.ImportFromCSV(csvFilePathTransactions, csvFilePathWithdrawalDeposits, csvFilePathDistribution);
+                }
+                else
+                {
+                    throw new InvalidOperationException("Wallet Name already exists.");
+                }
+            }
+        }
+        /// <inheritdoc/>
         public async Task CreateWallet(string walletName, Exchange exchange, string exchangeApiKey, string exchangeApiSecret)
         {
             if (string.IsNullOrWhiteSpace(exchangeApiKey) || string.IsNullOrWhiteSpace(exchangeApiSecret))
@@ -469,6 +529,7 @@ namespace CryptoControlCenter.Common
                     IExchangeWalletViewer wallet = new ExchangeWallet(walletName, exchange, secureid);
                     await SQLiteDatabaseManager.Database.InsertAsync(wallet);
                     ExchangeWallets.Add(wallet);
+                    await taskQueue.Enqueue(async() => await wallet.SynchronizeWallet());
                 }
                 else
                 {
@@ -502,7 +563,6 @@ namespace CryptoControlCenter.Common
             {
                 throw new InvalidOperationException("Wallet not found: " + wallet.WalletName);
             }
-
         }
         /// <summary>
         /// Logs an error to database and local list
