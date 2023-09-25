@@ -7,11 +7,13 @@
         xmlns:system="clr-namespace:System;assembly=System.Runtime"
         xmlns:syncfusion="clr-namespace:Syncfusion.Windows.Shared;assembly=Syncfusion.Shared.WPF"
         xmlns:skin="clr-namespace:Syncfusion.SfSkinManager;assembly=Syncfusion.SfSkinManager.WPF"
+        xmlns:busy="clr-namespace:Syncfusion.Windows.Controls.Notification;assembly=Syncfusion.SfBusyIndicator.WPF"
         xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
+        xmlns:res="clr-namespace:CryptoControlCenter.WPF.Resources"
         skin:SfSkinManager.Theme="{skin:SkinManagerExtension ThemeName=MaterialDark}" Background="{StaticResource Background}"
         mc:Ignorable="d"
         Closed="ChromelessWindow_Closed"
-        Title="{Binding SelectedItem, ElementName=NavigationMenuListBox,Converter={StaticResource TitleConverter}}" Icon="/Resources/Logo48.png" d:DesignHeight="800" d:DesignWidth="1280" TitleFontSize="12" TitleTextAlignment="Center" TitleBarForeground="{StaticResource Foreground}" TitleBarBackground="{StaticResource Background}" CornerRadius="6" AllowsTransparency="True" UseNativeChrome="True">
+        Title="{Binding SelectedItem, ElementName=NavigationMenuListBox,Converter={StaticResource TitleConverter}}" Icon="/Resources/Logo48.png" d:DesignHeight="800" d:DesignWidth="1280" TitleFontSize="14" TitleTextAlignment="Center" TitleBarForeground="{StaticResource Foreground}" TitleBarBackground="{StaticResource Background}" CornerRadius="6" AllowsTransparency="True" UseNativeChrome="True">
     <Window.Resources>
         <x:Array x:Key="NavigationMenuItems" Type="system:String">
             <system:String>Dashboard</system:String>
@@ -175,7 +177,8 @@
                  ItemContainerStyle="{DynamicResource NavigationListBoxItemStyle}"
                  ItemTemplate="{DynamicResource NavigationDataTemplate}"
                  ItemsSource="{StaticResource NavigationMenuItems}"/>
-
+        
         <ContentControl Grid.Column="1" Style="{StaticResource NavigationContentStyle}"/>
+        <busy:SfBusyIndicator Visibility="{Binding IsBusy, Converter={StaticResource BoolVisibilityConverter}}" IsBusy="{Binding IsBusy}" AnimationType="Flower" AnimationSpeed="70" ViewboxHeight="100" Grid.Column="0" FontSize="18" Grid.ColumnSpan="2" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Background="Transparent" Foreground="{StaticResource Foreground}" Header="{x:Static res:Strings.Loading}"/>
     </Grid>
 </syncfusion:ChromelessWindow>

@@ -123,11 +123,26 @@
   <data name="AddNewWallet" xml:space="preserve">
     <value>Neues Wallet erzeugen</value>
   </data>
+  <data name="Amount" xml:space="preserve">
+    <value>Menge</value>
+  </data>
+  <data name="Asset" xml:space="preserve">
+    <value>Währung</value>
+  </data>
   <data name="Assets" xml:space="preserve">
     <value>Vermögenswerte</value>
   </data>
+  <data name="Before" xml:space="preserve">
+    <value>vorher</value>
+  </data>
   <data name="Cancel" xml:space="preserve">
     <value>Abbrechen</value>
+  </data>
+  <data name="Choose" xml:space="preserve">
+    <value>Auswählen</value>
+  </data>
+  <data name="Continue" xml:space="preserve">
+    <value>Möchten Sie fortfahren?</value>
   </data>
   <data name="CryptoDisclaimer" xml:space="preserve">
     <value>KRYPTOWÄHRUNGEN SIND EINE INVESTITION MIT HOHEM RISIKO UND SIND DAHER MÖGLICHERWEISE NICHT FÜR ALLE MITGLIEDER DER ÖFFENTLICHKEIT UND ALLE ARTEN VON ANLEGERN GEEIGNET. BEVOR SIE MIT KRYPTOWÄHRUNGEN HANDELN, STELLEN SIE SICHER, DASS SIE DEREN ART, KOMPLEXITÄT UND RISIKEN VERSTEHEN.</value>
@@ -138,8 +153,14 @@
   <data name="Delete" xml:space="preserve">
     <value>Löschen</value>
   </data>
+  <data name="DepWith" xml:space="preserve">
+    <value>Ein-/Auszahlungen</value>
+  </data>
   <data name="Disclaimer" xml:space="preserve">
     <value>Haftungsausschluss</value>
+  </data>
+  <data name="Distributions" xml:space="preserve">
+    <value>Distributions</value>
   </data>
   <data name="Example" xml:space="preserve">
     <value>Dies ist ein Beispieltext.</value>
@@ -147,8 +168,32 @@
   <data name="Exchange" xml:space="preserve">
     <value>Kryptobörse</value>
   </data>
+  <data name="Fee" xml:space="preserve">
+    <value>Gebühr</value>
+  </data>
+  <data name="FeeValue" xml:space="preserve">
+    <value>Gebührwert in €</value>
+  </data>
+  <data name="Filter" xml:space="preserve">
+    <value>Zeige nur auffällige Zeilen</value>
+  </data>
+  <data name="From" xml:space="preserve">
+    <value>von</value>
+  </data>
+  <data name="GenerateTax" xml:space="preserve">
+    <value>Generiere Steuerreport</value>
+  </data>
   <data name="Language" xml:space="preserve">
     <value>Sprache</value>
+  </data>
+  <data name="Loading" xml:space="preserve">
+    <value>Lade ...</value>
+  </data>
+  <data name="LoadMissingValues" xml:space="preserve">
+    <value>Lade fehlende Werte</value>
+  </data>
+  <data name="LoadMissingWarning" xml:space="preserve">
+    <value>Diese Aktion versucht fehlende Werte mittels Verknüpfungen und dem Laden von historischen Preis-Daten aus dem Internet zu füllen. Dies kann abhängig von der Zahl der Transaktionen mehrere Minuten dauern.</value>
   </data>
   <data name="LogExport" xml:space="preserve">
     <value>Logs exportieren</value>
@@ -156,11 +201,23 @@
   <data name="Logs" xml:space="preserve">
     <value>Protokollierung</value>
   </data>
+  <data name="MissingValues" xml:space="preserve">
+    <value>Datenbank enthält fehlende Werte. Bitte wechseln Sie zum Datenbank-Tab und synchronisieren Sie Ihre Assets oder füllen die fehlenden Werte händisch aus. Es wird empfohlen, vorher alle Wallets hinzuzufügen um das beste Ergebnis bei der automatischen Synchronisation zu erzielen.</value>
+  </data>
   <data name="Not" xml:space="preserve">
     <value>Nicht</value>
   </data>
+  <data name="On" xml:space="preserve">
+    <value>in</value>
+  </data>
   <data name="Save" xml:space="preserve">
     <value>Speichern</value>
+  </data>
+  <data name="SelectYear" xml:space="preserve">
+    <value>Jahr wählen</value>
+  </data>
+  <data name="SelectYearFull" xml:space="preserve">
+    <value>Bitte wählen Sie das Jahr aus, für das der Steuerreport erstellt werden soll:</value>
   </data>
   <data name="SoftwareLicense" xml:space="preserve">
     <value>DIE SOFTWARE WIRD OHNE MÄNGELGEWÄHR BEREITGESTELLT, OHNE AUSDRÜCKLICHE ODER STILLSCHWEIGENDE GEWÄHRLEISTUNG, EINSCHLIESSLICH, ABER NICHT BESCHRÄNKT AUF GEWÄHRLEISTUNGEN DER MARKTFÄHIGKEIT, EIGNUNG FÜR EINEN BESTIMMTEN ZWECK UND NICHTVERLETZUNG VON RECHTEN DRITTER. DIE AUTOREN ODER URHEBERRECHTSINHABER SIND IN KEINEM FALL HAFTBAR FÜR ANSPRÜCHE, SCHÄDEN ODER SONSTIGE HAFTUNG, OB AUS VERTRAG, UNERLAUBTER HANDLUNG ODER ANDERWEITIG, DIE SICH AUS DER NUTZUNG ODER IM ZUSAMMENHANG MIT DER SOFTWARE ODER ANDEREN HANDLUNGEN MIT DER SOFTWARE ERGEBEN.</value>
@@ -168,8 +225,26 @@
   <data name="Taxfree" xml:space="preserve">
     <value>Steuerfrei</value>
   </data>
+  <data name="To" xml:space="preserve">
+    <value>nach</value>
+  </data>
+  <data name="Transactions" xml:space="preserve">
+    <value>Transaktionen</value>
+  </data>
+  <data name="TransactionTime" xml:space="preserve">
+    <value>Transaktionszeit</value>
+  </data>
+  <data name="Type" xml:space="preserve">
+    <value>Typ</value>
+  </data>
+  <data name="Value" xml:space="preserve">
+    <value>Wert in €</value>
+  </data>
   <data name="Wallets" xml:space="preserve">
     <value>Wallets</value>
+  </data>
+  <data name="WarningDatabase" xml:space="preserve">
+    <value>Warnung! Das Bearbeiten von Einträgen kann zur Inkonsistenz der Datenbank führen.</value>
   </data>
   <data name="Zoom" xml:space="preserve">
     <value>Textgröße</value>

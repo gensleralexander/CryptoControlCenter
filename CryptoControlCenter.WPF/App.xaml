@@ -21,6 +21,8 @@
         <converter:HasSelectionConverter x:Key="HasSelectionConverter"/>
         <converter:TitleConverter x:Key="TitleConverter"/>
         <converter:SunburstLabelConverter x:Key="SunburstLabelConverter"/>
+        <converter:BoolVisibilityConverter x:Key="BoolVisibilityConverter"/>
+        <converter:AssetAmountConverter x:Key="AssetAmountConverter"/>
 
         <Style TargetType="iconPacks:PackIconMaterial">
             <Setter Property="Width" Value="{DynamicResource ButtonSize}"/>

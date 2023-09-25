@@ -13,6 +13,6 @@
         <vm:DashboardViewModel/>
     </UserControl.DataContext>
     <Grid>
-        <TextBlock Text="{Binding Title}"/>
+        
     </Grid>
 </UserControl>

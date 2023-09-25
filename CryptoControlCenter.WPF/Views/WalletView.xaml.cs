@@ -1,4 +1,4 @@
-﻿using System.Windows;
+﻿using CryptoControlCenter.Common;
 using System.Windows.Controls;
 
 namespace CryptoControlCenter.WPF.Views
@@ -11,6 +11,7 @@ namespace CryptoControlCenter.WPF.Views
         public WalletView()
         {
             InitializeComponent();
+            Warning.DataContext = CryptoCenter.Instance;
         }
     }
 }

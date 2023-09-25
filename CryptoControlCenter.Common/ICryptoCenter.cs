@@ -3,7 +3,6 @@ using CryptoControlCenter.Common.Models;
 using CryptoControlCenter.Common.Models.Interfaces;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Threading.Tasks;
 
 namespace CryptoControlCenter.Common
 {
@@ -12,6 +11,8 @@ namespace CryptoControlCenter.Common
     /// </summary>
     public interface ICryptoCenter
     {
+        public bool IsBusy { get; }
+        public bool ContainsMissingValues { get; }
         /// <summary>
         /// List of all logs
         /// </summary>
@@ -23,7 +24,7 @@ namespace CryptoControlCenter.Common
         /// <summary>
         /// List of all transactions
         /// </summary>
-        public ObservableCollection<ITransactionViewer> Transactions { get; }
+        public ObservableCollection<Transaction> Transactions { get; }
         /// <summary>
         /// Returns all current assets. The current value will be updated every 5 minutes.
         /// </summary>
@@ -33,7 +34,7 @@ namespace CryptoControlCenter.Common
         /// </summary>
         public bool QueueRunning { get; }
         /// <summary>
-        /// Task to create a new Wallet and adds them to the Lists
+        /// Method to create a new Wallet and adds them to the Lists
         /// </summary>
         /// <param name="walletName">Name of the new Wallet</param>
         /// <param name="exchange">Exchange used</param>
@@ -41,9 +42,9 @@ namespace CryptoControlCenter.Common
         /// <param name="exchangeApiSecret">API Secret for the Exchange</param>
         /// <exception cref="ArgumentException">Thrown, when API credentials are empty or whitespace.</exception>
         /// <exception cref="InvalidOperationException">Thrown, when Wallet Name or API credentials are already in use.</exception>
-        public Task CreateWallet(string walletName, Exchange exchange, string exchangeApiKey, string exchangeApiSecret);
+        public void CreateWallet(string walletName, Exchange exchange, string exchangeApiKey, string exchangeApiSecret);
         /// <summary>
-        /// Task to create a new Wallet and adds them to the Lists. Instead of API-sync, this method uses CSV-Import
+        /// Method to create a new Wallet and adds them to the Lists. Instead of API-sync, this method uses CSV-Import
         /// </summary>
         /// <param name="walletName">Name of the new Wallet</param>
         /// <param name="exchange">Exchange used</param>
@@ -52,14 +53,14 @@ namespace CryptoControlCenter.Common
         /// <param name="csvFilePathDistribution">File Path to Distribution File</param>
         /// <exception cref="ArgumentException">Thrown, when csv paths are empty or whitespace.</exception>
         /// <exception cref="InvalidOperationException">Thrown, when Wallet Name is already in use.</exception>
-        public Task CreateWallet(string walletName, Exchange exchange, string csvFilePathTransactions, string csvFilePathWithdrawalDeposits, string csvFilePathDistribution);
+        public void CreateWallet(string walletName, Exchange exchange, string csvFilePathTransactions, string csvFilePathWithdrawalDeposits, string csvFilePathDistribution);
         /// <summary>
         /// Removes an Agent and the connected wallet. Gets executed via internal TaskQueue to avoid conflicts with existing wallet update tasks.
         /// </summary>
         /// <param name="wallet">Wallet to be deleted</param>
         public void RemoveWallet(IExchangeWalletViewer wallet);
         /// <summary>
-        /// Checks Database for Transactions that miss values for TransferValue and FeeValue and loads them via various web sources
+        /// Checks Database for Transactions that miss values for TransactionValue and FeeValue and tries to load them via web sources
         /// </summary>
         public void LoadMissingTransactionValues();
     }

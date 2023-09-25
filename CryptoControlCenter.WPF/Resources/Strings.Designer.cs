@@ -79,6 +79,24 @@ namespace CryptoControlCenter.WPF.Resources {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Amount ähnelt.
+        /// </summary>
+        public static string Amount {
+            get {
+                return ResourceManager.GetString("Amount", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Asset ähnelt.
+        /// </summary>
+        public static string Asset {
+            get {
+                return ResourceManager.GetString("Asset", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Assets ähnelt.
         /// </summary>
         public static string Assets {
@@ -88,11 +106,38 @@ namespace CryptoControlCenter.WPF.Resources {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die before ähnelt.
+        /// </summary>
+        public static string Before {
+            get {
+                return ResourceManager.GetString("Before", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Cancel ähnelt.
         /// </summary>
         public static string Cancel {
             get {
                 return ResourceManager.GetString("Cancel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Choose ähnelt.
+        /// </summary>
+        public static string Choose {
+            get {
+                return ResourceManager.GetString("Choose", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Do you want to continue? ähnelt.
+        /// </summary>
+        public static string Continue {
+            get {
+                return ResourceManager.GetString("Continue", resourceCulture);
             }
         }
         
@@ -124,11 +169,29 @@ namespace CryptoControlCenter.WPF.Resources {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Deposits &amp; Withdrawals ähnelt.
+        /// </summary>
+        public static string DepWith {
+            get {
+                return ResourceManager.GetString("DepWith", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Disclaimer ähnelt.
         /// </summary>
         public static string Disclaimer {
             get {
                 return ResourceManager.GetString("Disclaimer", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Distributions ähnelt.
+        /// </summary>
+        public static string Distributions {
+            get {
+                return ResourceManager.GetString("Distributions", resourceCulture);
             }
         }
         
@@ -151,11 +214,83 @@ namespace CryptoControlCenter.WPF.Resources {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Fee ähnelt.
+        /// </summary>
+        public static string Fee {
+            get {
+                return ResourceManager.GetString("Fee", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Fee Value in € ähnelt.
+        /// </summary>
+        public static string FeeValue {
+            get {
+                return ResourceManager.GetString("FeeValue", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Only show rows that need inspection ähnelt.
+        /// </summary>
+        public static string Filter {
+            get {
+                return ResourceManager.GetString("Filter", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die from ähnelt.
+        /// </summary>
+        public static string From {
+            get {
+                return ResourceManager.GetString("From", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Generate Tax Report ähnelt.
+        /// </summary>
+        public static string GenerateTax {
+            get {
+                return ResourceManager.GetString("GenerateTax", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Language ähnelt.
         /// </summary>
         public static string Language {
             get {
                 return ResourceManager.GetString("Language", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Loading ... ähnelt.
+        /// </summary>
+        public static string Loading {
+            get {
+                return ResourceManager.GetString("Loading", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Load missing values ähnelt.
+        /// </summary>
+        public static string LoadMissingValues {
+            get {
+                return ResourceManager.GetString("LoadMissingValues", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die This action tries to load missing values via linking transactions and requesting historic price data from exchanges. Depending on the amount of transactions, this can take several minutes. ähnelt.
+        /// </summary>
+        public static string LoadMissingWarning {
+            get {
+                return ResourceManager.GetString("LoadMissingWarning", resourceCulture);
             }
         }
         
@@ -178,6 +313,15 @@ namespace CryptoControlCenter.WPF.Resources {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Database has missing values. Please switch to Database Tab and synchronize/fill missing informations. It is advised to add all wallets first for best results. ähnelt.
+        /// </summary>
+        public static string MissingValues {
+            get {
+                return ResourceManager.GetString("MissingValues", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Not ähnelt.
         /// </summary>
         public static string Not {
@@ -187,11 +331,38 @@ namespace CryptoControlCenter.WPF.Resources {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die on ähnelt.
+        /// </summary>
+        public static string On {
+            get {
+                return ResourceManager.GetString("On", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Save ähnelt.
         /// </summary>
         public static string Save {
             get {
                 return ResourceManager.GetString("Save", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Select Year ähnelt.
+        /// </summary>
+        public static string SelectYear {
+            get {
+                return ResourceManager.GetString("SelectYear", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Please select the year, for which the tax report should be generated: ähnelt.
+        /// </summary>
+        public static string SelectYearFull {
+            get {
+                return ResourceManager.GetString("SelectYearFull", resourceCulture);
             }
         }
         
@@ -214,11 +385,65 @@ namespace CryptoControlCenter.WPF.Resources {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die to ähnelt.
+        /// </summary>
+        public static string To {
+            get {
+                return ResourceManager.GetString("To", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Transactions ähnelt.
+        /// </summary>
+        public static string Transactions {
+            get {
+                return ResourceManager.GetString("Transactions", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Transaction Time ähnelt.
+        /// </summary>
+        public static string TransactionTime {
+            get {
+                return ResourceManager.GetString("TransactionTime", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Type ähnelt.
+        /// </summary>
+        public static string Type {
+            get {
+                return ResourceManager.GetString("Type", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Value in € ähnelt.
+        /// </summary>
+        public static string Value {
+            get {
+                return ResourceManager.GetString("Value", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Wallets ähnelt.
         /// </summary>
         public static string Wallets {
             get {
                 return ResourceManager.GetString("Wallets", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Warning! Editing values can lead to database inconsistency. Proceed with caution. ähnelt.
+        /// </summary>
+        public static string WarningDatabase {
+            get {
+                return ResourceManager.GetString("WarningDatabase", resourceCulture);
             }
         }
         

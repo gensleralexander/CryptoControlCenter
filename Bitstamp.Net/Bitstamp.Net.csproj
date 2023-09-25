@@ -2,8 +2,8 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.1</TargetFramework>
-    <AssemblyVersion>1.0.26.8662</AssemblyVersion>
-    <FileVersion>1.0.26.8662</FileVersion>
+    <AssemblyVersion>1.0.60.8668</AssemblyVersion>
+    <FileVersion>1.0.60.8668</FileVersion>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
@@ -15,7 +15,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="CryptoExchange.Net" Version="6.1.1" />
+    <PackageReference Include="CryptoExchange.Net" Version="6.1.4" />
     <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
   </ItemGroup>
 

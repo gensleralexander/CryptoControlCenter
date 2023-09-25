@@ -4,10 +4,10 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:vm="clr-namespace:CryptoControlCenter.WPF.ViewModels"
-             xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
-             xmlns:res="clr-namespace:CryptoControlCenter.WPF.Resources"
              xmlns:mock="clr-namespace:CryptoControlCenter.WPF.MockData"
              xmlns:sunburst="clr-namespace:Syncfusion.UI.Xaml.SunburstChart;assembly=Syncfusion.SfSunburstChart.WPF"
+             xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
+             xmlns:res="clr-namespace:CryptoControlCenter.WPF.Resources"
              mc:Ignorable="d" 
              d:DesignHeight="500" d:DesignWidth="800"
              Background="{StaticResource Background}">
@@ -45,7 +45,7 @@
                 </Button.Content>
             </Button>
         </StackPanel>
-        
+
         <StackPanel Grid.Column="0" Grid.Row="1">
             <TextBlock Text="{x:Static res:Strings.Wallets}" FontSize="{DynamicResource AppFontSizeHeaders}" Margin="0,10,0,10"/>
             <ListBox x:Name="WalletList" SelectedItem="{Binding SelectedWallet,Mode=TwoWay}" ItemsSource="{Binding Wallets}" BorderThickness="0" Background="{StaticResource Background}">
@@ -57,7 +57,6 @@
             </ListBox>
         </StackPanel>
 
-
         <StackPanel Grid.Row="0" Grid.Column="1" Grid.RowSpan="2">
             <TextBlock Text="{x:Static res:Strings.Assets}" FontSize="{DynamicResource AppFontSizeHeaders}" HorizontalAlignment="Center" Margin="0,10,0,0"/>
             <sunburst:SfSunburstChart x:Name="Sunburst" InnerRadius="0.35" Background="{StaticResource Background}" Palette="Pineapple" HorizontalContentAlignment="Center" EnableAnimation="True" AnimationType="FadeIn" AnimationDuration="1200" ValueMemberPath="CurrentValue" StrokeThickness="2" Stroke="{StaticResource Background}" Foreground="{StaticResource PrimaryLightBrush}" d:DataContext="{d:DesignInstance Type=mock:MockViewModel,IsDesignTimeCreatable=True}" ItemsSource="{Binding Balances}">
@@ -67,8 +66,8 @@
                     <sunburst:SunburstHierarchicalLevel GroupMemberPath="TaxfreeString"/>
                 </sunburst:SfSunburstChart.Levels>
                 <!--<sunburst:SfSunburstChart.Legend>
-                <sunburst:SunburstLegend DockPosition="Top" Foreground="{StaticResource Foreground}" ClickAction="ToggleSegmentVisibility"/>
-            </sunburst:SfSunburstChart.Legend>-->
+    <sunburst:SunburstLegend DockPosition="Top" Foreground="{StaticResource Foreground}" ClickAction="ToggleSegmentVisibility"/>
+</sunburst:SfSunburstChart.Legend>-->
                 <sunburst:SfSunburstChart.DataLabelInfo>
                     <sunburst:SunburstDataLabelInfo LabelOverflowMode="Trim" LabelRotationMode="Normal" FontWeight="DemiBold">
                         <sunburst:SunburstDataLabelInfo.LabelTemplate>
@@ -94,23 +93,31 @@
                 </sunburst:SfSunburstChart.Behaviors>
 
                 <!--<sunburst:SfSunburstChart.ColorModel>
-                <sunburst:SunburstColorModel>
-                    <sunburst:SunburstColorModel.CustomBrushes>
-                        <LinearGradientBrush>
-                            <GradientStop Color="Yellow" Offset="0"/>
-                        </LinearGradientBrush>
+    <sunburst:SunburstColorModel>
+        <sunburst:SunburstColorModel.CustomBrushes>
+            <LinearGradientBrush>
+                <GradientStop Color="Yellow" Offset="0"/>
+            </LinearGradientBrush>
 
-                        <LinearGradientBrush>
-                            <GradientStop Color="Blue" Offset="0"/>
-                        </LinearGradientBrush>
+            <LinearGradientBrush>
+                <GradientStop Color="Blue" Offset="0"/>
+            </LinearGradientBrush>
 
-                        <LinearGradientBrush>
-                            <GradientStop Color="Green" Offset="0"/>
-                        </LinearGradientBrush>
-                    </sunburst:SunburstColorModel.CustomBrushes>
-                </sunburst:SunburstColorModel>
-            </sunburst:SfSunburstChart.ColorModel>-->
+            <LinearGradientBrush>
+                <GradientStop Color="Green" Offset="0"/>
+            </LinearGradientBrush>
+        </sunburst:SunburstColorModel.CustomBrushes>
+    </sunburst:SunburstColorModel>
+</sunburst:SfSunburstChart.ColorModel>-->
             </sunburst:SfSunburstChart>
         </StackPanel>
+
+        <RichTextBox x:Name="Warning" Visibility="{Binding ContainsMissingValues, Converter={StaticResource BoolVisibilityConverter}}" Grid.Row="1" Grid.Column="1" IsReadOnly="True" FontSize="{DynamicResource AppFontSize}" Foreground="{StaticResource Foreground}" Background="{StaticResource Background}" BorderThickness="0" MinWidth="500" MaxWidth="900" Margin="10,10,0,0" HorizontalAlignment="Center">
+            <FlowDocument>
+                <Paragraph Background="{StaticResource Background}">
+                    <Run Text="{x:Static res:Strings.MissingValues}"/>
+                </Paragraph>
+            </FlowDocument>
+        </RichTextBox>
     </Grid>
 </UserControl>

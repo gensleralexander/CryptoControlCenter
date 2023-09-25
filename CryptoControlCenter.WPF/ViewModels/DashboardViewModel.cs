@@ -1,12 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using CryptoControlCenter.Common.Helper;
 
 namespace CryptoControlCenter.WPF.ViewModels
 {
-    public class DashboardViewModel
+    public class DashboardViewModel : AbstractPropertyChanged
     {
         public string Title { get; } = "Dashboard";
     }

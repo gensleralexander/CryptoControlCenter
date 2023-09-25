@@ -17,3 +17,5 @@ You can get your latest version from [here](https://raw.githubusercontent.com/ge
 Please refer to the [License](LICENSE.md).
 This App is designed for my own private usage. Claims for damages or other liability by using this software are hereby excluded.
 Please note that all exchange-logos and names and their copyrights belong to their original owners. No copyright infringement intended.
+
+### Only supports EURO and german-taxlaws!

@@ -2,6 +2,7 @@
 using CryptoControlCenter.WPF.Helper;
 using Microsoft.Win32;
 using System;
+using System.IO;
 using System.Windows.Input;
 
 namespace CryptoControlCenter.WPF.ViewModels
@@ -182,9 +183,18 @@ namespace CryptoControlCenter.WPF.ViewModels
         {
             SaveFileDialog saveFileDialog = new SaveFileDialog();
             saveFileDialog.Filter = "Logs (*.log)|*.log";
-            saveFileDialog.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+            string lastPath = Properties.Settings.Default.LastAccessFilePath;
+            if (!string.IsNullOrWhiteSpace(lastPath))
+            {
+                saveFileDialog.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+            }
+            else
+            {
+                saveFileDialog.InitialDirectory = lastPath;
+            }
             if (saveFileDialog.ShowDialog() == true)
             {
+                Properties.Settings.Default.LastAccessFilePath = Path.GetDirectoryName(saveFileDialog.FileName);
                 await Common.DocumentGenerator.GenerateLogs(saveFileDialog.FileName);
             }
         }

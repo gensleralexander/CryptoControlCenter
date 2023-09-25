@@ -53,6 +53,7 @@ namespace Bitstamp.Net
         #region constructor/destructor
         internal BitstampApiClient(ILogger log, BitstampRestOptions options) : base(log, null, options.Environment.SpotRestAddress, options, options.SpotOptions)
         {
+            options.SpotOptions.OutputOriginalData = true;
             Options = options;
 
             Public = new BitstampApiPublicClient(this);

@@ -47,7 +47,7 @@ namespace CryptoControlCenter.Common.DataProvider
         /// <inheritdoc/>
         public void ImportFromCSV(string csvFilePathTransactions, string csvFilePathWithdrawalDeposits, string csvFilePathDistribution)
         {
-            int id = 100000000; //give new transaction an ID, because sometimes, transactions are identical and would falsly get dropped
+            int id = 2000000000; //give new transaction an ID, because sometimes, transactions are identical and would falsly get dropped. ID gets overwritten when adding to DB
             var culture = new CultureInfo("en-US");
             SortedSet<Transaction> transactions = new SortedSet<Transaction>();
             StreamReader reader;

@@ -6,8 +6,8 @@
     <Nullable>enable</Nullable>
     <UseWPF>true</UseWPF>
     <AssemblyName>CryptoControlCenter</AssemblyName>
-    <AssemblyVersion>1.0.156.8662</AssemblyVersion>
-    <FileVersion>1.0.156.8662</FileVersion>
+    <AssemblyVersion>1.0.252.8668</AssemblyVersion>
+    <FileVersion>1.0.252.8668</FileVersion>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
@@ -43,6 +43,7 @@
   <ItemGroup>
     <None Remove="Resources\Binance2560.png" />
     <None Remove="Resources\Bitstamp2560.png" />
+    <None Remove="Resources\Bitstamp2560inverted.png" />
     <None Remove="Resources\Logo128.png" />
     <None Remove="Resources\Logo48.png" />
     <None Remove="Resources\Logo64.png" />
@@ -51,11 +52,14 @@
   <ItemGroup>
     <PackageReference Include="CountryFlag.Wpf" Version="1.0.0" />
     <PackageReference Include="MahApps.Metro.IconPacks.Material" Version="4.11.0" />
-    <PackageReference Include="Syncfusion.SfChromelessWindow.WPF" Version="21.1.35" />
-    <PackageReference Include="Syncfusion.SfInput.WPF" Version="21.1.35" />
-    <PackageReference Include="Syncfusion.SfSkinManager.WPF" Version="21.1.35" />
-    <PackageReference Include="Syncfusion.SfSunburstChart.WPF" Version="21.1.35" />
-    <PackageReference Include="Syncfusion.Themes.MaterialDark.WPF" Version="21.1.35" />
+    <PackageReference Include="Syncfusion.SfBusyIndicator.WPF" Version="23.1.36" />
+    <PackageReference Include="Syncfusion.SfChromelessWindow.WPF" Version="23.1.36" />
+    <PackageReference Include="Syncfusion.SfGrid.WPF" Version="23.1.36" />
+    <PackageReference Include="Syncfusion.SfInput.WPF" Version="23.1.36" />
+    <PackageReference Include="Syncfusion.SfSkinManager.WPF" Version="23.1.36" />
+    <PackageReference Include="Syncfusion.SfSunburstChart.WPF" Version="23.1.36" />
+    <PackageReference Include="Syncfusion.Shared.WPF" Version="23.1.36" />
+    <PackageReference Include="Syncfusion.Themes.MaterialDark.WPF" Version="23.1.36" />
   </ItemGroup>
 
   <ItemGroup>
@@ -65,6 +69,7 @@
   <ItemGroup>
     <Resource Include="Resources\Binance2560.png" />
     <Resource Include="Resources\Bitstamp2560.png" />
+    <Resource Include="Resources\Bitstamp2560inverted.png" />
     <Resource Include="Resources\Logo128.png" />
     <Resource Include="Resources\Logo48.png" />
     <Resource Include="Resources\Logo64.png" />

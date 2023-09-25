@@ -123,11 +123,26 @@
   <data name="AddNewWallet" xml:space="preserve">
     <value>Add new Wallet</value>
   </data>
+  <data name="Amount" xml:space="preserve">
+    <value>Amount</value>
+  </data>
+  <data name="Asset" xml:space="preserve">
+    <value>Asset</value>
+  </data>
   <data name="Assets" xml:space="preserve">
     <value>Assets</value>
   </data>
+  <data name="Before" xml:space="preserve">
+    <value>before</value>
+  </data>
   <data name="Cancel" xml:space="preserve">
     <value>Cancel</value>
+  </data>
+  <data name="Choose" xml:space="preserve">
+    <value>Choose</value>
+  </data>
+  <data name="Continue" xml:space="preserve">
+    <value>Do you want to continue?</value>
   </data>
   <data name="CryptoDisclaimer" xml:space="preserve">
     <value>CRYPTOCURRENCIES ARE A HIGH RISK INVESTMENT AND THEREFORE MAY NOT BE SUITABLE FOR ALL MEMBERS OF THE PUBLIC AND ALL TYPES OF INVESTORS. BEFORE TRADING WITH CRYPTOCURRENCIES, MAKE SURE YOU UNDERSTAND THE NATURE, COMPLEXITY AND RISKS INHERENT IN THEM.</value>
@@ -138,8 +153,14 @@
   <data name="Delete" xml:space="preserve">
     <value>Delete</value>
   </data>
+  <data name="DepWith" xml:space="preserve">
+    <value>Deposits &amp; Withdrawals</value>
+  </data>
   <data name="Disclaimer" xml:space="preserve">
     <value>Disclaimer</value>
+  </data>
+  <data name="Distributions" xml:space="preserve">
+    <value>Distributions</value>
   </data>
   <data name="Example" xml:space="preserve">
     <value>This is an example text.</value>
@@ -147,8 +168,32 @@
   <data name="Exchange" xml:space="preserve">
     <value>Cryptoexchange</value>
   </data>
+  <data name="Fee" xml:space="preserve">
+    <value>Fee</value>
+  </data>
+  <data name="FeeValue" xml:space="preserve">
+    <value>Fee Value in €</value>
+  </data>
+  <data name="Filter" xml:space="preserve">
+    <value>Only show rows that need inspection</value>
+  </data>
+  <data name="From" xml:space="preserve">
+    <value>from</value>
+  </data>
+  <data name="GenerateTax" xml:space="preserve">
+    <value>Generate Tax Report</value>
+  </data>
   <data name="Language" xml:space="preserve">
     <value>Language</value>
+  </data>
+  <data name="Loading" xml:space="preserve">
+    <value>Loading ...</value>
+  </data>
+  <data name="LoadMissingValues" xml:space="preserve">
+    <value>Load missing values</value>
+  </data>
+  <data name="LoadMissingWarning" xml:space="preserve">
+    <value>This action tries to load missing values via linking transactions and requesting historic price data from exchanges. Depending on the amount of transactions, this can take several minutes.</value>
   </data>
   <data name="LogExport" xml:space="preserve">
     <value>Export Logs</value>
@@ -156,11 +201,23 @@
   <data name="Logs" xml:space="preserve">
     <value>Logging</value>
   </data>
+  <data name="MissingValues" xml:space="preserve">
+    <value>Database has missing values. Please switch to Database Tab and synchronize/fill missing informations. It is advised to add all wallets first for best results.</value>
+  </data>
   <data name="Not" xml:space="preserve">
     <value>Not</value>
   </data>
+  <data name="On" xml:space="preserve">
+    <value>on</value>
+  </data>
   <data name="Save" xml:space="preserve">
     <value>Save</value>
+  </data>
+  <data name="SelectYear" xml:space="preserve">
+    <value>Select Year</value>
+  </data>
+  <data name="SelectYearFull" xml:space="preserve">
+    <value>Please select the year, for which the tax report should be generated:</value>
   </data>
   <data name="SoftwareLicense" xml:space="preserve">
     <value>THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.</value>
@@ -168,8 +225,26 @@
   <data name="Taxfree" xml:space="preserve">
     <value>Taxfree</value>
   </data>
+  <data name="To" xml:space="preserve">
+    <value>to</value>
+  </data>
+  <data name="Transactions" xml:space="preserve">
+    <value>Transactions</value>
+  </data>
+  <data name="TransactionTime" xml:space="preserve">
+    <value>Transaction Time</value>
+  </data>
+  <data name="Type" xml:space="preserve">
+    <value>Type</value>
+  </data>
+  <data name="Value" xml:space="preserve">
+    <value>Value in €</value>
+  </data>
   <data name="Wallets" xml:space="preserve">
     <value>Wallets</value>
+  </data>
+  <data name="WarningDatabase" xml:space="preserve">
+    <value>Warning! Editing values can lead to database inconsistency. Proceed with caution.</value>
   </data>
   <data name="Zoom" xml:space="preserve">
     <value>Font Size</value>

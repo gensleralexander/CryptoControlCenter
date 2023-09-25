@@ -1,8 +1,14 @@
-﻿using CryptoControlCenter.Common.Enums;
+﻿using CryptoControlCenter.Common.Database;
+using CryptoControlCenter.Common.Enums;
+using CryptoControlCenter.Common.Helper;
 using CryptoControlCenter.Common.Models.Interfaces;
 using Newtonsoft.Json;
 using SQLite;
 using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Linq;
+using System.Reflection;
 using System.Text;
 
 namespace CryptoControlCenter.Common.Models
@@ -11,7 +17,7 @@ namespace CryptoControlCenter.Common.Models
     /// Class for Transaction Data
     /// </summary>
     [Table("Transaction")]
-    public class Transaction : ITransactionViewer, IComparable
+    public class Transaction : AbstractPropertyChanged, ITransactionViewer, IComparable, IEditableObject
     {
         /// <inheritdoc />
         [PrimaryKey, AutoIncrement]
@@ -20,8 +26,17 @@ namespace CryptoControlCenter.Common.Models
         public string Wallet { get; set; }
         /// <inheritdoc />
         public DateTime TransactionTime { get; set; }
+        private TransactionType transactionType;
         /// <inheritdoc />
-        public TransactionType TransactionType { get; set; }
+        public TransactionType TransactionType
+        {
+            get { return transactionType; }
+            set
+            {
+                transactionType = value;
+                OnPropertyChanged();
+            }
+        }
         /// <inheritdoc />
         public string AssetStart { get; set; }
         /// <inheritdoc />
@@ -30,18 +45,72 @@ namespace CryptoControlCenter.Common.Models
         public decimal AmountStart { get; set; }
         /// <inheritdoc />
         public decimal AmountDestination { get; set; }
+        private string locationStart;
         /// <inheritdoc />
-        public string LocationStart { get; set; }
+        public string LocationStart
+        {
+            get { return locationStart; }
+            set
+            {
+                locationStart = value;
+                OnPropertyChanged();
+            }
+        }
+        private string locationDestination;
         /// <inheritdoc />
-        public string LocationDestination { get; set; }
+        public string LocationDestination
+        {
+            get { return locationDestination; }
+            set
+            {
+                locationDestination = value;
+                OnPropertyChanged();
+            }
+        }
+        private decimal transactionValue;
         /// <inheritdoc />
-        public decimal TransferValue { get; set; }
+        public decimal TransactionValue
+        {
+            get { return transactionValue; }
+            set
+            {
+                transactionValue = value;
+                OnPropertyChanged();
+            }
+        }
+        private decimal feeAmount;
         /// <inheritdoc />
-        public decimal FeeAmount { get; set; }
+        public decimal FeeAmount
+        {
+            get { return feeAmount; }
+            set
+            {
+                feeAmount = value;
+                OnPropertyChanged();
+            }
+        }
+        private string feeAsset;
         /// <inheritdoc />
-        public string FeeAsset { get; set; }
+        public string FeeAsset
+        {
+            get { return feeAsset; }
+            set
+            {
+                feeAsset = value;
+                OnPropertyChanged();
+            }
+        }
+        private decimal feeValue;
         /// <inheritdoc />
-        public decimal FeeValue { get; set; }
+        public decimal FeeValue
+        {
+            get { return feeValue; }
+            set
+            {
+                feeValue = value;
+                OnPropertyChanged();
+            }
+        }
 
         /// <summary>
         /// Constructor
@@ -50,7 +119,7 @@ namespace CryptoControlCenter.Common.Models
         /// <summary>
         /// Constructor
         /// </summary>
-        public Transaction(string walletName, DateTime transactionTime, TransactionType transactionType, string assetStart, string assetDestination, decimal amountStart, decimal amountDestination, string locationStart, string locationDestination, decimal transferValue, decimal feeAmount, string feeAsset)
+        public Transaction(string walletName, DateTime transactionTime, TransactionType transactionType, string assetStart, string assetDestination, decimal amountStart, decimal amountDestination, string locationStart, string locationDestination, decimal transactionValue, decimal feeAmount, string feeAsset)
         {
             Wallet = walletName;
             TransactionTime = transactionTime;
@@ -61,7 +130,7 @@ namespace CryptoControlCenter.Common.Models
             AmountDestination = amountDestination;
             LocationStart = locationStart;
             LocationDestination = locationDestination;
-            TransferValue = transferValue;
+            TransactionValue = transactionValue;
             FeeAmount = feeAmount;
             FeeAsset = feeAsset;
         }
@@ -146,6 +215,53 @@ namespace CryptoControlCenter.Common.Models
             sb.Append(" to ");
             sb.Append(AssetDestination);
             return sb.ToString();
+        }
+
+
+
+        //IEditable
+        private Dictionary<string, object> storedValues;
+        protected Dictionary<string, object> BackUp()
+        {
+            var dict = new Dictionary<string, object>();
+            var itemProperties = this.GetType().GetTypeInfo().DeclaredProperties;
+
+            foreach (var pDescriptor in itemProperties)
+            {
+                if (pDescriptor.CanWrite)
+                    dict.Add(pDescriptor.Name, pDescriptor.GetValue(this));
+            }
+            return dict;
+        }
+
+        public void BeginEdit()
+        {
+            this.storedValues = this.BackUp();
+        }
+
+        public void CancelEdit()
+        {
+            if (this.storedValues == null)
+                return;
+
+            foreach (var item in this.storedValues)
+            {
+                var itemProperties = this.GetType().GetTypeInfo().DeclaredProperties;
+                var pDesc = itemProperties.FirstOrDefault(p => p.Name == item.Key);
+
+                if (pDesc != null)
+                    pDesc.SetValue(this, item.Value);
+            }
+        }
+
+        public async void EndEdit()
+        {
+            if (this.storedValues != null)
+            {
+                await SQLiteDatabaseManager.Database.UpdateAsync(this);
+                this.storedValues.Clear();
+                this.storedValues = null;
+            }
         }
     }
 }

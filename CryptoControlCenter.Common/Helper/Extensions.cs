@@ -148,13 +148,13 @@ namespace CryptoControlCenter.Common.Helper
                                     if (asset.Received.IsWithinTimeSpan(transaction.TransactionTime, new TimeSpan(isLeapYear ? -365 : -364, -23, -59, -59)))
                                     {
                                         buy += asset.CurrentValueOnBuyRate;
-                                        sell += asset.CurrentAmount / transaction.AmountStart * transaction.TransferValue;
+                                        sell += asset.CurrentAmount / transaction.AmountStart * transaction.TransactionValue;
                                     }
                                     else
                                     {
                                         fsDictionary.First(x => x.Key == transaction.Wallet).Value.paragraph23estg = true;
                                         buy23 += asset.CurrentValueOnBuyRate;
-                                        sell23 += asset.CurrentAmount / transaction.AmountStart * transaction.TransferValue;
+                                        sell23 += asset.CurrentAmount / transaction.AmountStart * transaction.TransactionValue;
                                     }
                                 }
                                 left -= asset.CurrentAmount;
@@ -169,13 +169,13 @@ namespace CryptoControlCenter.Common.Helper
                                     if (asset.Received.IsWithinTimeSpan(transaction.TransactionTime, new TimeSpan(isLeapYear ? -365 : -364, -23, -59, -59)))
                                     {
                                         buy += left / asset.OriginalAmount * asset.OriginalValue;
-                                        sell += left / transaction.AmountStart * transaction.TransferValue;
+                                        sell += left / transaction.AmountStart * transaction.TransactionValue;
                                     }
                                     else
                                     {
                                         fsDictionary.First(x => x.Key == transaction.Wallet).Value.paragraph23estg = true;
                                         buy23 += left / asset.OriginalAmount * asset.OriginalValue;
-                                        sell23 += left / transaction.AmountStart * transaction.TransferValue;
+                                        sell23 += left / transaction.AmountStart * transaction.TransactionValue;
                                     }
                                 }
                                 asset.CurrentValueOnBuyRate -= left / asset.OriginalAmount * asset.OriginalValue;
@@ -185,7 +185,7 @@ namespace CryptoControlCenter.Common.Helper
                         }
                         catch (InvalidOperationException)
                         {
-                            var leftValue = left / transaction.AmountStart * transaction.TransferValue;
+                            var leftValue = left / transaction.AmountStart * transaction.TransactionValue;
                             if (leftValue < 1.00m) //Catches some errors due to rounding of APIs. When leftValue is less than 1 €, the exception gets ignored
                             {
                                 left = 0.0m;
@@ -198,7 +198,7 @@ namespace CryptoControlCenter.Common.Helper
                     }
                     #endregion
                     //Insert new Asset into Set
-                    hodledAssets.Add(new HodledAsset(transaction.LocationDestination, transaction.AssetDestination, transaction.AmountDestination, transaction.TransferValue, transaction.TransactionTime));
+                    hodledAssets.Add(new HodledAsset(transaction.LocationDestination, transaction.AssetDestination, transaction.AmountDestination, transaction.TransactionValue, transaction.TransactionTime));
                     #region Fee
                     if (transaction.FeeAsset == transaction.AssetDestination)
                     {
@@ -272,7 +272,7 @@ namespace CryptoControlCenter.Common.Helper
                     {
                         if (transaction.LocationStart == "Unbekanntes Wallet" || string.IsNullOrWhiteSpace(transaction.LocationStart)) //deposits normally gets dropped and done through withdrawal action, but when origin is unknown, create dummy asset
                         {
-                            hodledAssets.Add(new HodledAsset(transaction.LocationDestination, transaction.AssetDestination, transaction.AmountDestination, transaction.TransferValue, transaction.TransactionTime));
+                            hodledAssets.Add(new HodledAsset(transaction.LocationDestination, transaction.AssetDestination, transaction.AmountDestination, transaction.TransactionValue, transaction.TransactionTime));
                         }
                     }
                     else //Withdraw from this wallet 
@@ -297,7 +297,7 @@ namespace CryptoControlCenter.Common.Helper
                             }
                             catch (InvalidOperationException)
                             {
-                                var leftValue = left / transaction.AmountStart * transaction.TransferValue;
+                                var leftValue = left / transaction.AmountStart * transaction.TransactionValue;
                                 if (leftValue < 1.00m) //Catches some errors due to rounding of APIs. When leftValue is less than 1 €, the exception gets ignored
                                 {
                                     left = 0.0m;
@@ -381,7 +381,7 @@ namespace CryptoControlCenter.Common.Helper
                             }
                             catch (InvalidOperationException)
                             {
-                                var leftValue = left / transaction.AmountStart * transaction.TransferValue;
+                                var leftValue = left / transaction.AmountStart * transaction.TransactionValue;
                                 if (leftValue < 1.00m) //Catches some errors due to rounding of APIs. When leftValue is less than 1 €, the exception gets ignored
                                 {
                                     left = 0.0m;
@@ -398,7 +398,7 @@ namespace CryptoControlCenter.Common.Helper
                 case TransactionType.Dust:
                     throw new NotImplementedException();
                 case TransactionType.BankDeposit:
-                    hodledAssets.Add(new HodledAsset(transaction.LocationDestination, transaction.AssetDestination, transaction.AmountDestination, transaction.TransferValue, transaction.TransactionTime));
+                    hodledAssets.Add(new HodledAsset(transaction.LocationDestination, transaction.AssetDestination, transaction.AmountDestination, transaction.TransactionValue, transaction.TransactionTime));
                     break;
                 case TransactionType.BankWithdrawal:
                     #region Asset

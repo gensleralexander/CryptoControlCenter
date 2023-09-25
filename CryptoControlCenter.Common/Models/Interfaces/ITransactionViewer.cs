@@ -49,9 +49,9 @@ namespace CryptoControlCenter.Common.Models.Interfaces
         /// </summary>
         public string LocationDestination { get; }
         /// <summary>
-        /// TransferValue in FIAT money
+        /// TransactionValue in FIAT money
         /// </summary>
-        public decimal TransferValue { get; }
+        public decimal TransactionValue { get; }
         /// <summary>
         /// Fee Amount
         /// </summary>

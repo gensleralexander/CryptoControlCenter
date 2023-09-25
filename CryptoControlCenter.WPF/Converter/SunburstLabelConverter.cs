@@ -13,11 +13,12 @@ namespace CryptoControlCenter.WPF.Converter
                 bool success = decimal.TryParse(value.ToString(), out decimal result);
                 if (success)
                 {
-                    if (Properties.Settings.Default.CurrencyIsDollar)
-                    {
-                        return String.Format("{0:0.##}", result) + " $";
-                    }
-                    else return String.Format("{0:0.##}", result) + " €";
+                    //if (Properties.Settings.Default.CurrencyIsDollar)
+                    //{
+                    //    return String.Format("{0:0.##}", result) + " $";
+                    //}
+                    //else return String.Format("{0:0.##}", result) + " €";
+                    return String.Format("{0:0.##}", result) + " €"; //only support for EUR atm
                 }
             }
             return string.Empty;

@@ -77,61 +77,66 @@ namespace Bitstamp.Net
             var result = await _baseClient.SendRequestInternal<IEnumerable<BitstampUserTransaction>>(_baseClient.GetUrl(userTransactionsEndpoint, api, version, tradingpair), HttpMethod.Post, ct, parameters, true, true, HttpMethodParameterPosition.InBody).ConfigureAwait(false);
             //This area is implemented to create dynamic BitstampUserTransactionTypes, as the original ones need regular maintenance (everytime, Bitstamp adds a new coin, the HTTP answer is different
             //needs to be non-async method, otherwise compiler issues
-            List<BitstampUserTransaction> output = new List<BitstampUserTransaction>();
-            CultureInfo culture = new CultureInfo("en-US");
-
-            List<Dictionary<string, dynamic>> transactions = JsonConvert.DeserializeObject<List<Dictionary<string, dynamic>>>(result.OriginalData);
-            foreach (Dictionary<string, dynamic> transaction in transactions)
+            //requires Original Data
+            if (result.Success)
             {
-                try
+                List<BitstampUserTransaction> output = new List<BitstampUserTransaction>();
+                CultureInfo culture = new CultureInfo("en-US");
+
+                List<Dictionary<string, dynamic>> transactions = JsonConvert.DeserializeObject<List<Dictionary<string, dynamic>>>(result.OriginalData);
+                foreach (Dictionary<string, dynamic> transaction in transactions)
                 {
-                    BitstampUserTransaction t = new BitstampUserTransaction();
-                    t.Id = long.Parse(transaction["id"].ToString(), culture);
-                    t.TransactionTime = DateTime.Parse(transaction["datetime"].ToString(), culture);
-                    t.FeeAmount = decimal.Parse(transaction["fee"].ToString(), culture);
                     try
                     {
-                        //Order IDs are only in market trades included
-                        t.OrderId = long.Parse(transaction["order_id"].ToString(), culture);
-                    }
-                    catch { }
-                    t.Type = (UserTransactionType)int.Parse(transaction["type"].ToString(), culture);
-                    foreach (KeyValuePair<string, dynamic> pair in transaction)
-                    {
+                        BitstampUserTransaction t = new BitstampUserTransaction();
+                        t.Id = long.Parse(transaction["id"].ToString(), culture);
+                        t.TransactionTime = DateTime.Parse(transaction["datetime"].ToString(), culture);
+                        t.FeeAmount = decimal.Parse(transaction["fee"].ToString(), culture);
                         try
                         {
-                            decimal value = decimal.Parse(pair.Value.ToString(), culture);
-                            if (value > 0.0m)
-                            {
-                                if (pair.Key.ToLower() != "order_id")
-                                {
-                                    if (pair.Key.Contains("_"))
-                                    {
-                                        t.ExchangeRate = value;
-                                        t.tradingPair = pair.Key;
-                                    }
-                                    else
-                                    {
-                                        t.ToAmount = value;
-                                        t.ToAsset = pair.Key.ToUpper();
-                                    }
-                                }
-                            }
-                            else if (value < 0.0m)
-                            {
-                                t.FromAmount = value * -1.0m;
-                                t.FromAsset = pair.Key.ToUpper();
-                            }
+                            //Order IDs are only in market trades included
+                            t.OrderId = long.Parse(transaction["order_id"].ToString(), culture);
                         }
                         catch { }
+                        t.Type = (UserTransactionType)int.Parse(transaction["type"].ToString(), culture);
+                        foreach (KeyValuePair<string, dynamic> pair in transaction)
+                        {
+                            try
+                            {
+                                decimal value = decimal.Parse(pair.Value.ToString(), culture);
+                                if (value > 0.0m)
+                                {
+                                    if (pair.Key.ToLower() != "order_id")
+                                    {
+                                        if (pair.Key.Contains("_"))
+                                        {
+                                            t.ExchangeRate = value;
+                                            t.tradingPair = pair.Key;
+                                        }
+                                        else
+                                        {
+                                            t.ToAmount = value;
+                                            t.ToAsset = pair.Key.ToUpper();
+                                        }
+                                    }
+                                }
+                                else if (value < 0.0m)
+                                {
+                                    t.FromAmount = value * -1.0m;
+                                    t.FromAsset = pair.Key.ToUpper();
+                                }
+                            }
+                            catch { }
+                        }
+                        output.Add(t);
                     }
-                    output.Add(t);
+                    catch { }
                 }
-                catch { }
+                //end of dynamic area
+                return result.As(output as IEnumerable<BitstampUserTransaction>); //result.As(result.Data);
             }
-
-            //end of dynamic area
-            return result.As(output as IEnumerable<BitstampUserTransaction>); //result.As(result.Data);
+            //Errors gets normally handled
+            else return result.As(result.Data);
         }
         #endregion
 

@@ -1,6 +1,7 @@
 ﻿using CryptoControlCenter.Common;
 using CryptoControlCenter.Common.Helper;
 using CryptoControlCenter.Common.Models.Interfaces;
+using CryptoControlCenter.WPF.Dialogs;
 using CryptoControlCenter.WPF.Helper;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -81,8 +82,8 @@ namespace CryptoControlCenter.WPF.ViewModels
 
         private void AddExecute()
         {
-            //int i = System.Random.Shared.Next();
-            //CryptoCenter.Instance.CreateWallet("Test" + i, Common.Enums.Exchange.Bitstamp, "test"+ i, "test" + i);
+            AddWalletDialog addWalletDialog = new AddWalletDialog();
+            addWalletDialog.ShowDialog();
         }
 
         private void DeleteExecute()

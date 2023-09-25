@@ -56,9 +56,8 @@ namespace CryptoControlCenter.Common
         /// Creates the crypto tax report (currently only german) for a given time period.
         /// </summary>
         /// <param name="toYear">Ending year. If NULL, then last year is used.</param>
-        /// <param name="language">Language for excel sheet.</param>
         /// <exception cref="InvalidOperationException">Occurs, when there is no valid worksheet found for Location.</exception>
-        public static async Task<string> GenerateCryptoTaxReport(int? toYear = null, string language = "en")
+        public static async Task<string> GenerateCryptoTaxReport(string path, int? toYear = null)
         {
             DateTime to;
             if (toYear == null || toYear > DateTime.UtcNow.Year) //default is until end of last year
@@ -96,8 +95,7 @@ namespace CryptoControlCenter.Common
 
                 //Setup License and ExcelPackage
                 ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
-                var path = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-                var xlFile = new FileInfo(Path.Combine(path, "TaxReport_" + DateTime.UtcNow.ToString("yyyy-MM-dd-HH-mm-ss") + ".xlsx"));
+                var xlFile = new FileInfo(path);
                 using (var package = new ExcelPackage())
                 {
                     // Create Worksheets and headers
@@ -132,7 +130,7 @@ namespace CryptoControlCenter.Common
                     //Process transactions
                     foreach (ITransactionViewer transaction in transactions)
                     {
-                        if (transaction.TransferValue > 0.0099m || transaction.TransactionType == TransactionType.Distribution)
+                        if (transaction.TransactionValue > 0.0099m || transaction.TransactionType == TransactionType.Distribution)
                         {
 #if DEBUG
                             Console.Write(debugLfd + " --- ");
@@ -218,9 +216,9 @@ namespace CryptoControlCenter.Common
                                     worksheet.Cells[currentRow + 1, 9].Value = transaction.AssetDestination;
                                     worksheet.Cells[currentRow, 10].Value = transaction.GetExchangeRateString();
                                     worksheet.Cells[currentRow + 1, 11].Style.Numberformat.Format = "#,##0.00 €";
-                                    worksheet.Cells[currentRow, 12].Value = transaction.TransferValue;
+                                    worksheet.Cells[currentRow, 12].Value = transaction.TransactionValue;
                                     worksheet.Cells[currentRow + 1, 12].Style.Numberformat.Format = "#,##0.00 €";
-                                    worksheet.Cells[currentRow + 1, 12].Value = transaction.TransferValue;
+                                    worksheet.Cells[currentRow + 1, 12].Value = transaction.TransactionValue;
                                     worksheet.Cells[currentRow, 13].Value = transaction.FeeAmount + " " + transaction.FeeAsset;
                                     worksheet.Cells[currentRow, 13].Style.HorizontalAlignment = ExcelHorizontalAlignment.Right;
                                     worksheet.Cells[currentRow, 14].Style.Numberformat.Format = "#,##0.00 €";
@@ -229,21 +227,21 @@ namespace CryptoControlCenter.Common
                                     {
                                         worksheet.Cells[currentRow, 5].Value = "Kauf";
                                         //worksheet.Cells[currentRow, 11].Value = 1.0m;
-                                        worksheet.Cells[currentRow + 1, 11].Value = transaction.TransferValue / transaction.AmountDestination;
+                                        worksheet.Cells[currentRow + 1, 11].Value = transaction.TransactionValue / transaction.AmountDestination;
 
                                     }
                                     else if (transaction.AssetDestination.IsFIATcurrency())
                                     {
                                         worksheet.Cells[currentRow, 5].Value = "Verkauf";
-                                        worksheet.Cells[currentRow, 11].Value = transaction.TransferValue / transaction.AmountStart;
+                                        worksheet.Cells[currentRow, 11].Value = transaction.TransactionValue / transaction.AmountStart;
                                         //worksheet.Cells[currentRow + 1, 11].Value = 1.0m;
 
                                     }
                                     else
                                     {
                                         worksheet.Cells[currentRow, 5].Value = "Tausch";
-                                        worksheet.Cells[currentRow, 11].Value = transaction.TransferValue / transaction.AmountStart;
-                                        worksheet.Cells[currentRow + 1, 11].Value = transaction.TransferValue / transaction.AmountDestination;
+                                        worksheet.Cells[currentRow, 11].Value = transaction.TransactionValue / transaction.AmountStart;
+                                        worksheet.Cells[currentRow + 1, 11].Value = transaction.TransactionValue / transaction.AmountDestination;
                                     }
                                     currentRow++;
                                     break;
@@ -251,22 +249,22 @@ namespace CryptoControlCenter.Common
                                     worksheet.Cells[currentRow, 5].Value = "Transfer";
                                     worksheet.Cells[currentRow, 6].Value = transaction.LocationStart;
                                     worksheet.Cells[currentRow, 7].Value = transaction.LocationDestination;
-                                    worksheet.Cells[currentRow, 11].Value = transaction.TransferValue / transaction.AmountStart;
-                                    worksheet.Cells[currentRow, 12].Value = transaction.TransferValue;
+                                    worksheet.Cells[currentRow, 11].Value = transaction.TransactionValue / transaction.AmountStart;
+                                    worksheet.Cells[currentRow, 12].Value = transaction.TransactionValue;
                                     break;
                                 case TransactionType.BankDeposit:
                                     worksheet.Cells[currentRow, 5].Value = "Einzahlung";
                                     worksheet.Cells[currentRow, 6].Value = "Bank";
                                     worksheet.Cells[currentRow, 7].Value = transaction.LocationDestination;
-                                    //worksheet.Cells[currentRow, 11].Value = transaction.TransferValue / transaction.AmountStart;
-                                    worksheet.Cells[currentRow, 12].Value = transaction.TransferValue;
+                                    //worksheet.Cells[currentRow, 11].Value = transaction.TransactionValue / transaction.AmountStart;
+                                    worksheet.Cells[currentRow, 12].Value = transaction.TransactionValue;
                                     break;
                                 case TransactionType.BankWithdrawal:
                                     worksheet.Cells[currentRow, 5].Value = "Auszahlung";
                                     worksheet.Cells[currentRow, 6].Value = transaction.LocationStart;
                                     worksheet.Cells[currentRow, 7].Value = "Bank";
-                                    //worksheet.Cells[currentRow, 11].Value = transaction.TransferValue / transaction.AmountStart;
-                                    worksheet.Cells[currentRow, 12].Value = transaction.TransferValue;
+                                    //worksheet.Cells[currentRow, 11].Value = transaction.TransactionValue / transaction.AmountStart;
+                                    worksheet.Cells[currentRow, 12].Value = transaction.TransactionValue;
                                     break;
                                 case TransactionType.Distribution:
                                     worksheet.Cells[currentRow, 5].Value = "Distribution";

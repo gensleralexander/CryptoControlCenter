@@ -47,7 +47,7 @@
             </Button>
             </StackPanel>
         </StackPanel>
-        <StackPanel Grid.Row="2">
+        <!--<StackPanel Grid.Row="2">
             <TextBlock Text="{x:Static res:Strings.Currency}" FontSize="{DynamicResource AppFontSizeHeaders}"/>
             <StackPanel Orientation="Horizontal">
                 <Button x:Name="Dollar" Command="{Binding DollarCommand}" IsEnabled="{Binding DollarCanExecute}" Margin="10">
@@ -65,7 +65,7 @@
                     </Button.Content>
                 </Button>
             </StackPanel>
-        </StackPanel>
+        </StackPanel>-->
         <StackPanel Grid.Row="3">
             <TextBlock Text="{x:Static res:Strings.Logs}" FontSize="{DynamicResource AppFontSizeHeaders}"/>
             <StackPanel Orientation="Horizontal">

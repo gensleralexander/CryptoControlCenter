@@ -31,7 +31,8 @@ namespace Bitstamp.Net.Objects
         public static BitstampRestOptions Default { get; set; } = new BitstampRestOptions()
         {
             Environment = BitstampEnvironment.Live,
-            AutoTimestamp = true
+            AutoTimestamp = true,
+            OutputOriginalData = true,
         };
 
 
