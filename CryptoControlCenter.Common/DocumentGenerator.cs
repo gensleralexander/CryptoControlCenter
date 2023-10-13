@@ -17,7 +17,7 @@ using System.Threading.Tasks;
 namespace CryptoControlCenter.Common
 {
     /// <summary>
-    /// This class is responsible for the creation of documents
+    /// This class is responsible for the creation of documents. Methods don't need an Instance of CryptoCenter and runs from Database directly.
     /// </summary>
     public static class DocumentGenerator
     {

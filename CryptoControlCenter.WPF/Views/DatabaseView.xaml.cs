@@ -54,7 +54,8 @@ namespace CryptoControlCenter.WPF.Views
             else
             {
                 TransactionsGrid.SortColumnDescriptions.Clear();
-                TransactionsGrid.ClearFilters();
+                TransactionsGrid.View.Filter = null;
+                TransactionsGrid.View.RefreshFilter();
             }
         }
 
