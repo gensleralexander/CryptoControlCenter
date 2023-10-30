@@ -1,5 +1,6 @@
 ﻿using CryptoControlCenter.Common.Helper;
 using CryptoControlCenter.Common.Models.Interfaces;
+using System.Text;
 
 namespace CryptoControlCenter.Common.Models
 {
@@ -66,5 +67,20 @@ namespace CryptoControlCenter.Common.Models
         }
 
         public WalletBalance() { }
+
+
+        public override string ToString()
+        {
+            StringBuilder sb = new StringBuilder();
+            sb.Append("Asset: ");
+            sb.AppendLine(Asset);
+            sb.Append("Wallet: ");
+            sb.AppendLine(Wallet);
+            sb.Append("Current Amount: ");
+            sb.AppendLine(CurrentAmount.ToString());
+            sb.Append("Current Value: ");
+            sb.AppendLine(CurrentValue.ToString());
+            return sb.ToString();
+        }
     }
 }

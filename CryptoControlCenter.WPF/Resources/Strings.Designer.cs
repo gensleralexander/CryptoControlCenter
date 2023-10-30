@@ -313,7 +313,7 @@ namespace CryptoControlCenter.WPF.Resources {
         }
         
         /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die Database has missing values. Please switch to Database Tab and synchronize/fill missing informations. It is advised to add all wallets first for best results. ähnelt.
+        ///   Sucht eine lokalisierte Zeichenfolge, die Database has missing or incorrect values. Please switch to Database Tab and synchronize/fill missing/correct wrong informations. It is advised to add all wallets first for best results. ähnelt.
         /// </summary>
         public static string MissingValues {
             get {
@@ -435,6 +435,15 @@ namespace CryptoControlCenter.WPF.Resources {
         public static string Wallets {
             get {
                 return ResourceManager.GetString("Wallets", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Warning! ähnelt.
+        /// </summary>
+        public static string Warning {
+            get {
+                return ResourceManager.GetString("Warning", resourceCulture);
             }
         }
         

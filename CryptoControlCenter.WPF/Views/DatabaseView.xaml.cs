@@ -1,6 +1,5 @@
 ﻿using CryptoControlCenter.Common;
 using CryptoControlCenter.Common.Enums;
-using CryptoControlCenter.Common.Models;
 using CryptoControlCenter.Common.Models.Interfaces;
 using CryptoControlCenter.WPF.Dialogs;
 using CryptoControlCenter.WPF.Resources;
@@ -61,7 +60,7 @@ namespace CryptoControlCenter.WPF.Views
 
         private void LoadMissingValues_Click(object sender, RoutedEventArgs e)
         {
-            var continueResult = MessageBox.Show(Strings.LoadMissingWarning + Environment.NewLine + Environment.NewLine + Strings.Continue, "Warning!", MessageBoxButton.YesNo, MessageBoxImage.Warning);
+            var continueResult = MessageBox.Show(Strings.LoadMissingWarning + Environment.NewLine + Environment.NewLine + Strings.Continue, Strings.Warning, MessageBoxButton.YesNo, MessageBoxImage.Warning);
             if (continueResult == MessageBoxResult.Yes)
             {
                 CryptoCenter.Instance.LoadMissingTransactionValues();
@@ -102,20 +101,10 @@ namespace CryptoControlCenter.WPF.Views
 
         private void TransactionsGrid_CurrentCellBeginEdit(object sender, CurrentCellBeginEditEventArgs e)
         {
-            //var transaction = (Transaction)((SfDataGrid)sender).SelectedItem;
-            //if (transaction != null)
-            //{
-
-            //}
         }
 
         private void TransactionsGrid_CurrentCellEndEdit(object sender, CurrentCellEndEditEventArgs e)
         {
-            var transaction = (Transaction)((SfDataGrid)sender).SelectedItem;
-            if (transaction != null)
-            {
-
-            }
         }
     }
 }

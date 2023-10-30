@@ -202,7 +202,7 @@
     <value>Protokollierung</value>
   </data>
   <data name="MissingValues" xml:space="preserve">
-    <value>Datenbank enthält fehlende Werte. Bitte wechseln Sie zum Datenbank-Tab und synchronisieren Sie Ihre Assets oder füllen die fehlenden Werte händisch aus. Es wird empfohlen, vorher alle Wallets hinzuzufügen um das beste Ergebnis bei der automatischen Synchronisation zu erzielen.</value>
+    <value>Datenbank enthält fehlende oder fehlerhafte Werte. Bitte wechseln Sie zum Datenbank-Tab und synchronisieren Sie Ihre Assets, füllen die fehlenden Werte händisch aus oder korrigieren die fehlerhaften Werte. Es wird empfohlen, vorher alle Wallets hinzuzufügen um das beste Ergebnis bei der automatischen Synchronisation zu erzielen.</value>
   </data>
   <data name="Not" xml:space="preserve">
     <value>Nicht</value>
@@ -242,6 +242,9 @@
   </data>
   <data name="Wallets" xml:space="preserve">
     <value>Wallets</value>
+  </data>
+  <data name="Warning" xml:space="preserve">
+    <value>Warnung!</value>
   </data>
   <data name="WarningDatabase" xml:space="preserve">
     <value>Warnung! Das Bearbeiten von Einträgen kann zur Inkonsistenz der Datenbank führen.</value>

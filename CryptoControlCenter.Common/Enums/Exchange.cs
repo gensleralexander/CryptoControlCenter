@@ -2,7 +2,7 @@
 {
     public enum Exchange
     {
-        // 0 is used as 'No Exchange'
+        PaperWallet = 0,
         Binance = 1,
         Bitstamp = 2
     }

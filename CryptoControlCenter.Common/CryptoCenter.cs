@@ -133,6 +133,7 @@ namespace CryptoControlCenter.Common
                 {
                     InternalInstance.Transactions.Clear();
                     var list = await SQLiteDatabaseManager.Database.Table<Transaction>().ToListAsync();
+                    list.Sort();
                     if (list != null) { list.ForEach(InternalInstance.Transactions.Add); }
                 }
                 catch (Exception ex)
@@ -234,35 +235,67 @@ namespace CryptoControlCenter.Common
             {
                 if (currentAssets == null)
                 {
-                    List<WalletBalance> list = new List<WalletBalance>();
                     currentAssets = new ObservableCollection<WalletBalance>();
-                    WalletBalance item;
-                    bool isLeapYear;
-                    foreach (HodledAsset asset in GetHodledAssets().Value)
+                    SortedSet<HodledAsset> hodledAssets = new SortedSet<HodledAsset>();
+                    List<WalletBalance> list = new List<WalletBalance>();
+                    List<Transaction> transactions = SQLiteDatabaseManager.Database.Table<Transaction>().ToListAsync().Result;
+                    if (transactions.Count != 0)
                     {
-                        if (!asset.removed)
+                        transactions.Sort();
+                        Dictionary<string, FinancialStatementHelper> fshelper = new Dictionary<string, FinancialStatementHelper>();
+                        List<string> wallets = new List<string>();
+                        wallets.AddRange(transactions.Select(x => x.LocationStart));
+                        wallets.AddRange(transactions.Select(x => x.LocationDestination));
+                        foreach (string walletname in wallets.Distinct())
                         {
-                            if ((DateTime.IsLeapYear(asset.Received.Year) && asset.Received < new DateTime(asset.Received.Year, 2, 29)) || (DateTime.IsLeapYear(DateTime.UtcNow.Year) && DateTime.UtcNow > new DateTime(DateTime.UtcNow.Year, 3, 1)))
+                            if (!string.IsNullOrWhiteSpace(walletname) && walletname != "Bank" && walletname != "Unbekanntes Wallet")
                             {
-                                isLeapYear = true;
-                            }
-                            else
-                            {
-                                isLeapYear = false;
-                            }
-                            bool taxfree = asset.Received.IsWithinTimeSpan(DateTime.UtcNow, new TimeSpan(isLeapYear ? -366 : -365, 0, 0, 0));
-                            try
-                            {
-                                item = list.First(x => x.Asset == asset.Asset && x.IsTaxfree == taxfree);
-                                item.CurrentAmount += (double)asset.CurrentAmount;
-                            }
-                            catch
-                            {
-                                list.Add(new WalletBalance(asset.Location, asset.Asset, (double)asset.CurrentAmount, taxfree));
+                                fshelper.Add(walletname, new FinancialStatementHelper());
                             }
                         }
+                        if (!transactions.Any(x => x.TransactionValue == -1.0m))
+                        {
+                            try
+                            {
+                                foreach (Transaction transaction in transactions)
+                                {
+                                    transaction.Process(ref fshelper, ref hodledAssets);
+                                }
+                            }
+                            catch{ InternalInstance.ContainsMissingValues = true; }
+                        }
+                        else { InternalInstance.ContainsMissingValues = true; }
+                        if (!InternalInstance.ContainsMissingValues)
+                        {
+                            WalletBalance item;
+                            bool isLeapYear;
+                            foreach (HodledAsset asset in hodledAssets)
+                            {
+                                if (!asset.removed)
+                                {
+                                    if ((DateTime.IsLeapYear(asset.Received.Year) && asset.Received < new DateTime(asset.Received.Year, 2, 29)) || (DateTime.IsLeapYear(DateTime.UtcNow.Year) && DateTime.UtcNow > new DateTime(DateTime.UtcNow.Year, 3, 1)))
+                                    {
+                                        isLeapYear = true;
+                                    }
+                                    else
+                                    {
+                                        isLeapYear = false;
+                                    }
+                                    bool taxfree = asset.Received.IsWithinTimeSpan(DateTime.UtcNow, new TimeSpan(isLeapYear ? -366 : -365, 0, 0, 0));
+                                    try
+                                    {
+                                        item = list.First(x => x.Asset == asset.Asset && x.IsTaxfree == taxfree);
+                                        item.CurrentAmount += (double)asset.CurrentAmount;
+                                    }
+                                    catch
+                                    {
+                                        list.Add(new WalletBalance(asset.Location, asset.Asset, (double)asset.CurrentAmount, taxfree));
+                                    }
+                                }
+                            }
+                            list.ForEach(currentAssets.Add);
+                        }
                     }
-                    list.ForEach(currentAssets.Add);
                 }
                 return currentAssets.ToList<IBalanceViewer>();
             }
@@ -464,9 +497,9 @@ namespace CryptoControlCenter.Common
                 {
                     case Currency.USDollar:
                         throw new NotImplementedException("Only supports EUR at the moment.");
-                        conversionRateBTCBinance = (double)BinancePrices.First(x => x.Symbol == "BTCUSDT").Price;
-                        conversionRateBTCBitstamp = (double)BitstampPrices.First(x => x.Pair == "BTC/USD").Last;
-                        break;
+                        //conversionRateBTCBinance = (double)BinancePrices.First(x => x.Symbol == "BTCUSDT").Price;
+                        //conversionRateBTCBitstamp = (double)BitstampPrices.First(x => x.Pair == "BTC/USD").Last;
+                        //break;
                     case Currency.Euro:
                         conversionRateBTCBinance = (double)BinancePrices.First(x => x.Symbol == "BTCEUR").Price;
                         conversionRateBTCBitstamp = (double)BitstampPrices.First(x => x.Pair == "BTC/EUR").Last;
@@ -500,40 +533,6 @@ namespace CryptoControlCenter.Common
             }
         }
 
-        /// <summary>
-        /// Get all hodled assets grouped by WalletNames based on the current transactions collection
-        /// </summary>
-        /// <returns>A KeyValuePair, where Key is the FinancialHelper-Dictionary and Pair is the SortedSet with HodledAssets</returns>
-        private KeyValuePair<Dictionary<string, FinancialStatementHelper>, SortedSet<HodledAsset>> GetHodledAssets()
-        {
-            SortedSet<HodledAsset> hodledAssets = new SortedSet<HodledAsset>();
-            Dictionary<string, FinancialStatementHelper> fshelper = new Dictionary<string, FinancialStatementHelper>();
-            List<string> wallets = new List<string>();
-            wallets.AddRange(Transactions.Select(x => x.LocationStart));
-            wallets.AddRange(Transactions.Select(x => x.LocationDestination));
-            foreach (string walletname in wallets.Distinct())
-            {
-                if (!string.IsNullOrWhiteSpace(walletname) && walletname != "Bank" && walletname != "Unbekanntes Wallet")
-                {
-                    fshelper.Add(walletname, new FinancialStatementHelper());
-                }
-            }
-            if (!Transactions.Any(x => x.TransactionValue == -1.0m))
-            {
-                try
-                {
-                    var temp = Transactions.ToList();
-                    temp.Sort();
-                    foreach (Transaction transaction in temp)
-                    {
-                        transaction.Process(ref fshelper, ref hodledAssets);
-                    }
-                }
-                catch { InternalInstance.ContainsMissingValues = true; }
-            }
-            else { InternalInstance.ContainsMissingValues = true; }
-            return new KeyValuePair<Dictionary<string, FinancialStatementHelper>, SortedSet<HodledAsset>>(fshelper, hodledAssets);
-        }
         /// <inheritdoc/>
         public async void CreateWallet(string walletName, Exchange exchange, string csvFilePathTransactions, string csvFilePathWithdrawalDeposits, string csvFilePathDistribution)
         {
