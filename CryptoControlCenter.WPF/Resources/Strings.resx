@@ -199,7 +199,7 @@
     <value>Export Logs</value>
   </data>
   <data name="Logs" xml:space="preserve">
-    <value>Logging</value>
+    <value>Error Logging</value>
   </data>
   <data name="MissingValues" xml:space="preserve">
     <value>Database has missing or incorrect values. Please switch to Database Tab and synchronize/fill missing/correct wrong informations. It is advised to add all wallets first for best results.</value>

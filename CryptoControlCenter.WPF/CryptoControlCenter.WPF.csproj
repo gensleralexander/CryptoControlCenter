@@ -6,8 +6,14 @@
     <Nullable>enable</Nullable>
     <UseWPF>true</UseWPF>
     <AssemblyName>CryptoControlCenter</AssemblyName>
-    <AssemblyVersion>1.0.268.8752</AssemblyVersion>
-    <FileVersion>1.0.268.8752</FileVersion>
+    <AssemblyVersion>1.0.269.8752</AssemblyVersion>
+    <FileVersion>1.0.269.8752</FileVersion>
+    <ApplicationIcon>Resources\Logo.ico</ApplicationIcon>
+    <Title>CryptoControlCenter</Title>
+    <Authors>Alexander Gensler</Authors>
+    <PackageIcon>Logo128.png</PackageIcon>
+    <PackageReadmeFile>README.MD</PackageReadmeFile>
+    <RepositoryUrl>https://github.com/gensleralexander/CryptoControlCenter</RepositoryUrl>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
@@ -44,9 +50,19 @@
     <None Remove="Resources\Binance2560.png" />
     <None Remove="Resources\Bitstamp2560.png" />
     <None Remove="Resources\Bitstamp2560inverted.png" />
-    <None Remove="Resources\Logo128.png" />
     <None Remove="Resources\Logo48.png" />
     <None Remove="Resources\Logo64.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="Resources\Logo.ico" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="..\README.MD">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
   </ItemGroup>
 
   <ItemGroup>
@@ -102,6 +118,10 @@
     <None Update="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+    <None Update="Resources\Logo128.png">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
     </None>
   </ItemGroup>
 

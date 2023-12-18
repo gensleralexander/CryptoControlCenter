@@ -199,7 +199,7 @@
     <value>Logs exportieren</value>
   </data>
   <data name="Logs" xml:space="preserve">
-    <value>Protokollierung</value>
+    <value>Fehlerprotokollierung</value>
   </data>
   <data name="MissingValues" xml:space="preserve">
     <value>Datenbank enthält fehlende oder fehlerhafte Werte. Bitte wechseln Sie zum Datenbank-Tab und synchronisieren Sie Ihre Assets, füllen die fehlenden Werte händisch aus oder korrigieren die fehlerhaften Werte. Es wird empfohlen, vorher alle Wallets hinzuzufügen um das beste Ergebnis bei der automatischen Synchronisation zu erzielen.</value>

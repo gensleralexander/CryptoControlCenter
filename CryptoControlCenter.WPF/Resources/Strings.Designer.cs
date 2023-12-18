@@ -304,7 +304,7 @@ namespace CryptoControlCenter.WPF.Resources {
         }
         
         /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die Logging ähnelt.
+        ///   Sucht eine lokalisierte Zeichenfolge, die Error Logging ähnelt.
         /// </summary>
         public static string Logs {
             get {
