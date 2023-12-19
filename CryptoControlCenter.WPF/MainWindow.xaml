@@ -176,7 +176,8 @@
                  Style="{StaticResource NavigationListBoxStyle}"
                  ItemContainerStyle="{DynamicResource NavigationListBoxItemStyle}"
                  ItemTemplate="{DynamicResource NavigationDataTemplate}"
-                 ItemsSource="{StaticResource NavigationMenuItems}"/>
+                 ItemsSource="{StaticResource NavigationMenuItems}"
+                 SelectionChanged="NavigationMenuListBox_SelectionChanged"/>
         
         <ContentControl Grid.Column="1" Style="{StaticResource NavigationContentStyle}"/>
         <busy:SfBusyIndicator Visibility="{Binding IsBusy, Converter={StaticResource BoolVisibilityConverter}}" IsBusy="{Binding IsBusy}" AnimationType="Flower" AnimationSpeed="70" ViewboxHeight="100" Grid.Column="0" FontSize="18" Grid.ColumnSpan="2" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Background="Transparent" Foreground="{StaticResource Foreground}" Header="{x:Static res:Strings.Loading}"/>

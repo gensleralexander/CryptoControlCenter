@@ -11,7 +11,7 @@ namespace CryptoControlCenter.Common
     /// </summary>
     public interface ICryptoCenter
     {
-        public bool IsBusy { get; }
+        public bool IsBusy { get; set; }
         public bool ContainsMissingValues { get; }
         /// <summary>
         /// List of all logs

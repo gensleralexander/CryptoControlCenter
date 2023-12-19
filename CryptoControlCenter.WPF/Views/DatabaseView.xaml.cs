@@ -7,8 +7,10 @@ using Microsoft.Win32;
 using Syncfusion.UI.Xaml.Grid;
 using System;
 using System.IO;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Threading;
 
 namespace CryptoControlCenter.WPF.Views
 {
@@ -21,6 +23,15 @@ namespace CryptoControlCenter.WPF.Views
         {
             DataContext = CryptoCenter.Instance;
             InitializeComponent();
+            Task.Run(() =>
+            {
+                Task.Delay(2000); // Wait till Syncfusion UI is loaded
+                Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Background, new Action(() =>
+                {
+                    TransactionsGrid.Visibility = Visibility.Visible;
+                }));
+                CryptoCenter.Instance.IsBusy = false;
+            });
         }
 
         public bool FilterRows(object o)
@@ -91,7 +102,7 @@ namespace CryptoControlCenter.WPF.Views
                     {
                         await Common.DocumentGenerator.GenerateCryptoTaxReport(saveFileDialog.FileName, pickerResult.Year);
                     }
-                    catch(Exception ex)
+                    catch (Exception ex)
                     {
                         MessageBox.Show(ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                     }

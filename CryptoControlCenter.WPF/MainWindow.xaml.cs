@@ -3,7 +3,6 @@ using Syncfusion.Windows.Shared;
 using System;
 using System.Globalization;
 using System.Threading;
-using System.Threading.Tasks;
 using System.Windows;
 
 namespace CryptoControlCenter.WPF
@@ -77,6 +76,11 @@ namespace CryptoControlCenter.WPF
             {
                 App.Current.Shutdown();
             }
+        }
+
+        private void NavigationMenuListBox_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
+        {
+            CryptoCenter.Instance.IsBusy = true;
         }
     }
 }

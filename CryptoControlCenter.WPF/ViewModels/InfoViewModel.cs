@@ -1,4 +1,5 @@
-﻿using System;
+﻿using CryptoControlCenter.Common;
+using System;
 using System.Reflection;
 
 namespace CryptoControlCenter.WPF.ViewModels
@@ -17,6 +18,13 @@ namespace CryptoControlCenter.WPF.ViewModels
             get
             {
                 return appVersion.ToString(4);
+            }
+        }
+        public static int DatabaseVersion
+        {
+            get
+            {
+                return CryptoCenter.DatabaseVersion;
             }
         }
     }

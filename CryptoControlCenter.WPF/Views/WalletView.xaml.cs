@@ -12,6 +12,7 @@ namespace CryptoControlCenter.WPF.Views
         {
             InitializeComponent();
             Warning.DataContext = CryptoCenter.Instance;
+            CryptoCenter.Instance.IsBusy = false;
         }
     }
 }

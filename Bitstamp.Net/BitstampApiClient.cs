@@ -89,6 +89,7 @@ namespace Bitstamp.Net
             bool signed,
             HttpMethodParameterPosition parameterPosition,
             ArrayParametersSerialization arraySerialization,
+            RequestBodyFormat bodyFormat,
             int requestId,
             Dictionary<string, string>? additionalHeaders)
         {
@@ -253,7 +254,7 @@ namespace Bitstamp.Net
 
         internal async Task<WebCallResult<T>> SendRequestInternal<T>(Uri uri, HttpMethod method, CancellationToken cancellationToken, Dictionary<string, object>? parameters = null, bool signed = false, bool checkResult = true, HttpMethodParameterPosition? postPosition = null, ArrayParametersSerialization? arraySerialization = null) where T : class
         {
-            var result = await SendRequestAsync<T>(uri, method, cancellationToken, parameters, signed, postPosition, arraySerialization, 1, ignoreRatelimit: false).ConfigureAwait(false);
+            var result = await SendRequestAsync<T>(uri, method, cancellationToken, parameters, signed, RequestBodyFormat.FormData, postPosition, arraySerialization, 1, ignoreRatelimit: false).ConfigureAwait(false);
             if (!result && result.Error!.Code == -1021 && (Options.SpotOptions.AutoTimestamp ?? ClientOptions.AutoTimestamp))
             {
                 //log.Write(LogLevel.Debug, "Received Invalid Timestamp error, triggering new time sync");
@@ -309,6 +310,7 @@ namespace Bitstamp.Net
                 new TimeSpan(0, 0, 0),
                 null,
                 string.Empty,
+                null,
                 null,
                 null,
                 null,

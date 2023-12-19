@@ -36,6 +36,7 @@ namespace CryptoControlCenter.Common
         internal static bool isInitialized = false;
         internal static bool initialzationRunning = false;
         internal static Currency currency = Currency.Euro;
+        public static int DatabaseVersion { get; private set; }
 
         public bool IsBusy
         {
@@ -83,6 +84,7 @@ namespace CryptoControlCenter.Common
         /// </summary>
         public static void Initialize()
         {
+            DatabaseVersion = SQLiteDatabaseManager.Database.LibVersionNumber;
             InternalInstance.IsBusy = true;
             initialzationRunning = true;
             List<Task> taskList = new List<Task>();

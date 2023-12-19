@@ -26,7 +26,7 @@
             </StackPanel>
         </StackPanel>
 
-        <syncfusion:SfDataGrid x:Name="TransactionsGrid" CurrentCellEndEdit="TransactionsGrid_CurrentCellEndEdit" CurrentCellBeginEdit="TransactionsGrid_CurrentCellBeginEdit" EditTrigger="OnTap" EditorSelectionBehavior="SelectAll" LostFocusBehavior="Default" Grid.Row="1" ColumnSizer="Auto" AllowResizingColumns="True" SelectionUnit="Cell" AutoGenerateColumns="False" ItemsSource="{Binding Transactions}" Margin="1">
+        <syncfusion:SfDataGrid x:Name="TransactionsGrid" Visibility="Hidden" CurrentCellEndEdit="TransactionsGrid_CurrentCellEndEdit" CurrentCellBeginEdit="TransactionsGrid_CurrentCellBeginEdit" EditTrigger="OnTap" EditorSelectionBehavior="SelectAll" LostFocusBehavior="Default" Grid.Row="1" ColumnSizer="Auto" AllowResizingColumns="True" SelectionUnit="Cell" AutoGenerateColumns="False" ItemsSource="{Binding Transactions}" Margin="1">
             <syncfusion:SfDataGrid.Columns>
                 <syncfusion:GridNumericColumn TextAlignment="Center" AllowEditing="False" MappingName="TransactionID" HeaderText="ID" NumberDecimalDigits="0"/>
                 <syncfusion:GridTextColumn TextAlignment="Center" AllowEditing="False" MappingName="Wallet"/>

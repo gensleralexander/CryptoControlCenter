@@ -16,7 +16,14 @@
         <Image Source="/Resources/Logo64.png" Margin="10" Width="64" Height="64" HorizontalAlignment="Right" VerticalAlignment="Top"/>
         <StackPanel Orientation="Vertical" Margin="10,0,0,0">
             <TextBlock Margin="0,20,0,0" Text="Version" FontWeight="DemiBold" FontSize="{DynamicResource AppFontSizeHeaders}"/>
-            <TextBlock Margin="10,10,0,20" Text="{Binding AppVersion}"/>
+            <TextBlock Margin="10,10,0,0">
+                <Run Text="App: "/>
+                <Run Text="{Binding AppVersion, Mode=OneTime}"/>
+            </TextBlock>
+            <TextBlock Margin="10,0,0,20">
+                <Run Text="Database: "/>
+                <Run Text="{Binding DatabaseVersion, Mode=OneTime}"/>
+            </TextBlock>
             <!--Disclaimer-->
             <TextBlock
                 FontWeight="DemiBold"

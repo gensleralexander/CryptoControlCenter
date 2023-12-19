@@ -6,13 +6,13 @@
 
     <IsPackable>false</IsPackable>
 
-    <AssemblyVersion>1.0.41.8703</AssemblyVersion>
+    <AssemblyVersion>1.0.43.8753</AssemblyVersion>
 
-    <FileVersion>1.0.41.8703</FileVersion>
+    <FileVersion>1.0.43.8753</FileVersion>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.7.2" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.8.0" />
     <PackageReference Include="MSTest.TestAdapter" Version="3.1.1" />
     <PackageReference Include="MSTest.TestFramework" Version="3.1.1" />
   </ItemGroup>

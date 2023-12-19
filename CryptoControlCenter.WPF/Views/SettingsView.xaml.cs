@@ -1,4 +1,5 @@
-﻿using System.Windows.Controls;
+﻿using CryptoControlCenter.Common;
+using System.Windows.Controls;
 
 namespace CryptoControlCenter.WPF.Views
 {
@@ -10,6 +11,7 @@ namespace CryptoControlCenter.WPF.Views
         public SettingsView()
         {
             InitializeComponent();
+            CryptoCenter.Instance.IsBusy = false;
         }
     }
 }

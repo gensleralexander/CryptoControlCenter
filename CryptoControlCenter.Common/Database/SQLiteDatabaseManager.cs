@@ -1,7 +1,6 @@
 ﻿using SQLite;
 using System.IO;
 using System.Threading.Tasks;
-using System.Globalization;
 using CryptoControlCenter.Common.Models;
 using System;
 
@@ -13,7 +12,6 @@ namespace CryptoControlCenter.Common.Database
     /// </summary>
     internal static class SQLiteDatabaseManager
     {
-        private static CultureInfo culture = new CultureInfo("en-US");
 
         private static SQLiteAsyncConnection database;
         internal static SQLiteAsyncConnection Database
