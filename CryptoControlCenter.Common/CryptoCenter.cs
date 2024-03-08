@@ -264,7 +264,7 @@ namespace CryptoControlCenter.Common
                                     transaction.Process(ref fshelper, ref hodledAssets);
                                 }
                             }
-                            catch{ InternalInstance.ContainsMissingValues = true; }
+                            catch { InternalInstance.ContainsMissingValues = true; }
                         }
                         else { InternalInstance.ContainsMissingValues = true; }
                         if (!InternalInstance.ContainsMissingValues)
@@ -499,9 +499,9 @@ namespace CryptoControlCenter.Common
                 {
                     case Currency.USDollar:
                         throw new NotImplementedException("Only supports EUR at the moment.");
-                        //conversionRateBTCBinance = (double)BinancePrices.First(x => x.Symbol == "BTCUSDT").Price;
-                        //conversionRateBTCBitstamp = (double)BitstampPrices.First(x => x.Pair == "BTC/USD").Last;
-                        //break;
+                    //conversionRateBTCBinance = (double)BinancePrices.First(x => x.Symbol == "BTCUSDT").Price;
+                    //conversionRateBTCBitstamp = (double)BitstampPrices.First(x => x.Pair == "BTC/USD").Last;
+                    //break;
                     case Currency.Euro:
                         conversionRateBTCBinance = (double)BinancePrices.First(x => x.Symbol == "BTCEUR").Price;
                         conversionRateBTCBitstamp = (double)BitstampPrices.First(x => x.Pair == "BTC/EUR").Last;
@@ -512,22 +512,44 @@ namespace CryptoControlCenter.Common
                     try
                     {
                         double conversionRate = 1.0;
-                        switch (InternalInstance.ExchangeWallets.First(x => x.WalletName == balance.Wallet).Exchange)
+                        if (!string.IsNullOrWhiteSpace(balance.Wallet))
                         {
-                            case Exchange.Binance:
-                                conversionRate = (double)BinancePrices.First(x => x.Symbol == balance.Asset + "BTC").Price;
-                                balance.CurrentValue = balance.CurrentAmount * conversionRate * conversionRateBTCBinance;
-                                break;
-                            case Exchange.Bitstamp:
-                                conversionRate = (double)BitstampPrices.First(x => x.Pair == balance.Asset.ToUpper() + "/BTC").Last;
-                                balance.CurrentValue = balance.CurrentAmount * conversionRate * conversionRateBTCBitstamp;
-                                break;
-                            default:
-                                throw new NotImplementedException();
+                            switch (InternalInstance.ExchangeWallets.First(x => x.WalletName == balance.Wallet).Exchange)
+                            {
+                                case Exchange.Binance:
+                                    if (balance.Asset == "BTC")
+                                    {
+                                        balance.CurrentValue = balance.CurrentAmount * conversionRateBTCBinance;
+                                    }
+                                    else
+                                    {
+                                        conversionRate = (double)BinancePrices.First(x => x.Symbol == balance.Asset + "BTC").Price;
+                                        balance.CurrentValue = balance.CurrentAmount * conversionRate * conversionRateBTCBinance;
+                                    }
+                                    break;
+                                case Exchange.Bitstamp:
+                                    try
+                                    {
+                                        conversionRate = (double)BitstampPrices.First(x => x.Pair == balance.Asset.ToUpper() + "/EUR").Last;
+                                        balance.CurrentValue = balance.CurrentAmount * conversionRate;
+                                    }
+                                    catch
+                                    {
+                                        conversionRate = (double)BitstampPrices.First(x => x.Pair == balance.Asset.ToUpper() + "/BTC").Last;
+                                        balance.CurrentValue = balance.CurrentAmount * conversionRate * conversionRateBTCBitstamp;
+                                    }
+                                    break;
+                                default:
+                                    //TODO: Marker
+                                    break;
+                            }
                         }
                     }
-                    catch
+                    catch (Exception ex)
                     {
+#if DEBUG
+                        Console.WriteLine(balance.Wallet + ": " + balance.Asset);
+#endif
                         //TODO
                     };
                 });
@@ -652,7 +674,7 @@ namespace CryptoControlCenter.Common
                 await SQLiteDatabaseManager.Database.DeleteAsync(wallet);
                 List<Transaction> transactions = await SQLiteDatabaseManager.Database.Table<Transaction>().Where(x => x.LocationStart == wallet.WalletName).ToListAsync();
                 List<Transaction> transactions2 = await SQLiteDatabaseManager.Database.Table<Transaction>().Where(x => (x.LocationStart == "Bank" || x.LocationStart == string.Empty) && x.LocationDestination == wallet.WalletName).ToListAsync();
-                Parallel.ForEach(transactions, async(transaction) =>
+                Parallel.ForEach(transactions, async (transaction) =>
                 {
                     await SQLiteDatabaseManager.Database.DeleteAsync(transaction);
                 });

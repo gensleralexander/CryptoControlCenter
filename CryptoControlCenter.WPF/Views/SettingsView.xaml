@@ -20,6 +20,7 @@
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
         <StackPanel Grid.Row="0">
             <TextBlock Text="{x:Static res:Strings.Zoom}" FontSize="{DynamicResource AppFontSizeHeaders}"/>
@@ -77,6 +78,10 @@
                     </Button.Content>
                 </Button>
             </StackPanel>
+        </StackPanel>
+        <StackPanel Grid.Row="4">
+            <TextBlock Text="{x:Static res:Strings.Blacklist}" FontSize="{DynamicResource AppFontSizeHeaders}"/>
+            <TextBlock Text="{x:Static res:Strings.BlacklistInfo}"/>
         </StackPanel>
     </Grid>
 </UserControl>

@@ -115,6 +115,24 @@ namespace CryptoControlCenter.WPF.Resources {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Coin Blacklist ähnelt.
+        /// </summary>
+        public static string Blacklist {
+            get {
+                return ResourceManager.GetString("Blacklist", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Add every coin here, that you want to ignore (scamcoins, micro-coins, etc.) ähnelt.
+        /// </summary>
+        public static string BlacklistInfo {
+            get {
+                return ResourceManager.GetString("BlacklistInfo", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Cancel ähnelt.
         /// </summary>
         public static string Cancel {

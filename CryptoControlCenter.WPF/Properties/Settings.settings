@@ -6,7 +6,7 @@
       <Value Profile="(Default)">16</Value>
     </Setting>
     <Setting Name="LanguageCode" Type="System.String" Scope="User">
-      <Value Profile="(Default)">en</Value>
+      <Value Profile="(Default)">de</Value>
     </Setting>
     <Setting Name="Height" Type="System.Double" Scope="User">
       <Value Profile="(Default)">800</Value>

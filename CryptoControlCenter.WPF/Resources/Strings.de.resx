@@ -135,6 +135,12 @@
   <data name="Before" xml:space="preserve">
     <value>vorher</value>
   </data>
+  <data name="Blacklist" xml:space="preserve">
+    <value>Coin-Blacklist</value>
+  </data>
+  <data name="BlacklistInfo" xml:space="preserve">
+    <value>Füge hier alle Coins hinzu, die ignoriert werden sollen (Scam-Coins, Mikro-Coins, etc.)</value>
+  </data>
   <data name="Cancel" xml:space="preserve">
     <value>Abbrechen</value>
   </data>
