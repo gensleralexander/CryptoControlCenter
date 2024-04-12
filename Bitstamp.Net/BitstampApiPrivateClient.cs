@@ -46,17 +46,7 @@ namespace Bitstamp.Net
         }
 
         #region UserTransactions
-        /// <summary>
-        /// Queries the UserTransactions
-        /// </summary>
-        /// <param name="tradingpair">(Optional) A specific TradingPair</param>
-        /// <param name="offset">Skip that many transactions before returning results (default: 0, maximum: 200000). If you need to export older history contact support OR use combination of limit and since_id parameters</param>
-        /// <param name="limit">Limit result to that many transactions (default: 100; maximum: 1000).</param>
-        /// <param name="sort">Sorting by date and time: ascending; descending (default: descending).</param>
-        /// <param name="since_timestamp">Show only transactions from unix timestamp (for max 30 days old).</param>
-        /// <param name="since_id">	Show only transactions from specified transaction id. If since_id parameter is used, limit parameter is set to 1000.</param>
-        /// <param name="ct">Task Cancellation Token</param>
-        /// <returns>IEnumerable of UserTransactions</returns>
+        /// <inheritdoc />
         public async Task<WebCallResult<IEnumerable<BitstampUserTransaction>>> GetUserTransactionsAsync(string tradingpair = null, int offset = 0, int limit = 1000, SortingOrder sort = SortingOrder.Descending, DateTime? since_timestamp = null, long? since_id = null, CancellationToken ct = default)
         {
             limit.ValidateIntBetween(nameof(limit), 1, 1000);
@@ -89,48 +79,54 @@ namespace Bitstamp.Net
                     try
                     {
                         BitstampUserTransaction t = new BitstampUserTransaction();
-                        t.Id = long.Parse(transaction["id"].ToString(), culture);
-                        t.TransactionTime = DateTime.Parse(transaction["datetime"].ToString(), culture);
-                        t.FeeAmount = decimal.Parse(transaction["fee"].ToString(), culture);
-                        try
-                        {
-                            //Order IDs are only in market trades included
-                            t.OrderId = long.Parse(transaction["order_id"].ToString(), culture);
-                        }
-                        catch { }
-                        t.Type = (UserTransactionType)int.Parse(transaction["type"].ToString(), culture);
                         foreach (KeyValuePair<string, dynamic> pair in transaction)
                         {
-                            try
+                            switch (pair.Key.ToLower())
                             {
-                                decimal value = decimal.Parse(pair.Value.ToString(), culture);
-                                if (value > 0.0m)
-                                {
-                                    if (pair.Key.ToLower() != "order_id")
+                                case "id":
+                                    t.Id = long.Parse(pair.Value.ToString(), culture);
+                                    break;
+                                case "datetime":
+                                    t.TransactionTime = DateTime.Parse(pair.Value.ToString(), culture);
+                                    break;
+                                case "type":
+                                    t.Type = (UserTransactionType)int.Parse(pair.Value.ToString(), culture);
+                                    break;
+                                case "fee":
+                                    t.FeeAmount = decimal.Parse(pair.Value.ToString(), culture);
+                                    break;
+                                case "order_id":
+                                    t.OrderId = long.Parse(pair.Value.ToString(), culture);
+                                    break;
+                                default:
+                                    if (pair.Key.Contains("_"))
                                     {
-                                        if (pair.Key.Contains("_"))
-                                        {
-                                            t.ExchangeRate = value;
-                                            t.tradingPair = pair.Key;
-                                        }
-                                        else
+                                        t.ExchangeRate = decimal.Parse(pair.Value.ToString(), culture);
+                                        t.tradingPair = pair.Key;
+                                    }
+                                    else
+                                    {
+                                        decimal value = decimal.Parse(pair.Value.ToString(), culture);
+                                        if (value > 0.0m)
                                         {
                                             t.ToAmount = value;
                                             t.ToAsset = pair.Key.ToUpper();
                                         }
+                                        else if (value < 0.0m)
+                                        {
+                                            t.FromAmount = value * -1.0m;
+                                            t.FromAsset = pair.Key.ToUpper();
+                                        }
                                     }
-                                }
-                                else if (value < 0.0m)
-                                {
-                                    t.FromAmount = value * -1.0m;
-                                    t.FromAsset = pair.Key.ToUpper();
-                                }
+                                    break;
                             }
-                            catch { }
                         }
                         output.Add(t);
                     }
-                    catch { }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine(ex.ToString());
+                    }
                 }
                 //end of dynamic area
                 return result.As(output as IEnumerable<BitstampUserTransaction>); //result.As(result.Data);
@@ -150,14 +146,7 @@ namespace Bitstamp.Net
 
 
         #region Crypto-Transactions
-        /// <summary>
-        /// Queries the Crypto Withdrawals and Deposits
-        /// </summary>
-        /// <param name="offset">Skip that many transactions before returning results (default: 0, maximum: 200000).</param>
-        /// <param name="limit">Limit result to that many transactions (default: 100; maximum: 1000).</param>
-        /// <param name="includeRippleIOUs">Shows also ripple IOU transactions</param>
-        /// <param name="ct">Task Cancellation Token</param>
-        /// <returns>IEnumerable of UserTransactions</returns>
+        /// <inheritdoc />
         public async Task<WebCallResult<BitstampCryptoTransactions>> GetCryptoDepositsAndWithdrawalsAsync(int offset = 0, int limit = 1000, bool includeRippleIOUs = true, CancellationToken ct = default)
         {
             limit.ValidateIntBetween(nameof(limit), 1, 1000);

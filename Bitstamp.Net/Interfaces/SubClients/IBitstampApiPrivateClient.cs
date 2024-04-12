@@ -24,7 +24,7 @@ namespace Bitstamp.Net.Interfaces.SubClients
         Task<WebCallResult<IEnumerable<BitstampUserTransaction>>> GetUserTransactionsAsync(string tradingpair = null, int offset = 0, int limit = 1000, SortingOrder sort = SortingOrder.Descending, DateTime? since_timestamp = null, long? since_id = null, CancellationToken ct = default);
 
         /// <summary>
-        /// Queries the Crypto Withdrawals and Deposits
+        /// Queries the Crypto Withdrawals and Deposits. Note: Most informations also get queried by GetUserTransactionAsync, so this method is only recommended, if you need the very specific crypto-transactions data.
         /// </summary>
         /// <param name="offset">Skip that many transactions before returning results (default: 0, maximum: 200000).</param>
         /// <param name="limit">Limit result to that many transactions (default: 100; maximum: 1000).</param>

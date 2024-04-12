@@ -17,6 +17,7 @@ using System.Web;
 using System.Linq;
 using Microsoft.Extensions.Logging;
 using System.Data;
+using CryptoExchange.Net.Clients;
 
 namespace Bitstamp.Net
 {
@@ -59,9 +60,9 @@ namespace Bitstamp.Net
             Public = new BitstampApiPublicClient(this);
             Private = new BitstampApiPrivateClient(this);
 
-            requestBodyEmptyContent = string.Empty;
-            requestBodyFormat = RequestBodyFormat.FormData;
-            arraySerialization = ArrayParametersSerialization.MultipleValues;
+            RequestBodyEmptyContent = string.Empty;
+            RequestBodyFormat = RequestBodyFormat.FormData;
+            ArraySerialization = ArrayParametersSerialization.MultipleValues;
         }
         #endregion
 
@@ -113,7 +114,29 @@ namespace Bitstamp.Net
             var bodyParameters = parameterPosition == HttpMethodParameterPosition.InBody ? new SortedDictionary<string, object>(parameters) : new SortedDictionary<string, object>();
 
             if (AuthenticationProvider != null)
-                AuthenticationProvider.AuthenticateRequest(this, uri, method, parameters, signed, arraySerialization, parameterPosition, out uriParameters, out bodyParameters, out headers);
+            {
+                try
+                {
+                    AuthenticationProvider.AuthenticateRequest(
+                        this,
+                        uri,
+                        method,
+                        parameters,
+                        signed,
+                        arraySerialization,
+                        parameterPosition,
+                        bodyFormat,
+                        out uriParameters,
+                        out bodyParameters,
+                        out headers);
+                }
+                catch (Exception ex)
+                {
+                    throw new Exception("Failed to authenticate request, make sure your API credentials are correct", ex);
+                }
+            }
+
+
 
             // Sanity check
             foreach (var param in parameters)
@@ -148,10 +171,10 @@ namespace Bitstamp.Net
 
             if (parameterPosition == HttpMethodParameterPosition.InBody)
             {
-                var contentType = requestBodyFormat == RequestBodyFormat.Json ? Constants.JsonContentHeader : Constants.FormContentHeader;
+                var contentType = RequestBodyFormat == RequestBodyFormat.Json ? Constants.JsonContentHeader : Constants.FormContentHeader;
                 if (bodyParameters.Any())
                     WriteParamBody(request, bodyParameters, contentType);
-                else request.SetContent(requestBodyEmptyContent, contentType);
+                else request.SetContent(RequestBodyEmptyContent, contentType);
             }
 
             return request;
@@ -165,13 +188,13 @@ namespace Bitstamp.Net
         /// <param name="contentType">The content type of the data</param>
         protected override void WriteParamBody(IRequest request, SortedDictionary<string, object> parameters, string contentType)
         {
-            if (requestBodyFormat == RequestBodyFormat.Json)
+            if (RequestBodyFormat == RequestBodyFormat.Json)
             {
                 // Write the parameters as json in the body
                 var stringData = JsonConvert.SerializeObject(parameters.OrderBy(p => p.Key).ToDictionary(p => p.Key, p => p.Value));
                 request.SetContent(stringData, contentType);
             }
-            else if (requestBodyFormat == RequestBodyFormat.FormData)
+            else if (RequestBodyFormat == RequestBodyFormat.FormData)
             {
                 // Write the parameters as form data in the body
                 var formData = HttpUtility.ParseQueryString(string.Empty);
@@ -199,7 +222,7 @@ namespace Bitstamp.Net
 
         #region helpers
         /// <inheritdoc />
-        protected override async Task<ServerError?> TryParseErrorAsync(JToken error)
+        protected async Task<ServerError?> TryParseErrorAsync(JToken error)
         {
             if (!error.HasValues)
                 return new ServerError(error.ToString());

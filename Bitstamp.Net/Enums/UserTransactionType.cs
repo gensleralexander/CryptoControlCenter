@@ -10,6 +10,7 @@
         SentAssetsToStaking = 26,
         StakingReward = 27,
         ReferralReward = 32,
+        SettlementTransfer = 33,
         InterAccountTransfer = 35
     }
 }

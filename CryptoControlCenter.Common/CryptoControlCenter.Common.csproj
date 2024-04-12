@@ -3,8 +3,8 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.1</TargetFramework>
     <Nullable>enable</Nullable>
-    <AssemblyVersion>1.0.128.8753</AssemblyVersion>
-    <FileVersion>1.0.128.8753</FileVersion>
+    <AssemblyVersion>1.0.135.8865</AssemblyVersion>
+    <FileVersion>1.0.135.8865</FileVersion>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
@@ -16,11 +16,11 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Binance.Net" Version="9.2.0" />
-    <PackageReference Include="CryptoExchange.Net" Version="6.2.3" />
-    <PackageReference Include="CsvHelper" Version="30.0.1" />
-    <PackageReference Include="EPPlus" Version="7.0.4" />
-    <PackageReference Include="sqlite-net-pcl" Version="1.8.116" />
+    <PackageReference Include="Binance.Net" Version="9.8.1" />
+    <PackageReference Include="CryptoExchange.Net" Version="7.2.1" />
+    <PackageReference Include="CsvHelper" Version="31.0.3" />
+    <PackageReference Include="EPPlus" Version="7.1.1" />
+    <PackageReference Include="sqlite-net-pcl" Version="1.9.172" />
     <PackageReference Include="System.Security.Cryptography.ProtectedData" Version="8.0.0" />
   </ItemGroup>
 

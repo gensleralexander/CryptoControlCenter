@@ -36,16 +36,7 @@ namespace Bitstamp.Net
         }
 
         #region Kline/Candlestick Data
-        /// <summary>
-        /// Get candlestick data for the provided symbol
-        /// </summary>
-        /// <param name="pair">The trading pair to get the data for</param>
-        /// <param name="interval">The candlestick timespan</param>
-        /// <param name="startTime">Start time to get candlestick data</param>
-        /// <param name="endTime">End time to get candlestick data</param>
-        /// <param name="limit">Max number of results</param>
-        /// <param name="ct">Cancellation token</param>
-        /// <returns>The candlestick data for the provided symbol</returns>
+        /// <inheritdoc />
         public async Task<WebCallResult<BitstampData<OHLCData>>> GetOHLCDataAsync(string pair, int step, int limit, DateTime? startTime = null, DateTime? endTime = null, CancellationToken ct = default)
         {
             limit.ValidateIntBetween(nameof(limit), 1, 1000);
@@ -64,11 +55,7 @@ namespace Bitstamp.Net
         #endregion
 
         #region TradingPair Info
-        /// <summary>
-        /// Queries the Trading Pairs for Bitstamp
-        /// </summary>
-        /// <param name="ct">Cancellation token</param>
-        /// <returns>Collection of trading pairs</returns>
+        /// <inheritdoc />
         public async Task<WebCallResult<IEnumerable<BitstampTradingPairInfo>>> GetTradingPairInfo(CancellationToken ct = default)
         {
             var result = await _baseClient.SendRequestInternal<IEnumerable<BitstampTradingPairInfo>>(_baseClient.GetUrl(tradingPairsInfoEndpoint, api, version, null), HttpMethod.Get, ct).ConfigureAwait(false);
@@ -79,12 +66,7 @@ namespace Bitstamp.Net
 
         #region Symbol Price Ticker
 
-        /// <summary>
-        /// Gets the ticker for specific pair
-        /// </summary>
-        /// <param name="pair">The pari to get the ticker for</param>
-        /// <param name="ct">Cancellation token</param>
-        /// <returns>Ticker of pair</returns>
+        /// <inheritdoc />
         public async Task<WebCallResult<BitstampTicker>> GetTickerAsync(string pair, CancellationToken ct = default)
         {
                 return await _baseClient.SendRequestInternal<BitstampTicker>(_baseClient.GetUrl(tickerEndpoint, api, version, pair), HttpMethod.Get, ct).ConfigureAwait(false);

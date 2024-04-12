@@ -1,8 +1,8 @@
 ﻿using Bitstamp.Net.Interfaces;
 using Bitstamp.Net.Interfaces.SubClients;
 using Bitstamp.Net.Objects;
-using CryptoExchange.Net;
 using CryptoExchange.Net.Authentication;
+using CryptoExchange.Net.Clients;
 using Microsoft.Extensions.Logging;
 using System;
 
