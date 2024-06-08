@@ -68,14 +68,15 @@ namespace CryptoControlCenter.Common.Models
             {
                 case Exchange.Binance:
                     DataProvider = new BinanceDataProvider(this);
+                    //await DataProvider.SynchronizeWallet(startingPoint); //Binance currently without Synchronization
                     break;
                 case Exchange.Bitstamp:
                     DataProvider = new BitstampDataProvider(this);
+                    await DataProvider.SynchronizeWallet(startingPoint);
                     break;
                 default:
-                    throw new NotImplementedException();
+                    break;
             }
-            await DataProvider.SynchronizeWallet(startingPoint);
         }
         /// <inheritdoc />
         public void ImportFromCSV(string csvFilePathTransactions, string csvFilePathWithdrawalDeposits, string csvFilePathDistribution)
@@ -84,14 +85,14 @@ namespace CryptoControlCenter.Common.Models
             {
                 case Exchange.Binance:
                     DataProvider = new BinanceDataProvider(this);
+                    DataProvider.ImportFromCSV(csvFilePathTransactions, csvFilePathWithdrawalDeposits, csvFilePathDistribution);
                     break;
                 case Exchange.Bitstamp:
                     DataProvider = new BitstampDataProvider(this);
                     break;
                 default:
-                    throw new NotImplementedException();
+                    break;
             }
-            DataProvider.ImportFromCSV(csvFilePathTransactions, csvFilePathWithdrawalDeposits, csvFilePathDistribution);
         }
     }
 }

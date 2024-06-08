@@ -1,5 +1,6 @@
 ﻿using CryptoControlCenter.Common;
 using CryptoControlCenter.Common.Enums;
+using CryptoControlCenter.Common.Models;
 using CryptoControlCenter.Common.Models.Interfaces;
 using CryptoControlCenter.WPF.Dialogs;
 using CryptoControlCenter.WPF.Resources;
@@ -25,7 +26,7 @@ namespace CryptoControlCenter.WPF.Views
             InitializeComponent();
             Task.Run(() =>
             {
-                Task.Delay(2000); // Wait till Syncfusion UI is loaded
+                Task.Delay(2000); // Wait 2 seconds for Syncfusion UI to load all data
                 Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Background, new Action(() =>
                 {
                     TransactionsGrid.Visibility = Visibility.Visible;
@@ -116,6 +117,36 @@ namespace CryptoControlCenter.WPF.Views
 
         private void TransactionsGrid_CurrentCellEndEdit(object sender, CurrentCellEndEditEventArgs e)
         {
+        }
+
+        private void AddTransaction_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+        private void DeleteTransaction_Click(object sender, RoutedEventArgs e)
+        {
+            var result = MessageBox.Show(Strings.DeleteTransactionConfirmation, Strings.Continue, MessageBoxButton.YesNo, MessageBoxImage.Question);
+            if (result == MessageBoxResult.Yes)
+            {
+                var transaction = TransactionsGrid.SelectedItem as Transaction;
+                if (transaction != null)
+                {
+                    CryptoCenter.Instance.DeleteTransaction(transaction);
+                }
+            }
+        }
+
+        private void TransactionsGrid_SelectionChanged(object sender, GridSelectionChangedEventArgs e)
+        {
+            if (sender != null)
+            {
+                var grid = sender as SfDataGrid;
+                if (grid.SelectedItem != null)
+                {
+                    DeleteButton.IsEnabled = true;
+                }
+                else DeleteButton.IsEnabled = false;
+            }
         }
     }
 }

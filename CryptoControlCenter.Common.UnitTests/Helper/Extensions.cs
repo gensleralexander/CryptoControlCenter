@@ -357,7 +357,7 @@ namespace CryptoControlCenter.Common.UnitTests.Helper
         /// <param name="afsHelper">Reference to the Annual Financial Statement Helper</param>
         /// <param name="hodledAssets">Reference to the HodledAssets Set</param>
         [TestMethod]
-        [ExpectedException(typeof(InvalidOperationException), "HodledAsset did not hold an asset, but did allow to withdraw it.")]
+        [ExpectedException(typeof(InvalidOperationException), "HodledAsset did not hold an asset, but did allow to transfer it.")]
         public void ProcessTransferWithException()
         {
             Dictionary<string, FinancialStatementHelper> fsHelper = new Dictionary<string, FinancialStatementHelper>();

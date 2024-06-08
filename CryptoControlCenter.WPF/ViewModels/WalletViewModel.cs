@@ -33,6 +33,11 @@ namespace CryptoControlCenter.WPF.ViewModels
         }
         #endregion
 
+        public bool ContainsMissingValues
+        {
+            get { return CryptoCenter.Instance.ContainsMissingValues; }
+        }
+
         public ICollectionView Balances
         {
             get

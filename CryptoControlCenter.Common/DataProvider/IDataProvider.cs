@@ -13,7 +13,7 @@ namespace CryptoControlCenter.Common.DataProvider
         /// Linked Wallet
         /// </summary>
         public IExchangeWalletViewer Wallet { get; }
-                /// <summary>
+        /// <summary>
         /// Synchronizes the past trades to present and place them into wallet.
         /// </summary>
         /// <param name="startingPoint">Defines a start point for data initialization.</param>

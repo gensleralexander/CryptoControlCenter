@@ -79,6 +79,15 @@ namespace CryptoControlCenter.WPF.Resources {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Add Transaction ähnelt.
+        /// </summary>
+        public static string AddTransaction {
+            get {
+                return ResourceManager.GetString("AddTransaction", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Amount ähnelt.
         /// </summary>
         public static string Amount {
@@ -187,6 +196,24 @@ namespace CryptoControlCenter.WPF.Resources {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Delete Transaction ähnelt.
+        /// </summary>
+        public static string DeleteTransaction {
+            get {
+                return ResourceManager.GetString("DeleteTransaction", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Do you really want to delete this transaction? This cannot be reversed. ähnelt.
+        /// </summary>
+        public static string DeleteTransactionConfirmation {
+            get {
+                return ResourceManager.GetString("DeleteTransactionConfirmation", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Deposits &amp; Withdrawals ähnelt.
         /// </summary>
         public static string DepWith {
@@ -273,6 +300,15 @@ namespace CryptoControlCenter.WPF.Resources {
         public static string GenerateTax {
             get {
                 return ResourceManager.GetString("GenerateTax", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Generic Wallet ähnelt.
+        /// </summary>
+        public static string GenericWallet {
+            get {
+                return ResourceManager.GetString("GenericWallet", resourceCulture);
             }
         }
         

@@ -1,0 +1,69 @@
+﻿<syncfusion:ChromelessWindow x:Class="CryptoControlCenter.WPF.Dialogs.AddTransactionDialog"
+xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+xmlns:local="clr-namespace:CryptoControlCenter.WPF.Dialogs"
+xmlns:res="clr-namespace:CryptoControlCenter.WPF.Resources"
+xmlns:syncfusion="http://schemas.syncfusion.com/wpf" 
+mc:Ignorable="d"
+xmlns:skin="clr-namespace:Syncfusion.SfSkinManager;assembly=Syncfusion.SfSkinManager.WPF"
+skin:SfSkinManager.Theme="{skin:SkinManagerExtension ThemeName=MaterialDark}" Background="{StaticResource Background}"
+Title="{x:Static res:Strings.AddTransaction}" MaxWidth="800" Width="Auto" MaxHeight="370" Height="Auto" WindowStartupLocation="CenterOwner" ShowIcon="True" Icon="/Resources/Logo48.png" TitleFontSize="12" TitleTextAlignment="Center" TitleBarForeground="{StaticResource Foreground}" TitleBarBackground="{StaticResource Background}" CornerRadius="6" AllowsTransparency="True" UseNativeChrome="True">
+    <Grid Margin="10">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="40"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="*" MinWidth="140"/>
+            <ColumnDefinition Width="*" MinWidth="140"/>
+            <ColumnDefinition Width="*" MinWidth="140"/>
+        </Grid.ColumnDefinitions>
+
+        <!--Texts-->
+        <TextBlock Text="Wallet" Grid.Column="0" Grid.Row="0"/>
+        <TextBlock Text="Transaction Time" Grid.Column="0" Grid.Row="1"/>
+        <TextBlock Text="Type" Grid.Column="0" Grid.Row="2"/>
+        <TextBlock Text="Value" Grid.Column="0" Grid.Row="3"/>
+
+        <TextBlock Text="Amount" Grid.Column="0" Grid.Row="5"/>
+        <TextBlock Text="Asset" Grid.Column="0" Grid.Row="6"/>
+        <TextBlock Text="Wallet" Grid.Column="0" Grid.Row="7"/>
+
+        <TextBlock Text="From" Grid.Column="1" Grid.Row="4"/>
+        <TextBlock Text="To" Grid.Column="2" Grid.Row="4"/>
+        <TextBlock Text="Fees" Grid.Column="3" Grid.Row="4"/>
+        <!--Inputs-->
+        <TextBox x:Name="Wallet" TextChanged="Boxes_TextChanged" Grid.Column="1" Grid.Row="0" Background="DimGray" VerticalAlignment="Center" FontSize="{DynamicResource AppFontSize}"/>
+        <TextBox x:Name="TransactionTime" TextChanged="Boxes_TextChanged" Grid.Column="1" Grid.Row="1" Background="DimGray" VerticalAlignment="Center" FontSize="{DynamicResource AppFontSize}"/>
+        <TextBox x:Name="Type" TextChanged="Boxes_TextChanged" Grid.Column="1" Grid.Row="2" Background="DimGray" VerticalAlignment="Center" FontSize="{DynamicResource AppFontSize}"/>
+        <TextBox x:Name="Value" TextChanged="Boxes_TextChanged" Grid.Column="1" Grid.Row="3" Background="DimGray" VerticalAlignment="Center" FontSize="{DynamicResource AppFontSize}"/>
+
+        <TextBox x:Name="FromAmount" TextChanged="Boxes_TextChanged" Grid.Column="1" Grid.Row="5" Background="DimGray" VerticalAlignment="Center" FontSize="{DynamicResource AppFontSize}"/>
+        <TextBox x:Name="FromAsset" TextChanged="Boxes_TextChanged" Grid.Column="1" Grid.Row="6" Background="DimGray" VerticalAlignment="Center" FontSize="{DynamicResource AppFontSize}"/>
+        <TextBox x:Name="FromWallet" TextChanged="Boxes_TextChanged" Grid.Column="1" Grid.Row="7" Background="DimGray" VerticalAlignment="Center" FontSize="{DynamicResource AppFontSize}"/>
+
+        <TextBox x:Name="ToAmount" TextChanged="Boxes_TextChanged" Grid.Column="2" Grid.Row="5" Background="DimGray" VerticalAlignment="Center" FontSize="{DynamicResource AppFontSize}"/>
+        <TextBox x:Name="ToAsset" TextChanged="Boxes_TextChanged" Grid.Column="2" Grid.Row="6" Background="DimGray" VerticalAlignment="Center" FontSize="{DynamicResource AppFontSize}"/>
+        <TextBox x:Name="ToWallet" TextChanged="Boxes_TextChanged" Grid.Column="2" Grid.Row="7" Background="DimGray" VerticalAlignment="Center" FontSize="{DynamicResource AppFontSize}"/>
+
+        <TextBox x:Name="FeeAmount" TextChanged="Boxes_TextChanged" Grid.Column="3" Grid.Row="5" Background="DimGray" VerticalAlignment="Center" FontSize="{DynamicResource AppFontSize}"/>
+        <TextBox x:Name="FeeAsset" TextChanged="Boxes_TextChanged" Grid.Column="3" Grid.Row="6" Background="DimGray" VerticalAlignment="Center" FontSize="{DynamicResource AppFontSize}"/>
+
+        
+        <!--Buttons-->
+        <WrapPanel Grid.Row="8" Grid.ColumnSpan="4" Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,12,0">
+            <Button Content="{x:Static res:Strings.Save}" IsEnabled="False" IsDefault="True" Name="btnDialogOk" Height="25" Click="btnDialogOk_Click" MinWidth="90" Margin="0,0,10,0"/>
+            <Button Content="{x:Static res:Strings.Cancel}" IsCancel="True" MinWidth="90" />
+        </WrapPanel>
+    </Grid>
+</syncfusion:ChromelessWindow>

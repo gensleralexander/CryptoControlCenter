@@ -232,6 +232,15 @@ namespace CryptoControlCenter.Common.Resources {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Transaction deleted: ähnelt.
+        /// </summary>
+        internal static string TransactionDeleted {
+            get {
+                return ResourceManager.GetString("TransactionDeleted", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Transaction Task ähnelt.
         /// </summary>
         internal static string TransactionTask {

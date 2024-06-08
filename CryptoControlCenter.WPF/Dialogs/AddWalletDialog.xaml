@@ -12,8 +12,8 @@
         Title="{x:Static res:Strings.AddNewWallet}" MaxWidth="800" Width="Auto" MaxHeight="370" Height="Auto" WindowStartupLocation="CenterOwner" ShowIcon="True" Icon="/Resources/Logo48.png" TitleFontSize="12" TitleTextAlignment="Center" TitleBarForeground="{StaticResource Foreground}" TitleBarBackground="{StaticResource Background}" CornerRadius="6" AllowsTransparency="True" UseNativeChrome="True">
     <Grid Margin="10">
         <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="30"/>
+            <RowDefinition Height="50"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
@@ -24,10 +24,11 @@
             <ColumnDefinition Width="Auto"/>
             <ColumnDefinition Width="*" MinWidth="140"/>
             <ColumnDefinition Width="*" MinWidth="140"/>
+            <ColumnDefinition Width="*" MinWidth="140"/>
         </Grid.ColumnDefinitions>
 
         <TextBlock Text="Wallet-Name" VerticalAlignment="Center" Grid.Column="0" Grid.Row="0" FontSize="{DynamicResource AppFontSize}"/>
-        <TextBox x:Name="NameBox" Background="DimGray" Grid.Row="0" Grid.Column="1" Width="130" VerticalAlignment="Center" FontSize="{DynamicResource AppFontSize}"/>
+        <TextBox x:Name="NameBox" TextChanged="NameBox_TextChanged" Background="DimGray" Grid.Row="0" Grid.Column="1" Height="25" Width="200" VerticalAlignment="Center" FontSize="{DynamicResource AppFontSize}"/>
 
         <TextBlock Text="{x:Static res:Strings.Exchange}" VerticalAlignment="Center" Grid.Column="0" Grid.Row="1" FontSize="{DynamicResource AppFontSize}"/>
         <Button x:Name="BinanceButton" Click="Binance_Click" Margin="5" Grid.Row="1" Height="35" Grid.Column="1">
@@ -46,32 +47,40 @@
             </Button.Content>
         </Button>
 
+        <Button x:Name="GenericButton" Click="GenericButton_Click" Margin="5" Height="35" Grid.Row="1" Grid.Column="3">
+            <Button.Content>
+                <StackPanel>
+                    <TextBlock Text="{x:Static res:Strings.GenericWallet}"/>
+                </StackPanel>
+            </Button.Content>
+        </Button>
+
         <TextBlock x:Name="KeyText" Visibility="Collapsed" Text="API Key" VerticalAlignment="Center" Grid.Column="0" Grid.Row="2" FontSize="{DynamicResource AppFontSize}"/>
         <TextBlock x:Name="SecretText" Visibility="Collapsed" Text="API Secret" VerticalAlignment="Center" Grid.Column="0" Grid.Row="3" FontSize="{DynamicResource AppFontSize}"/>
-        <TextBox x:Name="KeyBox" Visibility="Collapsed" Background="DimGray" Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="2" HorizontalAlignment="Stretch" VerticalAlignment="Center" FontSize="{DynamicResource AppFontSize}"/>
-        <TextBox x:Name="SecretBox" Visibility="Collapsed" Background="DimGray" Grid.Row="3" Grid.Column="1" Grid.ColumnSpan="2" HorizontalAlignment="Stretch" VerticalAlignment="Center" FontSize="{DynamicResource AppFontSize}"/>
+        <TextBox x:Name="KeyBox" Visibility="Collapsed" Background="DimGray" Height="25" Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="3" HorizontalAlignment="Stretch" VerticalAlignment="Center" FontSize="{DynamicResource AppFontSize}"/>
+        <TextBox x:Name="SecretBox" Visibility="Collapsed" Background="DimGray" Height="25" Grid.Row="3" Grid.Column="1" Grid.ColumnSpan="3" HorizontalAlignment="Stretch" VerticalAlignment="Center" FontSize="{DynamicResource AppFontSize}"/>
 
         <TextBlock x:Name="TransText" Visibility="Collapsed" Text="{x:Static res:Strings.Transactions}" VerticalAlignment="Center" Grid.Column="0" Grid.Row="2" FontSize="{DynamicResource AppFontSize}"/>
         <TextBlock x:Name="DepWithText" Visibility="Collapsed" Text="{x:Static res:Strings.DepWith}" VerticalAlignment="Center" Grid.Column="0" Grid.Row="3" FontSize="{DynamicResource AppFontSize}"/>
         <TextBlock x:Name="DistriText" Visibility="Collapsed" Text="{x:Static res:Strings.Distributions}" VerticalAlignment="Center" Grid.Column="0" Grid.Row="4" FontSize="{DynamicResource AppFontSize}"/>
-        <TextBox x:Name="TransactionsBox" Visibility="Collapsed" Background="DimGray" Grid.Row="2" Grid.Column="1" Width="130" VerticalAlignment="Center" FontSize="{DynamicResource AppFontSize}"/>
-        <TextBox x:Name="DepWithBox" Visibility="Collapsed" Background="DimGray" Grid.Row="3" Grid.Column="1" Width="130" VerticalAlignment="Center" FontSize="{DynamicResource AppFontSize}"/>
-        <TextBox x:Name="DistributionsBox" Visibility="Collapsed" Background="DimGray" Grid.Row="4" Grid.Column="1" Width="130" VerticalAlignment="Center" FontSize="{DynamicResource AppFontSize}"/>
-        <Button x:Name="TransButton" Visibility="Collapsed" Click="ChooseTrans_Click" Grid.Row="2" Grid.Column="2" Margin="10">
+        <TextBox x:Name="TransactionsBox" Visibility="Collapsed" Background="DimGray" Height="25" Grid.Row="2" Grid.ColumnSpan="2" Grid.Column="1" VerticalAlignment="Center" FontSize="{DynamicResource AppFontSize}"/>
+        <TextBox x:Name="DepWithBox" Visibility="Collapsed" Background="DimGray" Height="25" Grid.Row="3" Grid.Column="1" Grid.ColumnSpan="2" VerticalAlignment="Center" FontSize="{DynamicResource AppFontSize}"/>
+        <TextBox x:Name="DistributionsBox" Visibility="Collapsed" Background="DimGray" Height="25" Grid.Row="4" Grid.Column="1" Grid.ColumnSpan="2" VerticalAlignment="Center" FontSize="{DynamicResource AppFontSize}"/>
+        <Button x:Name="TransButton" Visibility="Collapsed" Click="ChooseTrans_Click" Grid.Row="2" Grid.Column="3" Margin="10">
             <Button.Content>
                 <StackPanel Orientation="Horizontal">
                     <TextBlock Text="{x:Static res:Strings.Choose}" Margin="10"/>
                 </StackPanel>
             </Button.Content>
         </Button>
-        <Button x:Name="DepWithButton" Visibility="Collapsed" Click="ChooseDepWith_Click" Grid.Row="3" Grid.Column="2" Margin="10">
+        <Button x:Name="DepWithButton" Visibility="Collapsed" Click="ChooseDepWith_Click" Grid.Row="3" Grid.Column="3" Margin="10">
             <Button.Content>
                 <StackPanel Orientation="Horizontal">
                     <TextBlock Text="{x:Static res:Strings.Choose}" Margin="10"/>
                 </StackPanel>
             </Button.Content>
         </Button>
-        <Button x:Name="DistriButton" Visibility="Collapsed" Click="ChooseDistri_Click" Grid.Row="4" Grid.Column="2" Margin="10">
+        <Button x:Name="DistriButton" Visibility="Collapsed" Click="ChooseDistri_Click" Grid.Row="4" Grid.Column="3" Margin="10">
             <Button.Content>
                 <StackPanel Orientation="Horizontal">
                     <TextBlock Text="{x:Static res:Strings.Choose}" Margin="10"/>
@@ -81,9 +90,9 @@
 
         <TextBlock x:Name="ErrorText" Visibility="Collapsed" Foreground="Red" VerticalAlignment="Center" Grid.Column="0" Grid.ColumnSpan="2" Grid.Row="6" FontSize="{DynamicResource AppFontSize}"/>
 
-        <WrapPanel Grid.Row="6" Grid.ColumnSpan="3" Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,0,0">
-            <Button Content="{x:Static res:Strings.Save}" IsDefault="True" Name="btnDialogOk" Click="btnDialogOk_Click" MinWidth="60" Margin="0,0,10,0"/>
-            <Button Content="{x:Static res:Strings.Cancel}" IsCancel="True" MinWidth="60" />
+        <WrapPanel Grid.Row="6" Grid.ColumnSpan="4" Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,12,0">
+            <Button Content="{x:Static res:Strings.Save}" IsEnabled="False" IsDefault="True" Name="btnDialogOk" Height="25" Click="btnDialogOk_Click" MinWidth="90" Margin="0,0,10,0"/>
+            <Button Content="{x:Static res:Strings.Cancel}" IsCancel="True" MinWidth="90" />
         </WrapPanel>
     </Grid>
 </syncfusion:ChromelessWindow>

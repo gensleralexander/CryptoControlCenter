@@ -123,6 +123,9 @@
   <data name="AddNewWallet" xml:space="preserve">
     <value>Neues Wallet erzeugen</value>
   </data>
+  <data name="AddTransaction" xml:space="preserve">
+    <value>Transaktion hinzufügen</value>
+  </data>
   <data name="Amount" xml:space="preserve">
     <value>Menge</value>
   </data>
@@ -159,6 +162,12 @@
   <data name="Delete" xml:space="preserve">
     <value>Löschen</value>
   </data>
+  <data name="DeleteTransaction" xml:space="preserve">
+    <value>Transaktion löschen</value>
+  </data>
+  <data name="DeleteTransactionConfirmation" xml:space="preserve">
+    <value>Möchten Sie diese Transaktion wirklich löschen? Dies kann nicht rückgängig gemacht werden.</value>
+  </data>
   <data name="DepWith" xml:space="preserve">
     <value>Ein-/Auszahlungen</value>
   </data>
@@ -189,6 +198,9 @@
   <data name="GenerateTax" xml:space="preserve">
     <value>Generiere Steuerreport</value>
   </data>
+  <data name="GenericWallet" xml:space="preserve">
+    <value>Generisches Wallet</value>
+  </data>
   <data name="Language" xml:space="preserve">
     <value>Sprache</value>
   </data>
@@ -214,7 +226,7 @@
     <value>Nicht</value>
   </data>
   <data name="On" xml:space="preserve">
-    <value>in</value>
+    <value>auf</value>
   </data>
   <data name="Save" xml:space="preserve">
     <value>Speichern</value>

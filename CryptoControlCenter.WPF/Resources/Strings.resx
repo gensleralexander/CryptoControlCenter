@@ -123,6 +123,9 @@
   <data name="AddNewWallet" xml:space="preserve">
     <value>Add new Wallet</value>
   </data>
+  <data name="AddTransaction" xml:space="preserve">
+    <value>Add Transaction</value>
+  </data>
   <data name="Amount" xml:space="preserve">
     <value>Amount</value>
   </data>
@@ -159,6 +162,12 @@
   <data name="Delete" xml:space="preserve">
     <value>Delete</value>
   </data>
+  <data name="DeleteTransaction" xml:space="preserve">
+    <value>Delete Transaction</value>
+  </data>
+  <data name="DeleteTransactionConfirmation" xml:space="preserve">
+    <value>Do you really want to delete this transaction? This cannot be reversed.</value>
+  </data>
   <data name="DepWith" xml:space="preserve">
     <value>Deposits &amp; Withdrawals</value>
   </data>
@@ -188,6 +197,9 @@
   </data>
   <data name="GenerateTax" xml:space="preserve">
     <value>Generate Tax Report</value>
+  </data>
+  <data name="GenericWallet" xml:space="preserve">
+    <value>Generic Wallet</value>
   </data>
   <data name="Language" xml:space="preserve">
     <value>Language</value>

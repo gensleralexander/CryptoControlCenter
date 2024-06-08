@@ -10,7 +10,7 @@ namespace CryptoControlCenter.WPF.Dialogs
 {
     public partial class AddWalletDialog : ChromelessWindow
     {
-        Exchange exchange;
+        Exchange? exchange;
         string lastPath = string.Empty;
 
         public AddWalletDialog()
@@ -25,6 +25,10 @@ namespace CryptoControlCenter.WPF.Dialogs
             {
                 switch (exchange)
                 {
+                    case Exchange.Generic:
+                        CryptoCenter.Instance.CreateWallet(NameBox.Text, Exchange.Generic);
+                        this.DialogResult = true;
+                        break;
                     case Exchange.Binance:
                         CryptoCenter.Instance.CreateWallet(NameBox.Text, Exchange.Binance, TransactionsBox.Text, DepWithBox.Text, DistributionsBox.Text);
                         this.DialogResult = true;
@@ -37,7 +41,7 @@ namespace CryptoControlCenter.WPF.Dialogs
                         break;
                 }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 ErrorText.Text = ex.Message;
                 ErrorText.Visibility = Visibility.Visible;
@@ -107,6 +111,11 @@ namespace CryptoControlCenter.WPF.Dialogs
             ErrorText.Visibility = Visibility.Collapsed;
             BitstampButton.IsEnabled = true;
             BinanceButton.IsEnabled = false;
+            GenericButton.IsEnabled = true;
+            if (!string.IsNullOrWhiteSpace(NameBox.Text))
+            {
+                btnDialogOk.IsEnabled = true;
+            }
         }
 
         private void Bitstamp_Click(object sender, RoutedEventArgs e)
@@ -128,6 +137,49 @@ namespace CryptoControlCenter.WPF.Dialogs
             ErrorText.Visibility = Visibility.Collapsed;
             BitstampButton.IsEnabled = false;
             BinanceButton.IsEnabled = true;
+            GenericButton.IsEnabled = true;
+            if (!string.IsNullOrWhiteSpace(NameBox.Text))
+            {
+                btnDialogOk.IsEnabled = true;
+            }
+        }
+
+        private void GenericButton_Click(object sender, RoutedEventArgs e)
+        {
+            exchange = Exchange.Generic;
+            SecretBox.Visibility = Visibility.Collapsed;
+            SecretText.Visibility = Visibility.Collapsed;
+            KeyBox.Visibility = Visibility.Collapsed;
+            KeyText.Visibility = Visibility.Collapsed;
+            TransText.Visibility = Visibility.Collapsed;
+            TransactionsBox.Visibility = Visibility.Collapsed;
+            TransButton.Visibility = Visibility.Collapsed;
+            DepWithBox.Visibility = Visibility.Collapsed;
+            DepWithButton.Visibility = Visibility.Collapsed;
+            DepWithText.Visibility = Visibility.Collapsed;
+            DistributionsBox.Visibility = Visibility.Collapsed;
+            DistriButton.Visibility = Visibility.Collapsed;
+            DistriText.Visibility = Visibility.Collapsed;
+            ErrorText.Visibility = Visibility.Collapsed;
+            BitstampButton.IsEnabled = true;
+            BinanceButton.IsEnabled = true;
+            GenericButton.IsEnabled = false;
+            if (!string.IsNullOrWhiteSpace(NameBox.Text))
+            {
+                btnDialogOk.IsEnabled = true;
+            }
+        }
+
+        private void NameBox_TextChanged(object sender, System.Windows.Controls.TextChangedEventArgs e)
+        {
+            if (string.IsNullOrWhiteSpace(NameBox.Text))
+            {
+                btnDialogOk.IsEnabled = false;
+            }
+            else if (exchange != null)
+            {
+                btnDialogOk.IsEnabled = true;
+            }
         }
     }
 }

@@ -30,11 +30,21 @@ namespace CryptoControlCenter.Common
         /// </summary>
         public List<IBalanceViewer> CurrentAssets { get; }
         /// <summary>
+        /// Returns a list of strings with all available ExchangeWallets
+        /// </summary>
+        public List<string> WalletNames { get; }
+        /// <summary>
         /// Indicates the status of the queue
         /// </summary>
         public bool QueueRunning { get; }
         /// <summary>
-        /// Method to create a new Wallet and adds them to the Lists
+        /// Method to create a new Wallet and adds them to the Lists.
+        /// </summary>
+        /// <param name="walletName">Name of the new Wallet</param>
+        /// <param name="exchange">Exchange used</param>
+        public void CreateWallet(string walletName, Exchange exchange);
+        /// <summary>
+        /// Method to create a new Wallet and adds them to the Lists. Uses API-sync
         /// </summary>
         /// <param name="walletName">Name of the new Wallet</param>
         /// <param name="exchange">Exchange used</param>
@@ -63,5 +73,15 @@ namespace CryptoControlCenter.Common
         /// Checks Database for Transactions that miss values for TransactionValue and FeeValue and tries to load them via web sources
         /// </summary>
         public void LoadMissingTransactionValues();
+        /// <summary>
+        /// Adds a new transaction to the Collection and Database
+        /// </summary>
+        /// <param name="transaction">Transaction to be added</param>
+        public void AddNewTransaction(Transaction transaction);
+        /// <summary>
+        /// Deletes transaction from the Collection and Database
+        /// </summary>
+        /// <param name="transaction">Transaction to be deleted</param>
+        public void DeleteTransaction(Transaction transaction);
     }
 }

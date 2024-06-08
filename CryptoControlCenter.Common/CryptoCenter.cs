@@ -1,6 +1,7 @@
 ﻿using Binance.Net.Clients;
 using Binance.Net.Enums;
 using Binance.Net.Interfaces;
+using Binance.Net.Interfaces.Clients;
 using Binance.Net.Objects.Models.Spot;
 using Bitstamp.Net;
 using Bitstamp.Net.Interfaces;
@@ -9,18 +10,17 @@ using CryptoControlCenter.Common.Database;
 using CryptoControlCenter.Common.Enums;
 using CryptoControlCenter.Common.Helper;
 using CryptoControlCenter.Common.Models;
+using CryptoControlCenter.Common.Models.Interfaces;
+using CryptoExchange.Net.Authentication;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
-using CryptoControlCenter.Common.Models.Interfaces;
 using System.Threading;
-using Newtonsoft.Json;
-using System.Globalization;
-using Binance.Net.Interfaces.Clients;
-using CryptoExchange.Net.Authentication;
 
 namespace CryptoControlCenter.Common
 {
@@ -70,7 +70,7 @@ namespace CryptoControlCenter.Common
         /// <summary>
         /// Set Currency
         /// </summary>
-        /// <param name="languageCode">ISO Language Code</param>
+        /// <param name="_currency"></param>
         public static void SetCurrency(Currency _currency)
         {
             currency = _currency;
@@ -84,78 +84,81 @@ namespace CryptoControlCenter.Common
         /// </summary>
         public static void Initialize()
         {
-            DatabaseVersion = SQLiteDatabaseManager.Database.LibVersionNumber;
-            InternalInstance.IsBusy = true;
-            initialzationRunning = true;
-            List<Task> taskList = new List<Task>();
-            ConcurrentBag<Exception> exceptionBag = new ConcurrentBag<Exception>();
-            taskList.Add(Task.Run(() =>
+            if (!initialzationRunning && !isInitialized)
             {
-                try
+                DatabaseVersion = SQLiteDatabaseManager.Database.LibVersionNumber;
+                InternalInstance.IsBusy = true;
+                initialzationRunning = true;
+                List<Task> taskList = new List<Task>();
+                ConcurrentBag<Exception> exceptionBag = new ConcurrentBag<Exception>();
+                taskList.Add(Task.Run(() =>
                 {
-                    InternalInstance.BitstampSymbols.Clear();
-                    InternalInstance.BinanceSymbols.Clear();
-                    InternalInstance.ActualizeSymbols();
-                }
-                catch (Exception ex)
+                    try
+                    {
+                        InternalInstance.BitstampSymbols.Clear();
+                        InternalInstance.BinanceSymbols.Clear();
+                        InternalInstance.ActualizeSymbols();
+                    }
+                    catch (Exception ex)
+                    {
+                        exceptionBag.Add(ex);
+                    }
+                }));
+                taskList.Add(Task.Run(() =>
                 {
-                    exceptionBag.Add(ex);
-                }
-            }));
-            taskList.Add(Task.Run(() =>
-            {
-                //I've decided to not use Binance WebSocket but rather do a refresh of Balance Values and Binance Prices every 5 minutes as
-                //Binance Websocket only offers updates per symbol in a specific interval (too many subscriptions would be necessary) or 
-                //updates, whenever a symbol price changes (too many updates because no possibility of a specific interval)
-                InternalInstance.FetchPrices();
-                InternalInstance.priceTimer.Elapsed += (source, e) =>
-                {
+                    //I've decided to not use Binance WebSocket but rather do a refresh of Balance Values and Binance Prices every 5 minutes as
+                    //Binance Websocket only offers updates per symbol in a specific interval (too many subscriptions would be necessary) or 
+                    //updates, whenever a symbol price changes (too many updates because no possibility of a specific interval)
                     InternalInstance.FetchPrices();
-                    InternalInstance.RefreshBalanceValues();
-                };
-                InternalInstance.priceTimer.Interval = 300000;
-                InternalInstance.priceTimer.Start();
-            }));
-            #region Load existing entries from database
-            taskList.Add(Task.Run(async () =>
-            {
-                try
+                    InternalInstance.priceTimer.Elapsed += (source, e) =>
+                    {
+                        InternalInstance.FetchPrices();
+                        InternalInstance.RefreshBalanceValues();
+                    };
+                    InternalInstance.priceTimer.Interval = 300000;
+                    InternalInstance.priceTimer.Start();
+                }));
+                #region Load existing entries from database
+                taskList.Add(Task.Run(async () =>
                 {
-                    InternalInstance.ExchangeWallets.Clear();
-                    (await SQLiteDatabaseManager.Database.Table<ExchangeWallet>().ToListAsync()).ForEach(InternalInstance.ExchangeWallets.Add);
-                }
-                catch (Exception ex)
+                    try
+                    {
+                        InternalInstance.ExchangeWallets.Clear();
+                        (await SQLiteDatabaseManager.Database.Table<ExchangeWallet>().ToListAsync()).ForEach(InternalInstance.ExchangeWallets.Add);
+                    }
+                    catch (Exception ex)
+                    {
+                        exceptionBag.Add(ex);
+                    }
+                }));
+                taskList.Add(Task.Run(async () =>
                 {
-                    exceptionBag.Add(ex);
-                }
-            }));
-            taskList.Add(Task.Run(async () =>
-            {
-                try
-                {
-                    InternalInstance.Transactions.Clear();
-                    var list = await SQLiteDatabaseManager.Database.Table<Transaction>().ToListAsync();
-                    list.Sort();
-                    if (list != null) { list.ForEach(InternalInstance.Transactions.Add); }
-                }
-                catch (Exception ex)
-                {
-                    exceptionBag.Add(ex);
-                }
-            }));
+                    try
+                    {
+                        InternalInstance.Transactions.Clear();
+                        var list = await SQLiteDatabaseManager.Database.Table<Transaction>().ToListAsync();
+                        list.Sort();
+                        if (list != null) { list.ForEach(InternalInstance.Transactions.Add); }
+                    }
+                    catch (Exception ex)
+                    {
+                        exceptionBag.Add(ex);
+                    }
+                }));
 
-            Task.WhenAll(taskList).Wait();
-            foreach (Exception ex in exceptionBag)
-            {
-                InternalInstance.AddLog(ex.Message, Resources.Strings.Initialization);
-                //TODO
+                Task.WhenAll(taskList).Wait();
+                foreach (Exception ex in exceptionBag)
+                {
+                    InternalInstance.AddLog(ex.Message, Resources.Strings.Initialization);
+                    //TODO
+                }
+                #endregion
+                InternalInstance.RefreshBalanceValues();
+                isInitialized = true;
+                initialzationRunning = false;
+                InternalInstance.AddLog(Resources.Strings.InitCompleted, Resources.Strings.Initialization, false);
+                InternalInstance.IsBusy = false;
             }
-            #endregion
-            InternalInstance.RefreshBalanceValues();
-            isInitialized = true;
-            initialzationRunning = false;
-            InternalInstance.AddLog(Resources.Strings.InitCompleted, Resources.Strings.Initialization, false);
-            InternalInstance.IsBusy = false;
         }
 
         /// <summary>
@@ -302,7 +305,19 @@ namespace CryptoControlCenter.Common
                 return currentAssets.ToList<IBalanceViewer>();
             }
         }
-
+        /// <inheritdoc/>
+        public List<string> WalletNames
+        {
+            get
+            {
+                List<string> output = new List<string>();
+                foreach (IExchangeWalletViewer wallet in ExchangeWallets)
+                {
+                    output.Add(wallet.WalletName);
+                }
+                return output;
+            }
+        }
         #region Queue
         /// <inheritdoc/>
         public bool QueueRunning
@@ -556,42 +571,73 @@ namespace CryptoControlCenter.Common
                 OnPropertyChanged("CurrentAssets");
             }
         }
-
         /// <inheritdoc/>
-        public async void CreateWallet(string walletName, Exchange exchange, string csvFilePathTransactions, string csvFilePathWithdrawalDeposits, string csvFilePathDistribution)
+        public async void CreateWallet(string walletName, Exchange exchange)
         {
-            InternalInstance.IsBusy = true;
-            if (string.IsNullOrWhiteSpace(csvFilePathTransactions) || string.IsNullOrWhiteSpace(csvFilePathWithdrawalDeposits) || string.IsNullOrWhiteSpace(csvFilePathDistribution))
+            if (string.IsNullOrWhiteSpace(walletName))
             {
-                throw new ArgumentException("File paths can't be empty or whitespace.");
+                throw new ArgumentException("WalletName can't be empty or whitespace.");
             }
             else
             {
+                InternalInstance.IsBusy = true;
                 var resultW = await SQLiteDatabaseManager.Database.FindAsync<ExchangeWallet>(x => x.WalletName == walletName);
                 if (resultW == null)
                 {
-                    IExchangeWalletViewer wallet = new ExchangeWallet(walletName, exchange, -1);
+                    var secureCredential = new SecuredCredentials(walletName, "dummy");
+                    await SQLiteDatabaseManager.Database.InsertAsync(secureCredential);
+                    int secureid = SQLiteDatabaseManager.Database.GetAsync<SecuredCredentials>(x => x.Key == walletName).Result.ID;
+                    IExchangeWalletViewer wallet = new ExchangeWallet(walletName, exchange, secureid);
                     await SQLiteDatabaseManager.Database.InsertAsync(wallet);
                     ExchangeWallets.Add(wallet);
-                    wallet.ImportFromCSV(csvFilePathTransactions, csvFilePathWithdrawalDeposits, csvFilePathDistribution);
+                    InternalInstance.IsBusy = false;
                 }
                 else
                 {
+                    InternalInstance.IsBusy = false;
                     throw new InvalidOperationException("Wallet Name already exists.");
                 }
             }
-            InternalInstance.IsBusy = false;
+        }
+        /// <inheritdoc/>
+        public async void CreateWallet(string walletName, Exchange exchange, string csvFilePathTransactions, string csvFilePathWithdrawalDeposits, string csvFilePathDistribution)
+        {
+            if (string.IsNullOrWhiteSpace(walletName) || string.IsNullOrWhiteSpace(csvFilePathTransactions) || string.IsNullOrWhiteSpace(csvFilePathWithdrawalDeposits) || string.IsNullOrWhiteSpace(csvFilePathDistribution))
+            {
+                throw new ArgumentException("File paths or wallet name can't be empty or whitespace.");
+            }
+            else
+            {
+                InternalInstance.IsBusy = true;
+                var resultW = await SQLiteDatabaseManager.Database.FindAsync<ExchangeWallet>(x => x.WalletName == walletName);
+                if (resultW == null)
+                {
+                    var secureCredential = new SecuredCredentials(walletName + "dummy", "dummy");
+                    await SQLiteDatabaseManager.Database.InsertAsync(secureCredential);
+                    int secureid = SQLiteDatabaseManager.Database.GetAsync<SecuredCredentials>(x => x.Key == (walletName + "dummy")).Result.ID;
+                    IExchangeWalletViewer wallet = new ExchangeWallet(walletName, exchange, secureid);
+                    await SQLiteDatabaseManager.Database.InsertAsync(wallet);
+                    ExchangeWallets.Add(wallet);
+                    wallet.ImportFromCSV(csvFilePathTransactions, csvFilePathWithdrawalDeposits, csvFilePathDistribution);
+                    InternalInstance.IsBusy = false;
+                }
+                else
+                {
+                    InternalInstance.IsBusy = false;
+                    throw new InvalidOperationException("Wallet Name already exists.");
+                }
+            }
         }
         /// <inheritdoc/>
         public async void CreateWallet(string walletName, Exchange exchange, string exchangeApiKey, string exchangeApiSecret)
         {
-            InternalInstance.IsBusy = true;
-            if (string.IsNullOrWhiteSpace(exchangeApiKey) || string.IsNullOrWhiteSpace(exchangeApiSecret))
+            if (string.IsNullOrWhiteSpace(walletName) || string.IsNullOrWhiteSpace(exchangeApiKey) || string.IsNullOrWhiteSpace(exchangeApiSecret))
             {
-                throw new ArgumentException("API Credentials can't be empty or whitespace.");
+                throw new ArgumentException("API Credentials or Wallet Name can't be empty or whitespace.");
             }
             else
             {
+                InternalInstance.IsBusy = true;
                 //check for proper priviliges
                 switch (exchange)
                 {
@@ -606,10 +652,15 @@ namespace CryptoControlCenter.Common
                                 {
                                     //everything ok
                                 }
-                                else throw new InvalidOperationException("Wrong credentials or unsufficent permissions");
+                                else
+                                {
+                                    InternalInstance.IsBusy = false;
+                                    throw new InvalidOperationException("Wrong credentials or unsufficent permissions");
+                                }
                             }
                             catch
                             {
+                                InternalInstance.IsBusy = false;
                                 throw new InvalidOperationException("Can't reach exchange. Please check connectivity.");
                             }
                         }
@@ -620,20 +671,23 @@ namespace CryptoControlCenter.Common
                             try
                             {
                                 client.Api.SetApiCredentials(new ApiCredentials(exchangeApiKey, exchangeApiSecret));
-                                var result = await client.Api.Private.GetUserTransactionsAsync();
+                                var result = await client.Api.Private.GetUserTransactionsAsync(limit: 10);
                                 if (!result.Success)
                                 {
-                                    //Bitstamp misses a comparable method as binance has.
+                                    //Bitstamp misses a comparable method as binance has, so instead, we try to read user transaction data
+                                    InternalInstance.IsBusy = false;
                                     throw new InvalidOperationException(result.Error.Message);
                                 }
                             }
                             catch
                             {
+                                InternalInstance.IsBusy = false;
                                 throw new InvalidOperationException("Can't reach exchange. Please check connectivity.");
                             }
                         }
                         break;
                     default:
+                        InternalInstance.IsBusy = false;
                         throw new NotImplementedException("Unsupported Exchange choosen.");
                 }
 
@@ -649,13 +703,14 @@ namespace CryptoControlCenter.Common
                     await SQLiteDatabaseManager.Database.InsertAsync(wallet);
                     ExchangeWallets.Add(wallet);
                     await taskQueue.Enqueue(async () => await wallet.SynchronizeWallet());
+                    InternalInstance.IsBusy = false;
                 }
                 else
                 {
+                    InternalInstance.IsBusy = false;
                     throw new InvalidOperationException("Wallet Name or API Key already exists.");
                 }
             }
-            InternalInstance.IsBusy = false;
         }
         /// <inheritdoc/>
         public void RemoveWallet(IExchangeWalletViewer wallet)
@@ -712,13 +767,32 @@ namespace CryptoControlCenter.Common
             Logs.Add(entry);
 #endif
         }
-        /// <summary>
-        /// Adds a new transaction to the Collection and Database and manipulate the AssetParts in the Wallets
-        /// </summary>
-        internal void AddNewTransaction(Transaction transaction)
+        /// <inheritdoc/>
+        public void AddNewTransaction(Transaction transaction)
         {
             taskQueue.Enqueue(async () => await newTransactionTask(transaction));
         }
+        /// <inheritdoc/>
+        public void DeleteTransaction(Transaction transaction)
+        {
+            if (transaction != null)
+            {
+                taskQueue.Enqueue(async () => await deleteTransactionTask(transaction));
+            }
+        }
+        /// <summary>
+        /// Delete Transaction Task - called by the public DeleteTransaction-Method
+        /// </summary>
+        private async Task deleteTransactionTask(Transaction transaction)
+        {
+            await SQLiteDatabaseManager.Database.DeleteAsync(transaction);
+            Transactions.Remove(transaction);
+#if DEBUG
+            InternalInstance.AddLog(Resources.Strings.TransactionDeleted + transaction.GetTradingPair(), Resources.Strings.TransactionTask);
+#endif
+        }
+
+
         /// <summary>
         /// New Transaction Task - called by the public AddNewTransaction-Method
         /// </summary>

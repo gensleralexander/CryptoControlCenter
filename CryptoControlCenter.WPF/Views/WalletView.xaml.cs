@@ -11,7 +11,6 @@ namespace CryptoControlCenter.WPF.Views
         public WalletView()
         {
             InitializeComponent();
-            Warning.DataContext = CryptoCenter.Instance;
             CryptoCenter.Instance.IsBusy = false;
         }
     }
