@@ -56,7 +56,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Content Include="Resources\Logo.ico" />
+    <Resource Include="Resources\Logo.ico" />
   </ItemGroup>
 
   <ItemGroup>
@@ -84,12 +84,24 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Resource Include="Resources\Binance2560.png" />
-    <Resource Include="Resources\Bitstamp2560.png" />
-    <Resource Include="Resources\Bitstamp2560inverted.png" />
-    <Resource Include="Resources\Logo128.png" />
-    <Resource Include="Resources\Logo48.png" />
-    <Resource Include="Resources\Logo64.png" />
+    <Resource Include="Resources\Binance2560.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Resources\Bitstamp2560.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Resources\Bitstamp2560inverted.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Resources\Logo128.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Resources\Logo48.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Resources\Logo64.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
   </ItemGroup>
 
   <ItemGroup>
