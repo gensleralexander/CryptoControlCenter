@@ -134,6 +134,25 @@ namespace CryptoControlCenter.Common.Models
             FeeAmount = feeAmount;
             FeeAsset = feeAsset;
         }
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        public Transaction(string walletName, DateTime transactionTime, TransactionType transactionType, string assetStart, string assetDestination, decimal amountStart, decimal amountDestination, string locationStart, string locationDestination, decimal transactionValue, decimal feeAmount, string feeAsset, decimal feeValue)
+        {
+            Wallet = walletName;
+            TransactionTime = transactionTime;
+            TransactionType = transactionType;
+            AssetStart = assetStart;
+            AssetDestination = assetDestination;
+            AmountStart = amountStart;
+            AmountDestination = amountDestination;
+            LocationStart = locationStart;
+            LocationDestination = locationDestination;
+            TransactionValue = transactionValue;
+            FeeAmount = feeAmount;
+            FeeAsset = feeAsset;
+            FeeValue = feeValue;
+        }
 
         /// <inheritdoc />
         public string GetTradingPair()

@@ -6,10 +6,11 @@ xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 xmlns:local="clr-namespace:CryptoControlCenter.WPF.Dialogs"
 xmlns:res="clr-namespace:CryptoControlCenter.WPF.Resources"
 xmlns:syncfusion="http://schemas.syncfusion.com/wpf" 
+xmlns:enums="clr-namespace:CryptoControlCenter.WPF.Helper"
 mc:Ignorable="d"
 xmlns:skin="clr-namespace:Syncfusion.SfSkinManager;assembly=Syncfusion.SfSkinManager.WPF"
 skin:SfSkinManager.Theme="{skin:SkinManagerExtension ThemeName=MaterialDark}" Background="{StaticResource Background}"
-Title="{x:Static res:Strings.AddTransaction}" MaxWidth="800" Width="Auto" MaxHeight="370" Height="Auto" WindowStartupLocation="CenterOwner" ShowIcon="True" Icon="/Resources/Logo48.png" TitleFontSize="12" TitleTextAlignment="Center" TitleBarForeground="{StaticResource Foreground}" TitleBarBackground="{StaticResource Background}" CornerRadius="6" AllowsTransparency="True" UseNativeChrome="True">
+Title="{x:Static res:Strings.AddTransaction}" MaxWidth="800" Width="Auto" MaxHeight="340" Height="Auto" WindowStartupLocation="CenterOwner" ShowIcon="True" Icon="/Resources/Logo48.png" TitleFontSize="12" TitleTextAlignment="Center" TitleBarForeground="{StaticResource Foreground}" TitleBarBackground="{StaticResource Background}" CornerRadius="6" AllowsTransparency="True" UseNativeChrome="True">
     <Grid Margin="10">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
@@ -30,36 +31,41 @@ Title="{x:Static res:Strings.AddTransaction}" MaxWidth="800" Width="Auto" MaxHei
         </Grid.ColumnDefinitions>
 
         <!--Texts-->
-        <TextBlock Text="Wallet" Grid.Column="0" Grid.Row="0"/>
-        <TextBlock Text="Transaction Time" Grid.Column="0" Grid.Row="1"/>
-        <TextBlock Text="Type" Grid.Column="0" Grid.Row="2"/>
-        <TextBlock Text="Value" Grid.Column="0" Grid.Row="3"/>
+        <TextBlock Text="{x:Static res:Strings.Type}" Grid.Column="0" Grid.Row="0" Margin="5"/>
+        <TextBlock Text="Wallet" Grid.Column="0" Grid.Row="1" Margin="5"/>
+        <TextBlock Text="{x:Static res:Strings.TransactionTime}" Grid.Column="0" Grid.Row="2" Margin="5"/>
+        <TextBlock Text="{x:Static res:Strings.Value}" Grid.Column="0" Grid.Row="3" Margin="5"/>
 
-        <TextBlock Text="Amount" Grid.Column="0" Grid.Row="5"/>
-        <TextBlock Text="Asset" Grid.Column="0" Grid.Row="6"/>
-        <TextBlock Text="Wallet" Grid.Column="0" Grid.Row="7"/>
+        <TextBlock Text="{x:Static res:Strings.Amount}" Grid.Column="0" Grid.Row="5" Margin="5"/>
+        <TextBlock Text="{x:Static res:Strings.Asset}" Grid.Column="0" Grid.Row="6" Margin="5"/>
+        <TextBlock Text="Wallet" Grid.Column="0" Grid.Row="7" Margin="5"/>
 
-        <TextBlock Text="From" Grid.Column="1" Grid.Row="4"/>
-        <TextBlock Text="To" Grid.Column="2" Grid.Row="4"/>
-        <TextBlock Text="Fees" Grid.Column="3" Grid.Row="4"/>
+        <TextBlock Text="{x:Static res:Strings.From}" Grid.Column="1" Grid.Row="4" Margin="5"/>
+        <TextBlock Text="{x:Static res:Strings.To}" Grid.Column="2" Grid.Row="4" Margin="5"/>
+        <TextBlock Text="{x:Static res:Strings.Fee}" Grid.Column="3" Grid.Row="2" Margin="5"/>
         <!--Inputs-->
-        <TextBox x:Name="Wallet" TextChanged="Boxes_TextChanged" Grid.Column="1" Grid.Row="0" Background="DimGray" VerticalAlignment="Center" FontSize="{DynamicResource AppFontSize}"/>
-        <TextBox x:Name="TransactionTime" TextChanged="Boxes_TextChanged" Grid.Column="1" Grid.Row="1" Background="DimGray" VerticalAlignment="Center" FontSize="{DynamicResource AppFontSize}"/>
-        <TextBox x:Name="Type" TextChanged="Boxes_TextChanged" Grid.Column="1" Grid.Row="2" Background="DimGray" VerticalAlignment="Center" FontSize="{DynamicResource AppFontSize}"/>
+        <ComboBox x:Name="Type" ItemsSource="{Binding TransactionType}" SelectionChanged="Type_SelectionChanged" Grid.Column="1" Grid.Row="0" Background="DimGray" VerticalAlignment="Center" FontSize="{DynamicResource AppFontSize}">
+            <ComboBox.DataContext>
+                <enums:EnumSourceProvider/>
+            </ComboBox.DataContext>
+        </ComboBox>
+        <ComboBox x:Name="Wallet" ItemsSource="{Binding WalletNames}" Grid.Column="1" Grid.Row="1" Background="DimGray" VerticalAlignment="Center" FontSize="{DynamicResource AppFontSize}"/>
+        <syncfusion:DateTimeEdit x:Name="TransactionTime" Pattern="SortableDateTime" TextChanged="Boxes_TextChanged" Grid.Column="1" Grid.Row="2" Background="DimGray" VerticalAlignment="Center" FontSize="{DynamicResource AppFontSize}"/>
         <TextBox x:Name="Value" TextChanged="Boxes_TextChanged" Grid.Column="1" Grid.Row="3" Background="DimGray" VerticalAlignment="Center" FontSize="{DynamicResource AppFontSize}"/>
 
         <TextBox x:Name="FromAmount" TextChanged="Boxes_TextChanged" Grid.Column="1" Grid.Row="5" Background="DimGray" VerticalAlignment="Center" FontSize="{DynamicResource AppFontSize}"/>
         <TextBox x:Name="FromAsset" TextChanged="Boxes_TextChanged" Grid.Column="1" Grid.Row="6" Background="DimGray" VerticalAlignment="Center" FontSize="{DynamicResource AppFontSize}"/>
-        <TextBox x:Name="FromWallet" TextChanged="Boxes_TextChanged" Grid.Column="1" Grid.Row="7" Background="DimGray" VerticalAlignment="Center" FontSize="{DynamicResource AppFontSize}"/>
+        <ComboBox x:Name="FromWallet" ItemsSource="{Binding WalletNames}" Grid.Column="1" Grid.Row="7" Background="DimGray" VerticalAlignment="Center" FontSize="{DynamicResource AppFontSize}"/>
 
-        <TextBox x:Name="ToAmount" TextChanged="Boxes_TextChanged" Grid.Column="2" Grid.Row="5" Background="DimGray" VerticalAlignment="Center" FontSize="{DynamicResource AppFontSize}"/>
-        <TextBox x:Name="ToAsset" TextChanged="Boxes_TextChanged" Grid.Column="2" Grid.Row="6" Background="DimGray" VerticalAlignment="Center" FontSize="{DynamicResource AppFontSize}"/>
-        <TextBox x:Name="ToWallet" TextChanged="Boxes_TextChanged" Grid.Column="2" Grid.Row="7" Background="DimGray" VerticalAlignment="Center" FontSize="{DynamicResource AppFontSize}"/>
+        <TextBox x:Name="ToAmount" Margin="5" TextChanged="Boxes_TextChanged" Grid.Column="2" Grid.Row="5" Background="DimGray" VerticalAlignment="Center" FontSize="{DynamicResource AppFontSize}"/>
+        <TextBox x:Name="ToAsset" Margin="5" TextChanged="Boxes_TextChanged" Grid.Column="2" Grid.Row="6" Background="DimGray" VerticalAlignment="Center" FontSize="{DynamicResource AppFontSize}"/>
+        <ComboBox x:Name="ToWallet" Margin="5" ItemsSource="{Binding WalletNames}" Grid.Column="2" Grid.Row="7" Background="DimGray" VerticalAlignment="Center" FontSize="{DynamicResource AppFontSize}"/>
 
+        <TextBox x:Name="FeeValue" TextChanged="Boxes_TextChanged" Grid.Column="3" Grid.Row="3" Background="DimGray" VerticalAlignment="Center" FontSize="{DynamicResource AppFontSize}"/>
         <TextBox x:Name="FeeAmount" TextChanged="Boxes_TextChanged" Grid.Column="3" Grid.Row="5" Background="DimGray" VerticalAlignment="Center" FontSize="{DynamicResource AppFontSize}"/>
         <TextBox x:Name="FeeAsset" TextChanged="Boxes_TextChanged" Grid.Column="3" Grid.Row="6" Background="DimGray" VerticalAlignment="Center" FontSize="{DynamicResource AppFontSize}"/>
 
-        
+
         <!--Buttons-->
         <WrapPanel Grid.Row="8" Grid.ColumnSpan="4" Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,12,0">
             <Button Content="{x:Static res:Strings.Save}" IsEnabled="False" IsDefault="True" Name="btnDialogOk" Height="25" Click="btnDialogOk_Click" MinWidth="90" Margin="0,0,10,0"/>

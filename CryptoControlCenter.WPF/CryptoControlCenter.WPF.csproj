@@ -2,18 +2,19 @@
 
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
-    <TargetFramework>net7.0-windows</TargetFramework>
+    <TargetFramework>net8.0-windows8.0</TargetFramework>
     <Nullable>enable</Nullable>
     <UseWPF>true</UseWPF>
     <AssemblyName>CryptoControlCenter</AssemblyName>
-    <AssemblyVersion>1.0.312.8925</AssemblyVersion>
-    <FileVersion>1.0.312.8925</FileVersion>
+    <AssemblyVersion>1.0.339.8966</AssemblyVersion>
+    <FileVersion>1.0.339.8966</FileVersion>
     <ApplicationIcon>Resources\Logo.ico</ApplicationIcon>
     <Title>CryptoControlCenter</Title>
     <Authors>Alexander Gensler</Authors>
     <PackageIcon>Logo128.png</PackageIcon>
     <PackageReadmeFile>README.MD</PackageReadmeFile>
     <RepositoryUrl>https://github.com/gensleralexander/CryptoControlCenter</RepositoryUrl>
+    <SupportedOSPlatformVersion>8.0</SupportedOSPlatformVersion>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
@@ -67,15 +68,15 @@
 
   <ItemGroup>
     <PackageReference Include="CountryFlag.Wpf" Version="1.0.0" />
-    <PackageReference Include="MahApps.Metro.IconPacks.Material" Version="4.11.0" />
-    <PackageReference Include="Syncfusion.SfBusyIndicator.WPF" Version="25.2.3" />
-    <PackageReference Include="Syncfusion.SfChromelessWindow.WPF" Version="25.2.3" />
-    <PackageReference Include="Syncfusion.SfGrid.WPF" Version="25.2.3" />
-    <PackageReference Include="Syncfusion.SfInput.WPF" Version="25.2.3" />
-    <PackageReference Include="Syncfusion.SfSkinManager.WPF" Version="25.2.3" />
-    <PackageReference Include="Syncfusion.SfSunburstChart.WPF" Version="25.2.3" />
-    <PackageReference Include="Syncfusion.Shared.WPF" Version="25.2.3" />
-    <PackageReference Include="Syncfusion.Themes.MaterialDark.WPF" Version="25.2.3" />
+    <PackageReference Include="MahApps.Metro.IconPacks.Material" Version="5.0.0" />
+    <PackageReference Include="Syncfusion.SfBusyIndicator.WPF" Version="26.1.40" />
+    <PackageReference Include="Syncfusion.SfChromelessWindow.WPF" Version="26.1.40" />
+    <PackageReference Include="Syncfusion.SfGrid.WPF" Version="26.1.40" />
+    <PackageReference Include="Syncfusion.SfInput.WPF" Version="26.1.40" />
+    <PackageReference Include="Syncfusion.SfSkinManager.WPF" Version="26.1.40" />
+    <PackageReference Include="Syncfusion.SfSunburstChart.WPF" Version="26.1.40" />
+    <PackageReference Include="Syncfusion.Shared.WPF" Version="26.1.40" />
+    <PackageReference Include="Syncfusion.Themes.MaterialDark.WPF" Version="26.1.40" />
   </ItemGroup>
 
   <ItemGroup>

@@ -1,6 +1,5 @@
 ﻿using CryptoControlCenter.Common.Enums;
 using System;
-using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 
 namespace CryptoControlCenter.Common.Models.Interfaces

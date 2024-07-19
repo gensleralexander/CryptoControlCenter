@@ -87,8 +87,7 @@ namespace CryptoControlCenter.WPF.ViewModels
 
         private void AddExecute()
         {
-            AddWalletDialog addWalletDialog = new AddWalletDialog();
-            addWalletDialog.ShowDialog();
+            new AddWalletDialog().ShowDialog();
         }
 
         private void DeleteExecute()

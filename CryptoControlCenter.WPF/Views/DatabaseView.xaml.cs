@@ -121,7 +121,7 @@ namespace CryptoControlCenter.WPF.Views
 
         private void AddTransaction_Click(object sender, RoutedEventArgs e)
         {
-
+            new AddTransactionDialog().ShowDialog();
         }
         private void DeleteTransaction_Click(object sender, RoutedEventArgs e)
         {
