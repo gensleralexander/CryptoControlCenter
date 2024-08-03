@@ -6,8 +6,8 @@
     <Nullable>enable</Nullable>
     <UseWPF>true</UseWPF>
     <AssemblyName>CryptoControlCenter</AssemblyName>
-    <AssemblyVersion>1.0.339.8966</AssemblyVersion>
-    <FileVersion>1.0.339.8966</FileVersion>
+    <AssemblyVersion>1.0.355.8981</AssemblyVersion>
+    <FileVersion>1.0.355.8981</FileVersion>
     <ApplicationIcon>Resources\Logo.ico</ApplicationIcon>
     <Title>CryptoControlCenter</Title>
     <Authors>Alexander Gensler</Authors>
