@@ -571,6 +571,24 @@ namespace CryptoControlCenter.Common
                 OnPropertyChanged("CurrentAssets");
             }
         }
+        
+        /// <inheritdoc/>
+        public void SynchronizeWallets()
+        {
+            InternalInstance.IsBusy = true;
+
+            Parallel.ForEach(InternalInstance.ExchangeWallets, async (wallet) =>
+            {
+                if (wallet.Exchange == Exchange.Bitstamp)
+                {
+                    DateTime lastTransaction = Transactions.Last(x => x.Wallet == wallet.WalletName).TransactionTime;
+                    lastTransaction.AddSeconds(1); //so the last transaction will not be included
+                    await taskQueue.Enqueue(async () => await wallet.SynchronizeWallet(lastTransaction));
+                }
+            });
+            InternalInstance.IsBusy = false;
+        }
+
         /// <inheritdoc/>
         public async void CreateWallet(string walletName, Exchange exchange)
         {

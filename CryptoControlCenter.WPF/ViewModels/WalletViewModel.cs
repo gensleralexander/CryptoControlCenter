@@ -5,6 +5,7 @@ using CryptoControlCenter.WPF.Dialogs;
 using CryptoControlCenter.WPF.Helper;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Threading.Tasks;
 using System.Windows.Data;
 using System.Windows.Input;
 
@@ -15,6 +16,7 @@ namespace CryptoControlCenter.WPF.ViewModels
         #region Commands
         private ICommand addCommand;
         private ICommand deleteCommand;
+        private ICommand syncCommand;
 
         public ICommand AddCommand
         {
@@ -29,6 +31,14 @@ namespace CryptoControlCenter.WPF.ViewModels
             get
             {
                 return deleteCommand ?? (deleteCommand = new RelayCommand(DeleteExecute));
+            }
+        }
+
+        public ICommand SyncCommand
+        {
+            get
+            {
+                return syncCommand ?? (syncCommand = new RelayCommand(SyncExecute));
             }
         }
         #endregion
@@ -78,6 +88,7 @@ namespace CryptoControlCenter.WPF.ViewModels
                 selectedWallet = value;
                 OnPropertyChanged();
                 OnPropertyChanged("Balances");
+                OnPropertyChanged("ContainsMissingValues");
             }
         }
 
@@ -97,6 +108,11 @@ namespace CryptoControlCenter.WPF.ViewModels
                 CryptoCenter.Instance.RemoveWallet(SelectedWallet);
                 SelectedWallet = null;
             }
+        }
+
+        private void SyncExecute()
+        {
+            CryptoCenter.Instance.SynchronizeWallets();
         }
     }
 }

@@ -83,5 +83,9 @@ namespace CryptoControlCenter.Common
         /// </summary>
         /// <param name="transaction">Transaction to be deleted</param>
         public void DeleteTransaction(Transaction transaction);
+        /// <summary>
+        /// Synchronize all API-based Wallets
+        /// </summary>
+        public void SynchronizeWallets();
     }
 }

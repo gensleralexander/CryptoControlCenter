@@ -17,15 +17,15 @@
     </UserControl.DataContext>
     <Grid Margin="2">
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="Auto"/>
             <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="3*"/>
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
-        <StackPanel Orientation="Horizontal" Grid.Row="0" Grid.Column="0">
+        <StackPanel Orientation="Horizontal" Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2">
             <Button x:Name="AddWallet" Command="{Binding AddCommand}">
                 <Button.Content>
                     <StackPanel Orientation="Horizontal">
@@ -35,12 +35,21 @@
                     </StackPanel>
                 </Button.Content>
             </Button>
-            <Button x:Name="DeleteWallet" Command="{Binding DeleteCommand}" IsEnabled="{Binding ElementName=WalletList, Path=SelectedItem, Converter={StaticResource HasSelectionConverter}}" Margin="10,0,0,0">
+            <Button x:Name="DeleteWallet" Command="{Binding DeleteCommand}" IsEnabled="{Binding ElementName=WalletList, Path=SelectedItem, Converter={StaticResource HasSelectionConverter}}" Margin="10,0,10,0">
                 <Button.Content>
                     <StackPanel Orientation="Horizontal">
                         <iconPacks:PackIconMaterial Kind="Delete" VerticalAlignment="Center" 
                                               HorizontalAlignment="Center" Margin="10"/>
                         <TextBlock Text="{x:Static res:Strings.Delete}" Margin="0,10,10,10"/>
+                    </StackPanel>
+                </Button.Content>
+            </Button>
+            <Button x:Name="SyncWallet" Command="{Binding SyncCommand}">
+                <Button.Content>
+                    <StackPanel Orientation="Horizontal">
+                        <iconPacks:PackIconMaterial Kind="Sync" VerticalAlignment="Center" 
+                                              HorizontalAlignment="Center" Margin="10"/>
+                        <TextBlock Text="{x:Static res:Strings.Sync}" Margin="0,10,10,10"/>
                     </StackPanel>
                 </Button.Content>
             </Button>
@@ -57,7 +66,7 @@
             </ListBox>
         </StackPanel>
 
-        <StackPanel Grid.Row="0" Grid.Column="1" Grid.RowSpan="2">
+        <StackPanel Grid.Row="1" Grid.Column="1">
             <TextBlock Text="{x:Static res:Strings.Assets}" FontSize="{DynamicResource AppFontSizeHeaders}" HorizontalAlignment="Center" Margin="0,10,0,0"/>
             <sunburst:SfSunburstChart x:Name="Sunburst" InnerRadius="0.35" Background="{StaticResource Background}" Palette="Pineapple" HorizontalContentAlignment="Center" EnableAnimation="True" AnimationType="FadeIn" AnimationDuration="1200" ValueMemberPath="CurrentValue" StrokeThickness="2" Stroke="{StaticResource Background}" Foreground="{StaticResource PrimaryLightBrush}" d:DataContext="{d:DesignInstance Type=mock:MockViewModel,IsDesignTimeCreatable=True}" ItemsSource="{Binding Balances}">
                 <sunburst:SfSunburstChart.Levels>
@@ -112,7 +121,7 @@
             </sunburst:SfSunburstChart>
         </StackPanel>
 
-        <RichTextBox x:Name="Warning" Visibility="{Binding ContainsMissingValues, Converter={StaticResource BoolVisibilityConverter}}" Grid.Row="1" Grid.Column="1" IsReadOnly="True" FontSize="{DynamicResource AppFontSize}" Foreground="{StaticResource Foreground}" Background="{StaticResource Background}" BorderThickness="0" MinWidth="500" MaxWidth="900" Margin="10,10,0,0" HorizontalAlignment="Center">
+        <RichTextBox x:Name="Warning" Visibility="{Binding ContainsMissingValues, Converter={StaticResource BoolVisibilityConverter}}" Grid.Row="1" Grid.Column="1" IsReadOnly="True" FontSize="{DynamicResource AppFontSize}" Foreground="{StaticResource Foreground}" Background="{StaticResource Background}" BorderThickness="0" MinWidth="500" MaxWidth="900" Margin="10,50,0,0" HorizontalAlignment="Center">
             <FlowDocument>
                 <Paragraph Background="{StaticResource Background}">
                     <Run Text="{x:Static res:Strings.MissingValues}"/>
