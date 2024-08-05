@@ -79,9 +79,9 @@
                 </Button>
             </StackPanel>
         </StackPanel>
-        <StackPanel Grid.Row="4">
+        <!--<StackPanel Grid.Row="4">
             <TextBlock Text="{x:Static res:Strings.Blacklist}" FontSize="{DynamicResource AppFontSizeHeaders}"/>
             <TextBlock Text="{x:Static res:Strings.BlacklistInfo}"/>
-        </StackPanel>
+        </StackPanel>-->
     </Grid>
 </UserControl>

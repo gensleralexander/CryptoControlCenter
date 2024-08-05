@@ -255,6 +255,9 @@
   <data name="Type" xml:space="preserve">
     <value>Type</value>
   </data>
+  <data name="UnhandledException" xml:space="preserve">
+    <value>An unhandled exception has occured: </value>
+  </data>
   <data name="Value" xml:space="preserve">
     <value>Value in €</value>
   </data>

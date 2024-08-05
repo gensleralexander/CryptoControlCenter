@@ -475,6 +475,15 @@ namespace CryptoControlCenter.WPF.Resources {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die An unhandled exception has occured:  ähnelt.
+        /// </summary>
+        public static string UnhandledException {
+            get {
+                return ResourceManager.GetString("UnhandledException", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Value in € ähnelt.
         /// </summary>
         public static string Value {
