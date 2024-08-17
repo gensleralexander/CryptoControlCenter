@@ -81,29 +81,32 @@ namespace CryptoControlCenter.Common.UnitTests.Helper
         {
             Dictionary<string, FinancialStatementHelper> fsHelper = new Dictionary<string, FinancialStatementHelper>()
                 {
-                    { "Unbekanntes Wallet", new FinancialStatementHelper(0,0) },
+                    { "StartDummy", new FinancialStatementHelper(0,0) },
                     { "Test", new FinancialStatementHelper(0,0) },
                     { "Test2", new FinancialStatementHelper(0,0) }
                 };
-            SortedSet<HodledAsset> set = new SortedSet<HodledAsset>();
+            SortedSet<HodledAsset> set = new SortedSet<HodledAsset>()
+            {
+                new HodledAsset("StartDummy", "BTC", 100.0m, 100.0m, new DateTime(2000,1,1,0,0,0))
+            };
             ProcessResult[] results = new ProcessResult[12];
 
             ITransactionViewer[] transactions = new Transaction[] {
-                new Transaction("Test", new DateTime(2000,1,1,0,0,0), TransactionType.Transfer, "BTC", "BTC", 100.0m, 100.0m, "Unbekanntes Wallet", "Test", 100.0m, 0.0m, string.Empty), //t0
-                new Transaction("Test", new DateTime(2000,12,31,23,0,0), TransactionType.Sell, "BTC", "USDT", 25.0m, 25.0m,"Test", "Test", 25.0m, 1.0m, "BTC"){ FeeValue = 1.0m}, //t1
-                new Transaction("Test", new DateTime(2000,12,31,23,30,0), TransactionType.Buy, "USDT", "BTC", 10.0m, 10.0m,"Test", "Test", 10.0m, 0.5m, "BTC"){ FeeValue = 0.5m}, //t2
-                new Transaction("Test", new DateTime(2001,1,1,0,0,0), TransactionType.Sell, "BTC", "EUR", 10.0m, 10.0m,"Test", "Test", 10.0m, 0.5m, "BTC"){ FeeValue = 0.5m}, //t3
-                new Transaction("Test", new DateTime(2001,12,31,23,15,0), TransactionType.Sell, "BTC", "ETH", 70.0m, 70.0m,"Test", "Test", 70.0m, 2.0m, "USDT"){FeeValue = 2.0m}, //t4
-                new Transaction("Test", new DateTime(2001,12,31,23,20,0), TransactionType.Buy, "EUR", "BTC", 10.0m, 10.0m,"Test", "Test", 10.0m, 0.5m, "BTC"){FeeValue = 0.5m}, //t5
-                new Transaction("Test", new DateTime(2002, 1,1,0,0,0), TransactionType.Transfer, "BTC", "BTC", 7.0m, 7.0m, "Test", "Test2", 7.0m, 0.5m, "BTC"){FeeValue = 0.5m}, //t6
-                new Transaction("Test2", new DateTime(2002, 1,1,0,0,0), TransactionType.Transfer, "BTC", "BTC", 7.0m, 7.0m, "Test", "Test2", 7.0m, 0.0m, string.Empty){FeeValue = 0.0m}, //=t6 Test2-Side
-                new Transaction("Test2", new DateTime(2002, 1,2,0,0,0), TransactionType.Transfer, "BTC", "BTC", 6.5m, 6.5m, "Test2", "Test", 65.0m, 0.5m, "BTC"){FeeValue = 0.5m}, //t7 Test2-Side
-                new Transaction("Test", new DateTime(2002, 1,2,0,0,0), TransactionType.Transfer, "BTC", "BTC", 6.5m, 6.5m, "Test2", "Test", 65.0m, 0.0m, string.Empty){FeeValue = 0.0m}, //t7
-                new Transaction("Test", new DateTime(2002, 1,2,0,0,0), TransactionType.Distribution, "TRX", "TRX", 10.0m, 10.0m,"Test", "Test", 0.0m, 0.0m, string.Empty), //t8
-                new Transaction("Test", new DateTime(2002, 1, 3, 0,0,0), TransactionType.Sell, "TRX", "USDT", 10.0m, 50.0m,"Test", "Test", 50.0m, 5.0m, "USDT")  {FeeValue = 5.0m } //t9
+                new Transaction("StartDummy", new DateTime(2000,1,1,0,0,1), TransactionType.Transfer, "BTC", "BTC", 100.0m, 100.0m, "StartDummy", "Test", 100.0m, 0.0m, "EUR", 0.0m), //t0
+                new Transaction("Test", new DateTime(2000,12,31,23,0,0), TransactionType.Sell, "BTC", "USDT", 25.0m, 25.0m,"Test", "Test", 25.0m, 1.0m, "BTC", 1.0m), //t1
+                new Transaction("Test", new DateTime(2000,12,31,23,30,0), TransactionType.Buy, "USDT", "BTC", 10.0m, 10.0m,"Test", "Test", 10.0m, 0.5m, "BTC", 0.5m), //t2
+                new Transaction("Test", new DateTime(2001,1,1,0,0,0), TransactionType.Sell, "BTC", "EUR", 10.0m, 10.0m,"Test", "Test", 10.0m, 0.5m, "BTC", 0.5m), //t3
+                new Transaction("Test", new DateTime(2001,12,31,23,15,0), TransactionType.Sell, "BTC", "ETH", 70.0m, 70.0m,"Test", "Test", 70.0m, 2.0m, "USDT", 2.0m), //t4
+                new Transaction("Test", new DateTime(2001,12,31,23,20,0), TransactionType.Buy, "EUR", "BTC", 10.0m, 10.0m,"Test", "Test", 10.0m, 0.5m, "BTC", 0.5m), //t5
+                new Transaction("Test", new DateTime(2002, 1,1,0,0,0), TransactionType.Transfer, "BTC", "BTC", 7.0m, 7.0m, "Test", "Test2", 7.0m, 0.5m, "BTC", 0.5m), //t6
+                new Transaction("Test2", new DateTime(2002, 1,1,0,0,0), TransactionType.Transfer, "BTC", "BTC", 7.0m, 7.0m, "Test", "Test2", 7.0m, 0.0m, "EUR", 0.0m), //=t6 Test2-Side
+                new Transaction("Test2", new DateTime(2002, 1,2,0,0,0), TransactionType.Transfer, "BTC", "BTC", 6.5m, 6.5m, "Test2", "Test", 65.0m, 0.5m, "BTC", 0.5m), //t7 Test2-Side
+                new Transaction("Test", new DateTime(2002, 1,2,0,0,0), TransactionType.Transfer, "BTC", "BTC", 6.5m, 6.5m, "Test2", "Test", 65.0m, 0.0m, "EUR", 0.0m), //t7
+                new Transaction("Test", new DateTime(2002, 1,2,0,0,0), TransactionType.Distribution, "TRX", "TRX", 10.0m, 10.0m,"Test", "Test", 0.0m, 0.0m, "EUR", 0.0m), //t8
+                new Transaction("Test", new DateTime(2002, 1, 3, 0,0,0), TransactionType.Sell, "TRX", "USDT", 10.0m, 50.0m,"Test", "Test", 50.0m, 5.0m, "USDT", 5.0m ) //t9
             };
 
-            #region t0 TransactionType.Transfer, "BTC", "BTC", 100.0m, 100.0m, "Unbekanntes Wallet", "Test", 100.0m, 0.0m, string.Empty
+            #region t0 TransactionType.Transfer, "BTC", "BTC", 100.0m, 100.0m, "StartDummy", "Test", 100.0m, 0.0m, string.Empty
             results[0] = transactions[0].Process(ref fsHelper, ref set);
             Assert.AreEqual(ProcessResult.NoParagraph23, results[0], "Process: Result[0] not as expected");
             HodledAsset asset0 = new HodledAsset("Test", "BTC", 100.0m, 100.0m, new DateTime(2000, 1, 1, 0, 0, 0));
@@ -332,7 +335,7 @@ namespace CryptoControlCenter.Common.UnitTests.Helper
         {
             Dictionary<string, FinancialStatementHelper> fsHelper = new Dictionary<string, FinancialStatementHelper>();
             SortedSet<HodledAsset> set = new SortedSet<HodledAsset>();
-            new Transaction("Test", DateTime.UtcNow, TransactionType.Sell, "BTC", "EXC", 1000.0m, 1.0m, "Test", "Test", 1000.0m, 0.0m, string.Empty).Process(ref fsHelper, ref set); //This should result in an invalidoperation-exception
+            new Transaction("Test", DateTime.UtcNow, TransactionType.Sell, "BTC", "EXC", 1000.0m, 1.0m, "Test", "Test", 1000.0m, 1.0m, "EUR", 1.0m).Process(ref fsHelper, ref set); //This should result in an invalidoperation-exception
         }
 
         /// <summary>
@@ -347,7 +350,7 @@ namespace CryptoControlCenter.Common.UnitTests.Helper
         {
             Dictionary<string, FinancialStatementHelper> fsHelper = new Dictionary<string, FinancialStatementHelper>();
             SortedSet<HodledAsset> set = new SortedSet<HodledAsset>();
-            new Transaction("Test", DateTime.UtcNow, TransactionType.BankWithdrawal, "EUR", "EUR", 1000.0m, 1000.0m, "Test", "Bank", 1000.0m, 0.0m, string.Empty).Process(ref fsHelper, ref set); //This should result in an invalidoperation-exception
+            new Transaction("Test", DateTime.UtcNow, TransactionType.BankWithdrawal, "EUR", "EUR", 1000.0m, 1000.0m, "Test", "Bank", 1000.0m, 1.0m, "EUR", 1.0m).Process(ref fsHelper, ref set); //This should result in an invalidoperation-exception
         }
 
         /// <summary>
@@ -362,7 +365,7 @@ namespace CryptoControlCenter.Common.UnitTests.Helper
         {
             Dictionary<string, FinancialStatementHelper> fsHelper = new Dictionary<string, FinancialStatementHelper>();
             SortedSet<HodledAsset> set = new SortedSet<HodledAsset>();
-            new Transaction("Test", DateTime.UtcNow, TransactionType.Transfer, "BTC", "BTC", 1000.0m, 1000.0m, "Test", "Test2", 1000.0m, 0.0m, string.Empty).Process(ref fsHelper, ref set); //This should result in an invalidoperation-exception
+            new Transaction("Test", DateTime.UtcNow, TransactionType.Transfer, "BTC", "BTC", 1000.0m, 1000.0m, "Test", "Test2", 1000.0m, 1.0m, "EUR", 1.0m).Process(ref fsHelper, ref set); //This should result in an invalidoperation-exception
         }
     }
 }

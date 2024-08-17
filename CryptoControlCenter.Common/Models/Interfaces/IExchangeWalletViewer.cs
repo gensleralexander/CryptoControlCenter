@@ -40,7 +40,8 @@ namespace CryptoControlCenter.Common.Models.Interfaces
         /// <param name="csvFilePathTransactions">File Path to Transactions File</param>
         /// <param name="csvFilePathWithdrawalDeposits">File Path to Withdrawal/Deposits File</param>
         /// <param name="csvFilePathDistribution">File Path to Distribution File</param>
+        /// <param name="startingPoint">Starting DateTime for CSV-Import</param>
         /// <returns></returns>
-        public void ImportFromCSV(string csvFilePathTransactions, string csvFilePathWithdrawalDeposits, string csvFilePathDistribution);
+        public void ImportFromCSV(string csvFilePathTransactions, string csvFilePathWithdrawalDeposits, string csvFilePathDistribution, DateTime? startingPoint = null);
     }
 }

@@ -27,10 +27,26 @@
             <ColumnDefinition Width="*" MinWidth="140"/>
         </Grid.ColumnDefinitions>
 
-        <TextBlock Text="Wallet-Name" VerticalAlignment="Center" Grid.Column="0" Grid.Row="0" FontSize="{DynamicResource AppFontSize}"/>
+        <TextBlock Text="Name" Margin="0,0,10,0" VerticalAlignment="Center" Grid.Column="0" Grid.Row="0" FontSize="{DynamicResource AppFontSize}"/>
         <TextBox x:Name="NameBox" TextChanged="NameBox_TextChanged" Background="DimGray" Grid.Row="0" Grid.Column="1" Height="25" Width="200" VerticalAlignment="Center" FontSize="{DynamicResource AppFontSize}"/>
+        <TextBlock Text="{x:Static res:Strings.StartingPoint}" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,10,0" Grid.Column="2" Grid.Row="0" FontSize="{DynamicResource AppFontSize}"/>
+        <syncfusion:SfDatePicker x:Name="StartingPointBox" Value="01-2010" MinDate="01-01-2010" FormatString="dd-MM-yyyy" Height="25"  VerticalAlignment="Center" Width="200" Grid.Row="0" Grid.Column="3" Background="{StaticResource Background}" AccentBrush="{StaticResource Selected}" SelectorFormatString="dd-MM-yyyy" SelectorItemWidth="100" SetValueOnLostFocus="True" Foreground="{StaticResource Foreground}">
+            <syncfusion:SfDatePicker.Style>
+                <Style TargetType="syncfusion:SfDatePicker">
 
-        <TextBlock Text="{x:Static res:Strings.Exchange}" VerticalAlignment="Center" Grid.Column="0" Grid.Row="1" FontSize="{DynamicResource AppFontSize}"/>
+                </Style>
+            </syncfusion:SfDatePicker.Style>
+            <syncfusion:SfDatePicker.SelectorStyle>
+                <Style TargetType="syncfusion:SfDateSelector">
+                    <Setter Property="Foreground" Value="{StaticResource Foreground}"/>
+                    <Setter Property="Background" Value="{StaticResource Background}"/>
+                    <Setter Property="SelectedForeground" Value="{StaticResource Foreground}"/>
+                    <Setter Property="AccentBrush" Value="{StaticResource Selected}"/>
+                </Style>
+            </syncfusion:SfDatePicker.SelectorStyle>
+        </syncfusion:SfDatePicker>
+
+        <TextBlock Text="{x:Static res:Strings.Type}" VerticalAlignment="Center" Grid.Column="0" Grid.Row="1" FontSize="{DynamicResource AppFontSize}"/>
         <Button x:Name="BinanceButton" Click="Binance_Click" Margin="5" Grid.Row="1" Height="35" Grid.Column="1">
             <Button.Content>
                 <StackPanel Orientation="Horizontal">

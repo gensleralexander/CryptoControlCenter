@@ -1,7 +1,5 @@
 ﻿using CryptoControlCenter.Common;
-using CryptoControlCenter.Common.Enums;
 using CryptoControlCenter.Common.Models;
-using CryptoControlCenter.Common.Models.Interfaces;
 using CryptoControlCenter.WPF.Dialogs;
 using CryptoControlCenter.WPF.Resources;
 using Microsoft.Win32;
@@ -35,23 +33,17 @@ namespace CryptoControlCenter.WPF.Views
             });
         }
 
+        /// <summary>
+        /// Filters the database view for invalid transactions. True = invalid and shown in table.
+        /// </summary>
         public bool FilterRows(object o)
         {
-            var item = o as ITransactionViewer;
+            var item = o as Transaction;
             if (item != null)
             {
-                if (string.IsNullOrWhiteSpace(item.AssetStart)) return true;
-                if (string.IsNullOrWhiteSpace(item.AssetDestination)) return true;
-                if (string.IsNullOrWhiteSpace(item.FeeAsset) && item.TransactionType != TransactionType.Distribution && item.TransactionType != TransactionType.BankDeposit && !(item.TransactionType == TransactionType.Transfer && item.Wallet == item.LocationDestination)) return true;
-                if (string.IsNullOrWhiteSpace(item.LocationStart)) return true;
-                if (string.IsNullOrWhiteSpace(item.LocationDestination)) return true;
-                if (item.AmountStart == 0.0m) return true;
-                if (item.AmountDestination == 0.0m) return true;
-                if (item.FeeAmount == 0.0m && item.TransactionType != TransactionType.Distribution && item.TransactionType != TransactionType.BankDeposit && !(item.TransactionType == TransactionType.Transfer && item.Wallet == item.LocationDestination)) return true;
-                if ((item.TransactionValue == 0.0m && item.TransactionType != TransactionType.Distribution) || item.TransactionValue == -1.0m) return true;
-                if (item.FeeValue == -1.0m) return true;
+                return !item.Validate();
             }
-            return false;
+            return true;
         }
 
         private void Filter_Click(object sender, RoutedEventArgs e)
@@ -67,15 +59,6 @@ namespace CryptoControlCenter.WPF.Views
                 TransactionsGrid.SortColumnDescriptions.Clear();
                 TransactionsGrid.View.Filter = null;
                 TransactionsGrid.View.RefreshFilter();
-            }
-        }
-
-        private void LoadMissingValues_Click(object sender, RoutedEventArgs e)
-        {
-            var continueResult = MessageBox.Show(Strings.LoadMissingWarning + Environment.NewLine + Environment.NewLine + Strings.Continue, Strings.Warning, MessageBoxButton.YesNo, MessageBoxImage.Warning);
-            if (continueResult == MessageBoxResult.Yes)
-            {
-                CryptoCenter.Instance.LoadMissingTransactionValues();
             }
         }
 
@@ -101,7 +84,7 @@ namespace CryptoControlCenter.WPF.Views
                     Properties.Settings.Default.LastAccessFilePath = Path.GetDirectoryName(saveFileDialog.FileName);
                     try
                     {
-                        await Common.DocumentGenerator.GenerateCryptoTaxReport(saveFileDialog.FileName, pickerResult.Year);
+                        await DocumentGenerator.GenerateCryptoTaxReport(saveFileDialog.FileName, pickerResult.Year);
                     }
                     catch (Exception ex)
                     {

@@ -79,13 +79,13 @@ namespace CryptoControlCenter.Common.Models
             }
         }
         /// <inheritdoc />
-        public void ImportFromCSV(string csvFilePathTransactions, string csvFilePathWithdrawalDeposits, string csvFilePathDistribution)
+        public void ImportFromCSV(string csvFilePathTransactions, string csvFilePathWithdrawalDeposits, string csvFilePathDistribution, DateTime? startingPoint)
         {
             switch (Exchange)
             {
                 case Exchange.Binance:
                     DataProvider = new BinanceDataProvider(this);
-                    DataProvider.ImportFromCSV(csvFilePathTransactions, csvFilePathWithdrawalDeposits, csvFilePathDistribution);
+                    DataProvider.ImportFromCSV(csvFilePathTransactions, csvFilePathWithdrawalDeposits, csvFilePathDistribution, startingPoint);
                     break;
                 case Exchange.Bitstamp:
                     DataProvider = new BitstampDataProvider(this);

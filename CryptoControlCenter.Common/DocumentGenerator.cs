@@ -3,14 +3,14 @@ using CryptoControlCenter.Common.Enums;
 using CryptoControlCenter.Common.Helper;
 using CryptoControlCenter.Common.Models;
 using CryptoControlCenter.Common.Models.Interfaces;
+using CryptoControlCenter.Common.Resources;
 using OfficeOpenXml;
 using OfficeOpenXml.Style;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
-using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -57,6 +57,8 @@ namespace CryptoControlCenter.Common
         /// </summary>
         /// <param name="toYear">Ending year. If NULL, then last year is used.</param>
         /// <exception cref="InvalidOperationException">Occurs, when there is no valid worksheet found for Location.</exception>
+        /// <exception cref="ArgumentException">Occurs, when no or invalid transactions were found.</exception>
+        /// <exception cref="Exception">Unhandled exception in case of transaction.Process.</exception>
         public static async Task<string> GenerateCryptoTaxReport(string path, int? toYear = null)
         {
             DateTime to;
@@ -73,11 +75,26 @@ namespace CryptoControlCenter.Common
             List<Transaction> transactions = await SQLiteDatabaseManager.Database.Table<Transaction>().Where(x => x.TransactionTime <= to).ToListAsync();
             if (transactions.Count == 0)
             {
-                return "No transactions found for specified time range. Please check your parameters";
+                throw new ArgumentException(Strings.NoTransactions);
             }
             else
             {
+                ConcurrentBag<bool> invalid = new ConcurrentBag<bool>();
+                Parallel.ForEach(transactions, t =>
+                {
+                    invalid.Add(t.Validate());
+                });
+                if (invalid.Contains(false))
+                {
+                    throw new ArgumentException(Strings.InvalidTransactions);
+                }
                 transactions.Sort();
+                ConcurrentBag<bool> results = new ConcurrentBag<bool>();
+                Parallel.ForEach(transactions, x => { results.Add(x.Validate()); });
+                if (results.Contains(false))
+                {
+                    return Strings.InvalidTransactions;
+                }
                 Dictionary<string, FinancialStatementHelper> fsDictionary = new Dictionary<string, FinancialStatementHelper>();
                 List<string> wallets = new List<string>();
                 wallets.AddRange(transactions.Select(x => x.LocationStart));
@@ -167,7 +184,6 @@ namespace CryptoControlCenter.Common
                             fsDictionary.First(x => x.Key == worksheet.Name).Value.currentNr++;
                             int currentRow = fsDictionary.First(x => x.Key == worksheet.Name).Value.currentRow;
                             //Process transaction
-#if DEBUG
                             ProcessResult result = ProcessResult.NoParagraph23;
                             try
                             {
@@ -175,14 +191,13 @@ namespace CryptoControlCenter.Common
                             }
                             catch
                             {
+#if DEBUG
                                 Console.WriteLine("Error occured during processing of transactions");
                                 Console.WriteLine("Saving Excel Sheet for debugging purpose...");
-                                package.SaveAs(xlFile);
-                                break;
-                            }
-#else
-                            ProcessResult result = transaction.Process(ref fsDictionary, ref hodledAssets);
 #endif
+                                package.SaveAs(xlFile);
+                                throw new Exception(Strings.UnhandledException);
+                            }
                             fsDictionary.First(x => x.Key == worksheet.Name).Value.processedTransactions++;
                             //Insert common values
                             worksheet.Cells[currentRow, 2].Value = fsDictionary.First(x => x.Key == worksheet.Name).Value.currentNr;
@@ -209,7 +224,7 @@ namespace CryptoControlCenter.Common
                             {
                                 case TransactionType.Buy:
                                 case TransactionType.Sell:
-                                    worksheet.Cells[currentRow, 6].Value = transaction.LocationStart;
+                                    worksheet.Cells[currentRow, 6].Value = transaction.Wallet;
                                     worksheet.Cells[currentRow, 7].Value = transaction.GetTradingPair();
                                     worksheet.Cells[currentRow + 1, 8].Style.Numberformat.Format = "#,##0.00000000";
                                     worksheet.Cells[currentRow + 1, 8].Value = transaction.AmountDestination;
@@ -256,6 +271,8 @@ namespace CryptoControlCenter.Common
                                     worksheet.Cells[currentRow, 5].Value = "Einzahlung";
                                     worksheet.Cells[currentRow, 6].Value = "Bank";
                                     worksheet.Cells[currentRow, 7].Value = transaction.LocationDestination;
+                                    worksheet.Cells[currentRow, 8].Value = transaction.AmountDestination;
+                                    worksheet.Cells[currentRow, 9].Value = transaction.AssetDestination;
                                     //worksheet.Cells[currentRow, 11].Value = transaction.TransactionValue / transaction.AmountStart;
                                     worksheet.Cells[currentRow, 12].Value = transaction.TransactionValue;
                                     break;
@@ -263,11 +280,15 @@ namespace CryptoControlCenter.Common
                                     worksheet.Cells[currentRow, 5].Value = "Auszahlung";
                                     worksheet.Cells[currentRow, 6].Value = transaction.LocationStart;
                                     worksheet.Cells[currentRow, 7].Value = "Bank";
+                                    worksheet.Cells[currentRow, 8].Value = transaction.AmountDestination;
+                                    worksheet.Cells[currentRow, 9].Value = transaction.AssetDestination;
                                     //worksheet.Cells[currentRow, 11].Value = transaction.TransactionValue / transaction.AmountStart;
                                     worksheet.Cells[currentRow, 12].Value = transaction.TransactionValue;
                                     break;
                                 case TransactionType.Distribution:
                                     worksheet.Cells[currentRow, 5].Value = "Distribution";
+                                    worksheet.Cells[currentRow, 8].Value = transaction.AmountDestination;
+                                    worksheet.Cells[currentRow, 9].Value = transaction.AssetDestination;
                                     worksheet.Cells[currentRow, 12].Value = 0.00m;
                                     worksheet.Cells[currentRow, 15].Value = "Distributionen werden bei Veräußerung mit Anschaffungskosten 0€ verrechnet.";
                                     break;

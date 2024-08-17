@@ -147,6 +147,9 @@
   <data name="Initialization" xml:space="preserve">
     <value>Initialisierung</value>
   </data>
+  <data name="InvalidTransactions" xml:space="preserve">
+    <value>Transaktionstabelle enthält ungültige Transaktionen. Bitte prüfe die Datenbank</value>
+  </data>
   <data name="NewTransaction" xml:space="preserve">
     <value>Neue Transaktion hinzugefügt: </value>
   </data>
@@ -155,6 +158,9 @@
   </data>
   <data name="Not" xml:space="preserve">
     <value>Nicht</value>
+  </data>
+  <data name="NoTransactions" xml:space="preserve">
+    <value>Keine Transaktionen für spezifizierten Zeitraum gefunden. Bitte prüfe deine Eingabe</value>
   </data>
   <data name="Shutdown" xml:space="preserve">
     <value>Schließen</value>
@@ -179,5 +185,8 @@
   </data>
   <data name="TransactionTask" xml:space="preserve">
     <value>Transaktionen</value>
+  </data>
+  <data name="UnhandledException" xml:space="preserve">
+    <value>Ein unbekannter Fehler ist beim Verarbeiten der Transaktionen aufgetreten. Die Excel-Datei wurde an der letzten gültigen Transaktion gespeichert.</value>
   </data>
 </root>

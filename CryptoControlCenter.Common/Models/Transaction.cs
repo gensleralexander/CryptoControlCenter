@@ -42,9 +42,9 @@ namespace CryptoControlCenter.Common.Models
         /// <inheritdoc />
         public string AssetDestination { get; set; }
         /// <inheritdoc />
-        public decimal AmountStart { get; set; }
+        public decimal? AmountStart { get; set; }
         /// <inheritdoc />
-        public decimal AmountDestination { get; set; }
+        public decimal? AmountDestination { get; set; }
         private string locationStart;
         /// <inheritdoc />
         public string LocationStart
@@ -67,9 +67,9 @@ namespace CryptoControlCenter.Common.Models
                 OnPropertyChanged();
             }
         }
-        private decimal transactionValue;
+        private decimal? transactionValue;
         /// <inheritdoc />
-        public decimal TransactionValue
+        public decimal? TransactionValue
         {
             get { return transactionValue; }
             set
@@ -78,9 +78,9 @@ namespace CryptoControlCenter.Common.Models
                 OnPropertyChanged();
             }
         }
-        private decimal feeAmount;
+        private decimal? feeAmount;
         /// <inheritdoc />
-        public decimal FeeAmount
+        public decimal? FeeAmount
         {
             get { return feeAmount; }
             set
@@ -100,9 +100,9 @@ namespace CryptoControlCenter.Common.Models
                 OnPropertyChanged();
             }
         }
-        private decimal feeValue;
+        private decimal? feeValue;
         /// <inheritdoc />
-        public decimal FeeValue
+        public decimal? FeeValue
         {
             get { return feeValue; }
             set
@@ -119,7 +119,7 @@ namespace CryptoControlCenter.Common.Models
         /// <summary>
         /// Constructor
         /// </summary>
-        public Transaction(string walletName, DateTime transactionTime, TransactionType transactionType, string assetStart, string assetDestination, decimal amountStart, decimal amountDestination, string locationStart, string locationDestination, decimal transactionValue, decimal feeAmount, string feeAsset)
+        public Transaction(string walletName, DateTime transactionTime, TransactionType transactionType, string assetStart, string assetDestination, decimal? amountStart, decimal? amountDestination, string locationStart, string locationDestination, decimal? transactionValue, decimal? feeAmount, string feeAsset)
         {
             Wallet = walletName;
             TransactionTime = transactionTime;
@@ -133,11 +133,12 @@ namespace CryptoControlCenter.Common.Models
             TransactionValue = transactionValue;
             FeeAmount = feeAmount;
             FeeAsset = feeAsset;
+            FeeValue = null;
         }
         /// <summary>
         /// Constructor
         /// </summary>
-        public Transaction(string walletName, DateTime transactionTime, TransactionType transactionType, string assetStart, string assetDestination, decimal amountStart, decimal amountDestination, string locationStart, string locationDestination, decimal transactionValue, decimal feeAmount, string feeAsset, decimal feeValue)
+        public Transaction(string walletName, DateTime transactionTime, TransactionType transactionType, string assetStart, string assetDestination, decimal? amountStart, decimal? amountDestination, string locationStart, string locationDestination, decimal? transactionValue, decimal? feeAmount, string feeAsset, decimal? feeValue)
         {
             Wallet = walletName;
             TransactionTime = transactionTime;
@@ -238,7 +239,63 @@ namespace CryptoControlCenter.Common.Models
 
 
 
-        //IEditable
+        /// <inheritdoc />
+        public bool Validate()
+        {
+            if (string.IsNullOrWhiteSpace(Wallet)) return false;
+            if (TransactionTime == null) return false;
+            switch (TransactionType)
+            {
+                case TransactionType.Transfer:
+                    if (string.IsNullOrWhiteSpace(AssetStart)) return false;
+                    if (AmountStart == null) return false;
+                    if (string.IsNullOrWhiteSpace(LocationStart)) return false;
+                    if (string.IsNullOrWhiteSpace(LocationDestination)) return false;
+                    if (FeeAmount == null) return false;
+                    if (FeeValue == null) return false;
+                    if (string.IsNullOrWhiteSpace(FeeAsset)) return false;
+                    break;
+                case TransactionType.Buy:
+                case TransactionType.Sell:
+                case TransactionType.Dust:
+                    if (string.IsNullOrWhiteSpace(AssetStart)) return false;
+                    if (string.IsNullOrWhiteSpace(AssetDestination)) return false;
+                    if (AmountStart == null) return false;
+                    if (AmountDestination == null) return false;
+                    if (TransactionValue == null) return false;
+                    if (FeeAmount == null) return false;
+                    if (FeeValue == null) return false;
+                    if (string.IsNullOrWhiteSpace(FeeAsset)) return false;
+                    break;
+                case TransactionType.BankDeposit:
+                    if (string.IsNullOrWhiteSpace(AssetDestination)) return false;
+                    if (string.IsNullOrWhiteSpace(LocationStart)) return false;
+                    if (string.IsNullOrWhiteSpace(LocationDestination)) return false;
+                    if (AmountDestination == null) return false;
+                    if (TransactionValue == null) return false;
+                    break;
+                case TransactionType.BankWithdrawal:
+                    if (string.IsNullOrWhiteSpace(AssetDestination)) return false;
+                    if (string.IsNullOrWhiteSpace(LocationStart)) return false;
+                    if (string.IsNullOrWhiteSpace(LocationDestination)) return false;
+                    if (AmountDestination == null) return false;
+                    if (TransactionValue == null) return false;
+                    if (FeeAmount == null) return false;
+                    if (FeeValue == null) return false;
+                    if (string.IsNullOrWhiteSpace(FeeAsset)) return false;
+                    break;
+                case TransactionType.Distribution:
+                    if (string.IsNullOrWhiteSpace(AssetDestination)) return false;
+                    if (string.IsNullOrWhiteSpace(LocationDestination)) return false;
+                    if (AmountDestination == null) return false;
+                    if (TransactionValue == null) return false;
+                    break;
+            }
+            return true;
+        }
+
+
+        #region IEditable
         private Dictionary<string, object> storedValues;
         protected Dictionary<string, object> BackUp()
         {
@@ -282,5 +339,6 @@ namespace CryptoControlCenter.Common.Models
                 this.storedValues = null;
             }
         }
+        #endregion
     }
 }

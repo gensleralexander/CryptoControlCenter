@@ -23,6 +23,11 @@ namespace CryptoControlCenter.WPF.Dialogs
         {
             try
             {
+                DateTime startingPoint = new DateTime(2010, 1, 1,0,0,0);
+                if(StartingPointBox.Value != null)
+                {
+                    startingPoint = (DateTime)StartingPointBox.Value;
+                }
                 switch (exchange)
                 {
                     case Exchange.Generic:
@@ -30,11 +35,11 @@ namespace CryptoControlCenter.WPF.Dialogs
                         this.DialogResult = true;
                         break;
                     case Exchange.Binance:
-                        CryptoCenter.Instance.CreateWallet(NameBox.Text, Exchange.Binance, TransactionsBox.Text, DepWithBox.Text, DistributionsBox.Text);
+                        CryptoCenter.Instance.CreateWallet(NameBox.Text, Exchange.Binance, TransactionsBox.Text, DepWithBox.Text, DistributionsBox.Text, startingPoint);
                         this.DialogResult = true;
                         break;
                     case Exchange.Bitstamp:
-                        CryptoCenter.Instance.CreateWallet(NameBox.Text, Exchange.Bitstamp, KeyBox.Text, SecretBox.Text);
+                        CryptoCenter.Instance.CreateWallet(NameBox.Text, Exchange.Bitstamp, KeyBox.Text, SecretBox.Text, startingPoint);
                         this.DialogResult = true;
                         break;
                     default:

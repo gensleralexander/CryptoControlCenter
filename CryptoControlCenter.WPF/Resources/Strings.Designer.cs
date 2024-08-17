@@ -430,6 +430,15 @@ namespace CryptoControlCenter.WPF.Resources {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Start at date ähnelt.
+        /// </summary>
+        public static string StartingPoint {
+            get {
+                return ResourceManager.GetString("StartingPoint", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Sync API-based ähnelt.
         /// </summary>
         public static string Sync {

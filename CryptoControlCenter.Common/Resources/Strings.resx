@@ -147,6 +147,9 @@
   <data name="Initialization" xml:space="preserve">
     <value>Initialization</value>
   </data>
+  <data name="InvalidTransactions" xml:space="preserve">
+    <value>Transactions-List contains invalid transactions. Please check database</value>
+  </data>
   <data name="NewTransaction" xml:space="preserve">
     <value>New Transaction added:</value>
   </data>
@@ -155,6 +158,9 @@
   </data>
   <data name="Not" xml:space="preserve">
     <value>Not</value>
+  </data>
+  <data name="NoTransactions" xml:space="preserve">
+    <value>No transactions found for specified time range. Please check your parameters</value>
   </data>
   <data name="Shutdown" xml:space="preserve">
     <value>Shutdown</value>
@@ -179,5 +185,8 @@
   </data>
   <data name="TransactionTask" xml:space="preserve">
     <value>Transaction Task</value>
+  </data>
+  <data name="UnhandledException" xml:space="preserve">
+    <value>An unhandled exception occured during the processing of transactions. The Excel File was saved at the last succesful transaction.</value>
   </data>
 </root>

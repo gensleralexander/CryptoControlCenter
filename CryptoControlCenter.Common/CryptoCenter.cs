@@ -1,10 +1,6 @@
 ﻿using Binance.Net.Clients;
-using Binance.Net.Enums;
-using Binance.Net.Interfaces;
-using Binance.Net.Interfaces.Clients;
 using Binance.Net.Objects.Models.Spot;
 using Bitstamp.Net;
-using Bitstamp.Net.Interfaces;
 using Bitstamp.Net.Objects;
 using CryptoControlCenter.Common.Database;
 using CryptoControlCenter.Common.Enums;
@@ -21,6 +17,7 @@ using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Threading;
+using CryptoControlCenter.Common.Resources;
 
 namespace CryptoControlCenter.Common
 {
@@ -149,14 +146,14 @@ namespace CryptoControlCenter.Common
                 Task.WhenAll(taskList).Wait();
                 foreach (Exception ex in exceptionBag)
                 {
-                    InternalInstance.AddLog(ex.Message, Resources.Strings.Initialization);
+                    InternalInstance.AddLog(ex.Message, Strings.Initialization);
                     //TODO
                 }
                 #endregion
                 InternalInstance.RefreshBalanceValues();
                 isInitialized = true;
                 initialzationRunning = false;
-                InternalInstance.AddLog(Resources.Strings.InitCompleted, Resources.Strings.Initialization, false);
+                InternalInstance.AddLog(Strings.InitCompleted, Strings.Initialization, false);
                 InternalInstance.IsBusy = false;
             }
         }
@@ -247,6 +244,15 @@ namespace CryptoControlCenter.Common
                     if (transactions.Count != 0)
                     {
                         transactions.Sort();
+                        ConcurrentBag<bool> invalid = new ConcurrentBag<bool>();
+                        Parallel.ForEach(transactions, t =>
+                        {
+                            invalid.Add(t.Validate());
+                        });
+                        if (invalid.Contains(false))
+                        {
+                            InternalInstance.ContainsMissingValues = true;
+                        }
                         Dictionary<string, FinancialStatementHelper> fshelper = new Dictionary<string, FinancialStatementHelper>();
                         List<string> wallets = new List<string>();
                         wallets.AddRange(transactions.Select(x => x.LocationStart));
@@ -618,7 +624,7 @@ namespace CryptoControlCenter.Common
             }
         }
         /// <inheritdoc/>
-        public async void CreateWallet(string walletName, Exchange exchange, string csvFilePathTransactions, string csvFilePathWithdrawalDeposits, string csvFilePathDistribution)
+        public async void CreateWallet(string walletName, Exchange exchange, string csvFilePathTransactions, string csvFilePathWithdrawalDeposits, string csvFilePathDistribution, DateTime startingPoint)
         {
             if (string.IsNullOrWhiteSpace(walletName) || string.IsNullOrWhiteSpace(csvFilePathTransactions) || string.IsNullOrWhiteSpace(csvFilePathWithdrawalDeposits) || string.IsNullOrWhiteSpace(csvFilePathDistribution))
             {
@@ -630,13 +636,14 @@ namespace CryptoControlCenter.Common
                 var resultW = await SQLiteDatabaseManager.Database.FindAsync<ExchangeWallet>(x => x.WalletName == walletName);
                 if (resultW == null)
                 {
-                    var secureCredential = new SecuredCredentials(walletName + "dummy", "dummy");
+                    string keyname = walletName + "dummy";
+                    var secureCredential = new SecuredCredentials(keyname, "dummy");
                     await SQLiteDatabaseManager.Database.InsertAsync(secureCredential);
-                    int secureid = SQLiteDatabaseManager.Database.GetAsync<SecuredCredentials>(x => x.Key == (walletName + "dummy")).Result.ID;
+                    int secureid = SQLiteDatabaseManager.Database.GetAsync<SecuredCredentials>(x => x.Key == keyname).Result.ID;
                     IExchangeWalletViewer wallet = new ExchangeWallet(walletName, exchange, secureid);
                     await SQLiteDatabaseManager.Database.InsertAsync(wallet);
                     ExchangeWallets.Add(wallet);
-                    wallet.ImportFromCSV(csvFilePathTransactions, csvFilePathWithdrawalDeposits, csvFilePathDistribution);
+                    wallet.ImportFromCSV(csvFilePathTransactions, csvFilePathWithdrawalDeposits, csvFilePathDistribution, startingPoint);
                     InternalInstance.IsBusy = false;
                 }
                 else
@@ -647,7 +654,7 @@ namespace CryptoControlCenter.Common
             }
         }
         /// <inheritdoc/>
-        public async void CreateWallet(string walletName, Exchange exchange, string exchangeApiKey, string exchangeApiSecret)
+        public async void CreateWallet(string walletName, Exchange exchange, string exchangeApiKey, string exchangeApiSecret, DateTime startingPoint)
         {
             if (string.IsNullOrWhiteSpace(walletName) || string.IsNullOrWhiteSpace(exchangeApiKey) || string.IsNullOrWhiteSpace(exchangeApiSecret))
             {
@@ -720,7 +727,7 @@ namespace CryptoControlCenter.Common
                     IExchangeWalletViewer wallet = new ExchangeWallet(walletName, exchange, secureid);
                     await SQLiteDatabaseManager.Database.InsertAsync(wallet);
                     ExchangeWallets.Add(wallet);
-                    await taskQueue.Enqueue(async () => await wallet.SynchronizeWallet());
+                    await taskQueue.Enqueue(async () => await wallet.SynchronizeWallet(startingPoint));
                     InternalInstance.IsBusy = false;
                 }
                 else
@@ -829,510 +836,6 @@ namespace CryptoControlCenter.Common
                     InternalInstance.AddLog(Resources.Strings.NewTransaction + transaction.TransactionType.ToString() + " " + transaction.AssetStart, Resources.Strings.TransactionTask);
                     break;
             }
-#endif
-        }
-        /// <inheritdoc/>
-        public void LoadMissingTransactionValues()
-        {
-            taskQueue.Enqueue(async () => await loadMissingTransactionValuesTask());
-        }
-        /// <summary>
-        /// Task Execution of LoadMissingTransactionValues that can be enqueued
-        /// </summary>
-        private async Task loadMissingTransactionValuesTask()
-        {
-#if DEBUG
-            Console.WriteLine("Load missing TransactionValue started.");
-#endif
-            InternalInstance.IsBusy = true;
-            List<ExchangeWallet> exchWallets = await SQLiteDatabaseManager.Database.Table<ExchangeWallet>().ToListAsync();
-            List<Transaction> transferTransactions = new List<Transaction>();
-            foreach (Transaction t in Transactions.Where(x => string.IsNullOrWhiteSpace(x.LocationDestination) || string.IsNullOrWhiteSpace(x.LocationStart)))
-            {
-                transferTransactions.Add(t);
-            }
-            foreach (Transaction transaction in transferTransactions)
-            {
-                if (transaction.TransactionType == Enums.TransactionType.BankDeposit)
-                {
-                    transaction.LocationStart = "Bank";
-                }
-                else if (transaction.TransactionType == Enums.TransactionType.BankWithdrawal)
-                {
-                    transaction.LocationDestination = "Bank";
-                }
-                else
-                {
-                    foreach (Transaction compare in transferTransactions)
-                    {
-                        if (transaction.TransactionID != compare.TransactionID) //check if both are equal
-                        {
-                            if (string.IsNullOrWhiteSpace(transaction.LocationStart)) // = deposit; search for matching withdrawal
-                            {
-                                if (transaction.AmountDestination == compare.AmountStart && transaction.AssetDestination == compare.AssetStart && transaction.TransactionTime.IsWithinTimeSpan(compare.TransactionTime, new TimeSpan(1, 0, 0, 0)))
-                                {
-                                    transaction.LocationStart = compare.LocationStart;
-                                    compare.LocationDestination = transaction.LocationDestination;
-                                }
-                            }
-                            else if (string.IsNullOrWhiteSpace(transaction.LocationDestination)) // = withdrawal; search for matching deposit
-                            {
-                                if (transaction.AmountStart == compare.AmountDestination && transaction.AssetStart == compare.AssetDestination && transaction.TransactionTime.IsWithinTimeSpan(compare.TransactionTime, new TimeSpan(-1, 0, 0, 0)))
-                                {
-                                    transaction.LocationDestination = compare.LocationDestination;
-                                    compare.LocationStart = transaction.LocationStart;
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-            await SQLiteDatabaseManager.Database.UpdateAllAsync(transferTransactions);
-            List<Transaction> transactions = new List<Transaction>();
-            foreach (Transaction t in Transactions.Where(x => x.TransactionValue == -1.0m || (x.FeeValue == 0.0m && x.FeeAmount != 0.0m)))
-            {
-                transactions.Add(t);
-            }
-
-            #region Create Requests
-            //Aggregate DateTimes for Value API Calls with maximize efficency to reduce API calls by using duplicates
-            SortedSet<ExchangeRateRequest> bitstampSet = new SortedSet<ExchangeRateRequest>();
-            SortedSet<ExchangeRateRequest> binanceSet = new SortedSet<ExchangeRateRequest>();
-
-            foreach (Transaction transaction in transactions)
-            {
-                Exchange exchange = exchWallets.First(x => x.WalletName == transaction.LocationStart || x.WalletName == transaction.LocationDestination).Exchange;
-                switch (exchange)
-                {
-                    //TODO Add more exchanges here
-                    case Exchange.Binance:
-                        #region FeeAssets
-                        if (!string.IsNullOrWhiteSpace(transaction.FeeAsset) && transaction.FeeValue == 0.0m)
-                        {
-                            if (transaction.FeeAsset == "EUR" || transaction.FeeAsset.IsEURstablecoin())
-                            {
-                                transaction.FeeValue = transaction.FeeAmount;
-                            }
-                            else if (transaction.FeeAsset == "BTC")  //If Asset is BTC
-                            {
-                                if (!bitstampSet.Any(x => x.Asset == "BTC" && x.BaseAsset == "EUR" && transaction.TransactionTime - x.DateTime <= new TimeSpan(16, 39, 59)))  //...and entry does not already exists
-                                {
-                                    bitstampSet.Add(new ExchangeRateRequest(transaction.TransactionTime.AddHours(-1), "BTC", "EUR"));
-                                }
-                            }
-                            else if (transaction.FeeAsset == "USD" || transaction.FeeAsset.IsUSDStablecoin())  //If Asset is an USD equivalent
-                            {
-                                if (!bitstampSet.Any(x => x.Asset == "USD" && x.BaseAsset == "EUR" && transaction.TransactionTime - x.DateTime <= new TimeSpan(16, 39, 59)))  //...and entry does not already exists
-                                {
-                                    bitstampSet.Add(new ExchangeRateRequest(transaction.TransactionTime.AddHours(-1), "USD", "EUR"));
-                                }
-                            }
-                            else  //Else request feeAsset/BTC-Pair from Binance and BTC/EUR-Pair from Bitstamp
-                            {
-                                if ((!binanceSet.Any(x => x.Asset == transaction.FeeAsset && transaction.TransactionTime - x.DateTime <= new TimeSpan(16, 39, 59))) && BinanceSymbols.Any(x => x.Name == (transaction.FeeAsset + "BTC")))  //...and entry does not already exists + is a valid symbol
-                                {
-                                    binanceSet.Add(new ExchangeRateRequest(transaction.TransactionTime.AddHours(-1), transaction.FeeAsset, "BTC"));
-                                }
-                                if (!bitstampSet.Any(x => x.Asset == "BTC" && x.BaseAsset == "EUR" && transaction.TransactionTime - x.DateTime <= new TimeSpan(16, 39, 59)))  //...and entry does not already exists
-                                {
-                                    bitstampSet.Add(new ExchangeRateRequest(transaction.TransactionTime.AddHours(-1), "BTC", "EUR"));
-                                }
-                            }
-                        }
-                        #endregion
-                        #region TradeAssets
-                        if (transaction.TransactionValue == -1)
-                        {
-                            if ((transaction.AssetStart == "EUR" || transaction.AssetStart.IsEURstablecoin()) && transaction.AmountStart != 0.0m)
-                            {
-                                transaction.TransactionValue = transaction.AmountStart;
-                            }
-                            else if ((transaction.AssetDestination == "EUR" || transaction.AssetDestination.IsEURstablecoin()) && transaction.AmountDestination != 0.0m)
-                            {
-                                transaction.TransactionValue = transaction.AmountDestination;
-                            }
-                            else if (transaction.AssetStart == "BTC" || transaction.AssetDestination == "BTC")  //If one of Assets is BTC
-                            {
-                                if (!bitstampSet.Any(x => x.Asset == "BTC" && x.BaseAsset == "EUR" && transaction.TransactionTime - x.DateTime <= new TimeSpan(16, 39, 59)))  //...and entry does not already exists
-                                {
-                                    bitstampSet.Add(new ExchangeRateRequest(transaction.TransactionTime.AddHours(-1), "BTC", "EUR"));
-                                }
-                            }
-                            else if (transaction.AssetStart == "USD" || transaction.AssetDestination == "USD" || transaction.AssetStart.IsUSDStablecoin() || transaction.AssetDestination.IsUSDStablecoin())  //If one of Assets is an USD equivalent
-                            {
-                                if (!bitstampSet.Any(x => x.Asset == "USD" && x.BaseAsset == "EUR" && transaction.TransactionTime - x.DateTime <= new TimeSpan(16, 39, 59)))  //...and entry does not already exists
-                                {
-                                    bitstampSet.Add(new ExchangeRateRequest(transaction.TransactionTime.AddHours(-1), "USD", "EUR"));
-                                }
-                            }
-                            else  //Else request startAsset/BTC-Pair from Binance and BTC/EUR-Pair from Bitstamp - except if not a valid pair exists, then use destinationAsset/BTC
-                            {
-                                if ((!binanceSet.Any(x => x.Asset == transaction.AssetStart && transaction.TransactionTime - x.DateTime <= new TimeSpan(16, 39, 59))) && BinanceSymbols.Any(x => x.Name == (transaction.AssetStart + "BTC")))  //...and entry does not already exists + is a valid symbol
-                                {
-                                    binanceSet.Add(new ExchangeRateRequest(transaction.TransactionTime.AddHours(-1), transaction.AssetStart, "BTC"));
-                                }
-                                else if ((!binanceSet.Any(x => x.Asset == transaction.AssetDestination && transaction.TransactionTime - x.DateTime <= new TimeSpan(16, 39, 59))) && BinanceSymbols.Any(x => x.Name == (transaction.AssetDestination + "BTC")))  //...and entry does not already exists + is a valid symbol
-                                {
-                                    binanceSet.Add(new ExchangeRateRequest(transaction.TransactionTime.AddHours(-1), transaction.AssetDestination, "BTC"));
-                                }
-                                if (!bitstampSet.Any(x => x.Asset == "BTC" && x.BaseAsset == "EUR" && transaction.TransactionTime - x.DateTime <= new TimeSpan(16, 39, 59)))  //...and entry does not already exists
-                                {
-                                    bitstampSet.Add(new ExchangeRateRequest(transaction.TransactionTime.AddHours(-1), "BTC", "EUR"));
-                                }
-                            }
-                        }
-                        #endregion
-                        break;
-                    case Exchange.Bitstamp:
-                        #region FeeAssets
-                        if (!string.IsNullOrWhiteSpace(transaction.FeeAsset) && transaction.FeeValue == 0.0m)
-                        {
-                            if (transaction.FeeAsset == "EUR" || transaction.FeeAsset.IsEURstablecoin())
-                            {
-                                transaction.FeeValue = transaction.FeeAmount;
-                            }
-                            else if (transaction.FeeAsset == "USD" || transaction.FeeAsset.IsUSDStablecoin())  //If Asset is an USD equivalent
-                            {
-                                if (!bitstampSet.Any(x => x.Asset == "USD" && x.BaseAsset == "EUR" && transaction.TransactionTime - x.DateTime <= new TimeSpan(16, 39, 59)))  //...and entry does not already exists
-                                {
-                                    bitstampSet.Add(new ExchangeRateRequest(transaction.TransactionTime.AddHours(-1), "USD", "EUR"));
-                                }
-                            }
-                            else  //Else request feeAsset/EUR-Pair from Binance and BTC/EUR-Pair from Bitstamp
-                            {
-                                if (!bitstampSet.Any(x => x.Asset == transaction.FeeAsset && x.BaseAsset == "EUR" && transaction.TransactionTime - x.DateTime <= new TimeSpan(16, 39, 59)))  //...and entry does not already exists
-                                {
-                                    bitstampSet.Add(new ExchangeRateRequest(transaction.TransactionTime.AddHours(-1), transaction.FeeAsset, "EUR"));
-                                }
-                            }
-                        }
-                        #endregion
-                        #region TradeAssets
-                        if (transaction.TransactionValue == -1)
-                        {
-                            if ((transaction.AssetStart == "EUR" || transaction.AssetStart.IsEURstablecoin()) && transaction.AmountStart != 0.0m)
-                            {
-                                transaction.TransactionValue = transaction.AmountStart;
-                            }
-                            else if ((transaction.AssetDestination == "EUR" || transaction.AssetDestination.IsEURstablecoin()) && transaction.AmountDestination != 0.0m)
-                            {
-                                transaction.TransactionValue = transaction.AmountDestination;
-                            }
-                            else if (transaction.AssetStart == "BTC" || transaction.AssetDestination == "BTC")  //If one of Assets is BTC
-                            {
-                                if (!bitstampSet.Any(x => x.Asset == "BTC" && x.BaseAsset == "EUR" && transaction.TransactionTime - x.DateTime <= new TimeSpan(16, 39, 59)))  //...and entry does not already exists
-                                {
-                                    bitstampSet.Add(new ExchangeRateRequest(transaction.TransactionTime.AddHours(-1), "BTC", "EUR"));
-                                }
-                            }
-                            else if (transaction.AssetStart == "USD" || transaction.AssetDestination == "USD" || transaction.AssetStart.IsUSDStablecoin() || transaction.AssetDestination.IsUSDStablecoin())  //If one of Assets is an USD equivalent
-                            {
-                                if (!bitstampSet.Any(x => x.Asset == "USD" && x.BaseAsset == "EUR" && transaction.TransactionTime - x.DateTime <= new TimeSpan(16, 39, 59)))  //...and entry does not already exists
-                                {
-                                    bitstampSet.Add(new ExchangeRateRequest(transaction.TransactionTime.AddHours(-1), "USD", "EUR"));
-                                }
-                            }
-                            else  //Else request startAsset/EUR-Pair if not null or eur 
-                            {
-                                if (transaction.AssetStart != null && transaction.AssetStart != "EUR")
-                                {
-                                    if (!bitstampSet.Any(x => x.Asset == transaction.AssetStart && x.BaseAsset == "EUR" && transaction.TransactionTime - x.DateTime <= new TimeSpan(16, 39, 59)))  //...and entry does not already exists
-                                    {
-                                        bitstampSet.Add(new ExchangeRateRequest(transaction.TransactionTime.AddHours(-1), transaction.AssetStart, "EUR"));
-                                    }
-                                }
-                                else if (transaction.AssetDestination != null && transaction.AssetDestination != "EUR")
-                                {
-                                    if (!bitstampSet.Any(x => x.Asset == transaction.AssetDestination && x.BaseAsset == "EUR" && transaction.TransactionTime - x.DateTime <= new TimeSpan(16, 39, 59)))  //...and entry does not already exists
-                                    {
-                                        bitstampSet.Add(new ExchangeRateRequest(transaction.TransactionTime.AddHours(-1), transaction.AssetDestination, "EUR"));
-                                    }
-                                }
-                            }
-                        }
-                        #endregion
-                        break;
-                    default: break;
-                }
-            }
-            #endregion
-
-            #region API Calls
-            List<Task> taskList = new List<Task>();
-            #region Bitstamp
-            taskList.Add(Task.Run(async () =>
-                {
-                    IBitstampClient client = new BitstampClient();
-                    foreach (ExchangeRateRequest request in bitstampSet)
-                    {
-                        var result = await client.Api.Public.GetOHLCDataAsync(request.Asset == "BTC" ? "btceur" : request.Asset == "USD" ? "eurusd" : request.Asset.ToLower() + request.BaseAsset.ToLower(), 60, 1000, request.DateTime, request.DateTime.AddHours(16).AddMinutes(40));
-                        if (result.Success)
-                        {
-                            List<ExchangeRate> temp = new List<ExchangeRate>();
-                            foreach (IBitstampKline kline in result.Data.Data.OHLC)
-                            {
-                                temp.Add(new ExchangeRate(kline.Timestamp, kline.Timestamp.AddMilliseconds(59999), (kline.High + kline.Low + kline.Open + kline.Close) / 4));
-                            }
-                            request.Rates = temp;
-                        }
-                        else
-                        {
-                            InternalInstance.AddLog(Resources.Strings.Error + "@Bitstamp-GetOHLC: " + request.Asset + request.BaseAsset + Environment.NewLine + result.Error.Message);
-                        }
-                        await Task.Delay(100);
-                    }
-                }));
-            #endregion
-            #region Binance
-            taskList.Add(Task.Run(async () =>
-            {
-                IBinanceRestClient Client = new BinanceRestClient();
-                foreach (ExchangeRateRequest request in binanceSet)
-                {
-                    var result = await Client.SpotApi.ExchangeData.GetKlinesAsync(request.Asset + request.BaseAsset, KlineInterval.OneMinute, request.DateTime, request.DateTime.AddHours(16).AddMinutes(40), 1000); //16h40min == 1000 min -> 1000 limited klines @ 1 Minute Interval
-                    if (result.Success)
-                    {
-                        List<ExchangeRate> temp = new List<ExchangeRate>();
-                        foreach (IBinanceKline kline in result.Data)
-                        {
-                            temp.Add(new ExchangeRate(kline.OpenTime, kline.CloseTime, (kline.HighPrice + kline.LowPrice + kline.OpenPrice + kline.ClosePrice) / 4));
-                        }
-                        request.Rates = temp;
-                    }
-                    else
-                    {
-                        InternalInstance.AddLog(Resources.Strings.Error + "@Binance-GetKlines: " + request.Asset + request.BaseAsset + Environment.NewLine + result.Error.Message);
-                    }
-                    await Task.Delay(900);
-                }
-            }));
-            #endregion
-            await Task.WhenAll(taskList);
-            #endregion
-
-            #region Add Informations from Requests to transactions
-            Parallel.ForEach(transactions, (transaction) =>
-            {
-                Exchange exchange = exchWallets.First(x => x.WalletName == transaction.LocationStart || x.WalletName == transaction.LocationDestination).Exchange;
-                switch (exchange)
-                {
-                    case Exchange.Binance:
-                        #region TradeAssets
-                        if (transaction.TransactionValue == -1.0m) //this occurs, if one of the assets was in EUR and was directly set
-                        {
-                            try
-                            {
-                                //If one Asset is BTC
-                                if (transaction.AssetStart == "BTC" || transaction.AssetDestination == "BTC")
-                                {
-                                    var hasInformation = bitstampSet.First(x => x.Asset == "BTC" && x.BaseAsset == "EUR" && transaction.TransactionTime.IsWithinTimeSpan(x.DateTime, new TimeSpan(16, 39, 59)));
-                                    var rate = hasInformation.Rates.First(x => x.OpenTime <= transaction.TransactionTime && x.CloseTime >= transaction.TransactionTime);
-                                    if (transaction.AssetStart == "BTC")
-                                    {
-                                        transaction.TransactionValue = transaction.AmountStart * rate.MedianRate;
-                                    }
-                                    else transaction.TransactionValue = transaction.AmountDestination * rate.MedianRate;
-                                }
-                                //If one Asset is USD equivalent
-                                else if (transaction.AssetStart == "USD" || transaction.AssetStart.IsUSDStablecoin() || transaction.AssetDestination == "USD" || transaction.AssetDestination.IsUSDStablecoin())
-                                {
-                                    var hasInformation = bitstampSet.First(x => x.Asset == "USD" && x.BaseAsset == "EUR" && transaction.TransactionTime.IsWithinTimeSpan(x.DateTime, new TimeSpan(16, 39, 59)));
-                                    var rate = hasInformation.Rates.First(x => x.OpenTime <= transaction.TransactionTime && x.CloseTime >= transaction.TransactionTime);
-                                    if (transaction.AssetStart == "USD" || transaction.AssetStart.IsUSDStablecoin())
-                                    {
-                                        transaction.TransactionValue = transaction.AmountStart / rate.MedianRate;
-                                    }
-                                    else transaction.TransactionValue = transaction.AmountDestination / rate.MedianRate;
-                                }
-                                //else, the startAsset/BTC-Pair was used
-                                else
-                                {
-                                    var hasInformationBitstamp = bitstampSet.First(x => x.Asset == "BTC" && x.BaseAsset == "EUR" && transaction.TransactionTime.IsWithinTimeSpan(x.DateTime, new TimeSpan(16, 39, 59)));
-                                    var btcEurRate = hasInformationBitstamp.Rates.First(x => x.OpenTime <= transaction.TransactionTime && x.CloseTime >= transaction.TransactionTime);
-
-                                    try
-
-                                    {
-                                        var hasInformationBinance = binanceSet.First(x => x.Asset == transaction.AssetStart && x.BaseAsset == "BTC" && transaction.TransactionTime.IsWithinTimeSpan(x.DateTime, new TimeSpan(16, 39, 59)));
-                                        var rateBinance = hasInformationBinance.Rates.First(x => x.OpenTime <= transaction.TransactionTime && x.CloseTime >= transaction.TransactionTime);
-                                        transaction.TransactionValue = transaction.AmountStart * rateBinance.MedianRate * btcEurRate.MedianRate;
-                                    }
-                                    catch (Exception) //rare occasions, where there is no valid startAsset/BTC pair on binance -> search for the destinationAsset/BTC pair
-                                    {
-                                        var hasInformationBinance = binanceSet.First(x => x.Asset == transaction.AssetDestination && x.BaseAsset == "BTC" && transaction.TransactionTime.IsWithinTimeSpan(x.DateTime, new TimeSpan(16, 39, 59)));
-                                        var rateBinance = hasInformationBinance.Rates.First(x => x.OpenTime <= transaction.TransactionTime && x.CloseTime >= transaction.TransactionTime);
-                                        transaction.TransactionValue = transaction.AmountDestination * rateBinance.MedianRate * btcEurRate.MedianRate;
-                                    }
-                                }
-                            }
-                            catch (Exception ex)
-                            {
-                                switch (transaction.TransactionType)
-                                {
-                                    case Enums.TransactionType.Buy:
-                                    case Enums.TransactionType.Sell:
-                                        InternalInstance.AddLog(Resources.Strings.Error + "@ParallelAddInformation: " + transaction.GetTradingPair() + " @ " + transaction.TransactionTime.ToString() + " ----- " + ex.Message);
-                                        break;
-                                    case Enums.TransactionType.Distribution:
-                                        transaction.TransactionValue = 0.0m; //Some Assets were distributed on Binance, before there were trading pairs for them -> add TransactionValue = 0, since Distribution isn't counted as buy
-                                        break;
-                                    default:
-                                        InternalInstance.AddLog(Resources.Strings.Error + "@ParallelAddInformation: " + transaction.TransactionType.ToString() + " " + transaction.AssetStart + " ----- " + ex.Message);
-                                        break;
-                                }
-                            }
-                        }
-                        #endregion
-                        #region FeeAssets
-                        if (!string.IsNullOrWhiteSpace(transaction.FeeAsset) && transaction.FeeValue == 0.0m)
-                        {
-                            try
-                            {
-                                //If Asset is BTC
-                                if (transaction.FeeAsset == "BTC")
-                                {
-                                    var hasInformation = bitstampSet.First(x => x.Asset == "BTC" && x.BaseAsset == "EUR" && transaction.TransactionTime.IsWithinTimeSpan(x.DateTime, new TimeSpan(16, 39, 59)));
-                                    var rate = hasInformation.Rates.First(x => x.OpenTime <= transaction.TransactionTime && x.CloseTime >= transaction.TransactionTime);
-                                    transaction.FeeValue = transaction.FeeAmount * rate.MedianRate;
-                                }
-                                //If Asset is USD equivalent
-                                else if (transaction.FeeAsset == "USD" || transaction.FeeAsset.IsUSDStablecoin())
-                                {
-                                    var hasInformation = bitstampSet.First(x => x.Asset == "USD" && x.BaseAsset == "EUR" && transaction.TransactionTime.IsWithinTimeSpan(x.DateTime, new TimeSpan(16, 39, 59)));
-                                    var rate = hasInformation.Rates.First(x => x.OpenTime <= transaction.TransactionTime && x.CloseTime >= transaction.TransactionTime);
-                                    transaction.FeeValue = transaction.FeeAmount / rate.MedianRate;
-                                }
-                                //else, the feeAsset/BTC-Pair was used
-                                else
-                                {
-                                    var hasInformationBitstamp = bitstampSet.First(x => x.Asset == "BTC" && x.BaseAsset == "EUR" && transaction.TransactionTime.IsWithinTimeSpan(x.DateTime, new TimeSpan(16, 39, 59)));
-                                    var btcEurRate = hasInformationBitstamp.Rates.First(x => x.OpenTime <= transaction.TransactionTime && x.CloseTime >= transaction.TransactionTime);
-                                    var hasInformationBinance = binanceSet.First(x => x.Asset == transaction.FeeAsset && x.BaseAsset == "BTC" && transaction.TransactionTime.IsWithinTimeSpan(x.DateTime, new TimeSpan(16, 39, 59)));
-                                    var rateBinance = hasInformationBinance.Rates.First(x => x.OpenTime <= transaction.TransactionTime && x.CloseTime >= transaction.TransactionTime);
-                                    transaction.FeeValue = transaction.FeeAmount * rateBinance.MedianRate * btcEurRate.MedianRate;
-                                }
-                            }
-                            catch (Exception ex)
-                            {
-                                switch (transaction.TransactionType)
-                                {
-                                    case Enums.TransactionType.Buy:
-                                    case Enums.TransactionType.Sell:
-                                        InternalInstance.AddLog(Resources.Strings.Error + "@ParallelAddInformationFees: " + transaction.GetTradingPair() + " @ " + transaction.TransactionTime.ToString() + " ----- " + ex.Message);
-                                        break;
-                                    default:
-                                        InternalInstance.AddLog(Resources.Strings.Error + "@ParallelAddInformationFees: " + transaction.TransactionType.ToString() + " " + transaction.AssetStart + " ----- " + ex.Message);
-                                        break;
-                                }
-                            }
-                        }
-                        #endregion
-                        break;
-                    case Exchange.Bitstamp:
-                        #region TradeAssets
-                        if (transaction.TransactionValue == -1.0m) //this occurs, if one of the assets was in EUR and was directly set
-                        {
-                            try
-                            {
-                                //If one Asset is BTC
-                                if (transaction.AssetStart == "BTC" || transaction.AssetDestination == "BTC")
-                                {
-                                    var hasInformation = bitstampSet.First(x => x.Asset == "BTC" && x.BaseAsset == "EUR" && transaction.TransactionTime.IsWithinTimeSpan(x.DateTime, new TimeSpan(16, 39, 59)));
-                                    var rate = hasInformation.Rates.First(x => x.OpenTime <= transaction.TransactionTime && x.CloseTime >= transaction.TransactionTime);
-                                    if (transaction.AssetStart == "BTC")
-                                    {
-                                        transaction.TransactionValue = transaction.AmountStart * rate.MedianRate;
-                                    }
-                                    else transaction.TransactionValue = transaction.AmountDestination * rate.MedianRate;
-                                }
-                                //If one Asset is USD equivalent
-                                else if (transaction.AssetStart == "USD" || transaction.AssetStart.IsUSDStablecoin() || transaction.AssetDestination == "USD" || transaction.AssetDestination.IsUSDStablecoin())
-                                {
-                                    var hasInformation = bitstampSet.First(x => x.Asset == "USD" && x.BaseAsset == "EUR" && transaction.TransactionTime.IsWithinTimeSpan(x.DateTime, new TimeSpan(16, 39, 59)));
-                                    var rate = hasInformation.Rates.First(x => x.OpenTime <= transaction.TransactionTime && x.CloseTime >= transaction.TransactionTime);
-                                    if (transaction.AssetStart == "USD" || transaction.AssetStart.IsUSDStablecoin())
-                                    {
-                                        transaction.TransactionValue = transaction.AmountStart / rate.MedianRate;
-                                    }
-                                    else transaction.TransactionValue = transaction.AmountDestination / rate.MedianRate;
-                                }
-                                //else, the startAsset/EUR-Pair or the destinationAsset/EUR-Pair was used
-                                else if (transaction.AssetStart != null && transaction.AssetStart != "EUR")
-                                {
-                                    var hasInformationBitstamp = bitstampSet.First(x => x.Asset == transaction.AssetStart && x.BaseAsset == "EUR" && transaction.TransactionTime.IsWithinTimeSpan(x.DateTime, new TimeSpan(16, 39, 59)));
-                                    var bitstampRate = hasInformationBitstamp.Rates.First(x => x.OpenTime <= transaction.TransactionTime && x.CloseTime >= transaction.TransactionTime);
-                                    transaction.TransactionValue = transaction.AmountStart * bitstampRate.MedianRate;
-                                }
-                                else
-                                {
-                                    var hasInformationBitstamp = bitstampSet.First(x => x.Asset == transaction.AssetDestination && x.BaseAsset == "EUR" && transaction.TransactionTime.IsWithinTimeSpan(x.DateTime, new TimeSpan(16, 39, 59)));
-                                    var bitstampRate = hasInformationBitstamp.Rates.First(x => x.OpenTime <= transaction.TransactionTime && x.CloseTime >= transaction.TransactionTime);
-                                    transaction.TransactionValue = transaction.AmountDestination * bitstampRate.MedianRate;
-                                }
-                            }
-                            catch (Exception ex)
-                            {
-                                switch (transaction.TransactionType)
-                                {
-                                    case Enums.TransactionType.Buy:
-                                    case Enums.TransactionType.Sell:
-                                        InternalInstance.AddLog(Resources.Strings.Error + "@ParallelAddInformation: " + transaction.GetTradingPair() + " @ " + transaction.TransactionTime.ToString() + " ----- " + ex.Message);
-                                        break;
-                                    case Enums.TransactionType.Distribution:
-                                        transaction.TransactionValue = 0.0m;
-                                        break;
-                                    default:
-                                        InternalInstance.AddLog(Resources.Strings.Error + "@ParallelAddInformation: " + transaction.TransactionType.ToString() + " " + transaction.AssetStart + " ----- " + ex.Message);
-                                        break;
-                                }
-                            }
-                        }
-                        #endregion
-                        #region FeeAssets
-                        if (!string.IsNullOrWhiteSpace(transaction.FeeAsset) && transaction.FeeValue == 0.0m)
-                        {
-                            try
-                            {
-                                //If Asset is USD equivalent
-                                if (transaction.FeeAsset == "USD" || transaction.FeeAsset.IsUSDStablecoin())
-                                {
-                                    var hasInformation = bitstampSet.First(x => x.Asset == "USD" && x.BaseAsset == "EUR" && transaction.TransactionTime.IsWithinTimeSpan(x.DateTime, new TimeSpan(16, 39, 59)));
-                                    var rate = hasInformation.Rates.First(x => x.OpenTime <= transaction.TransactionTime && x.CloseTime >= transaction.TransactionTime);
-                                    transaction.FeeValue = transaction.FeeAmount / rate.MedianRate;
-                                }
-                                //else, the feeAsset/BTC-Pair was used
-                                else
-                                {
-                                    var hasInformationBitstamp = bitstampSet.First(x => x.Asset == transaction.FeeAsset && x.BaseAsset == "EUR" && transaction.TransactionTime.IsWithinTimeSpan(x.DateTime, new TimeSpan(16, 39, 59)));
-                                    var rateBitstamp = hasInformationBitstamp.Rates.First(x => x.OpenTime <= transaction.TransactionTime && x.CloseTime >= transaction.TransactionTime);
-                                    transaction.FeeValue = transaction.FeeAmount * rateBitstamp.MedianRate;
-                                }
-                            }
-                            catch (Exception ex)
-                            {
-                                switch (transaction.TransactionType)
-                                {
-                                    case Enums.TransactionType.Buy:
-                                    case Enums.TransactionType.Sell:
-                                        InternalInstance.AddLog(Resources.Strings.Error + "@ParallelAddInformationFees: " + transaction.GetTradingPair() + " @ " + transaction.TransactionTime.ToString() + " ----- " + ex.Message);
-                                        break;
-                                    default:
-                                        InternalInstance.AddLog(Resources.Strings.Error + "@ParallelAddInformationFees: " + transaction.TransactionType.ToString() + " " + transaction.AssetStart + " ----- " + ex.Message);
-                                        break;
-                                }
-                            }
-                        }
-                        #endregion
-                        break;
-                }
-            });
-            #endregion
-
-            await SQLiteDatabaseManager.Database.UpdateAllAsync(transactions);
-            OnPropertyChanged("Transactions");
-            InternalInstance.IsBusy = false;
-#if DEBUG
-            Console.WriteLine("Load missing TransactionValue ended.");
 #endif
         }
     }

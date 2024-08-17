@@ -25,7 +25,6 @@
             <StackPanel Orientation="Horizontal">
                 <Button Content="{x:Static res:Strings.AddTransaction}" Click="AddTransaction_Click" MinWidth="200"/>
                 <Button x:Name="DeleteButton" Content="{x:Static res:Strings.DeleteTransaction}" IsEnabled="{Binding ElementName=TransactionsGrid,Path=SelectedItem, Converter={StaticResource HasSelectionConverter}}" Click="DeleteTransaction_Click" MinWidth="200"/>
-                <Button Content="{x:Static res:Strings.LoadMissingValues}" Click="LoadMissingValues_Click" Width="200"/>
                 <Button Content="{x:Static res:Strings.GenerateTax}" Click="Generate_Click" MinWidth="200"/>
             </StackPanel>
         </StackPanel>
@@ -33,14 +32,14 @@
         <syncfusion:SfDataGrid x:Name="TransactionsGrid" SelectionChanged="TransactionsGrid_SelectionChanged" Visibility="Hidden" CurrentCellEndEdit="TransactionsGrid_CurrentCellEndEdit" CurrentCellBeginEdit="TransactionsGrid_CurrentCellBeginEdit" EditTrigger="OnTap" EditorSelectionBehavior="SelectAll" LostFocusBehavior="Default" Grid.Row="1" ColumnSizer="Auto" AllowResizingColumns="True" SelectionUnit="Cell" AutoGenerateColumns="False" ItemsSource="{Binding Transactions}" Margin="1">
             <syncfusion:SfDataGrid.Columns>
                 <syncfusion:GridNumericColumn TextAlignment="Center" AllowEditing="False" MappingName="TransactionID" HeaderText="ID" NumberDecimalDigits="0"/>
-                <syncfusion:GridTextColumn TextAlignment="Center" AllowEditing="False" MappingName="Wallet"/>
-                <syncfusion:GridDateTimeColumn TextAlignment="Center" AllowEditing="False" Pattern="SortableDateTime" MappingName="TransactionTime" HeaderText="{x:Static res:Strings.TransactionTime}"/>
+                <syncfusion:GridTextColumn TextAlignment="Center" AllowEditing="True" MappingName="Wallet"/>
+                <syncfusion:GridDateTimeColumn TextAlignment="Center" AllowEditing="True" Pattern="SortableDateTime" MappingName="TransactionTime" HeaderText="{x:Static res:Strings.TransactionTime}"/>
                 <syncfusion:GridTextColumn TextAlignment="Center" AllowEditing="True" MappingName="TransactionType" HeaderText="{x:Static res:Strings.Type}"/>
-                <syncfusion:GridNumericColumn TextAlignment="Center" AllowEditing="False" MappingName="AmountStart" HeaderText="{x:Static res:Strings.Amount}" DisplayBinding="{Binding Path=AmountStart, Converter={StaticResource AssetAmountConverter}}"/>
-                <syncfusion:GridTextColumn TextAlignment="Center" AllowEditing="False" MappingName="AssetStart" HeaderText="{x:Static res:Strings.Asset}"/>
+                <syncfusion:GridNumericColumn TextAlignment="Center" AllowEditing="True" MappingName="AmountStart" HeaderText="{x:Static res:Strings.Amount}" DisplayBinding="{Binding Path=AmountStart, Converter={StaticResource AssetAmountConverter}}"/>
+                <syncfusion:GridTextColumn TextAlignment="Center" AllowEditing="True" MappingName="AssetStart" HeaderText="{x:Static res:Strings.Asset}"/>
                 <syncfusion:GridComboBoxColumn TextAlignment="Center" ItemsSource="{Binding WalletNames}" AllowEditing="True" MappingName="LocationStart" HeaderText="{x:Static res:Strings.On}"/>
-                <syncfusion:GridNumericColumn TextAlignment="Center" AllowEditing="False" MappingName="AmountDestination" HeaderText="{x:Static res:Strings.Amount}" DisplayBinding="{Binding Path=AmountDestination, Converter={StaticResource AssetAmountConverter}}"/>
-                <syncfusion:GridTextColumn TextAlignment="Center" AllowEditing="False" MappingName="AssetDestination" HeaderText="{x:Static res:Strings.Asset}"/>
+                <syncfusion:GridNumericColumn TextAlignment="Center" AllowEditing="True" MappingName="AmountDestination" HeaderText="{x:Static res:Strings.Amount}" DisplayBinding="{Binding Path=AmountDestination, Converter={StaticResource AssetAmountConverter}}"/>
+                <syncfusion:GridTextColumn TextAlignment="Center" AllowEditing="True" MappingName="AssetDestination" HeaderText="{x:Static res:Strings.Asset}"/>
                 <syncfusion:GridComboBoxColumn TextAlignment="Center" ItemsSource="{Binding WalletNames}" AllowEditing="True" MappingName="LocationDestination" HeaderText="{x:Static res:Strings.On}"/>
                 <syncfusion:GridNumericColumn TextAlignment="Center" AllowEditing="True" MappingName="TransactionValue" HeaderText="{x:Static res:Strings.Value}" NumberDecimalDigits="2"/>
                 <syncfusion:GridNumericColumn TextAlignment="Center" AllowEditing="True" MappingName="FeeAmount" HeaderText="{x:Static res:Strings.Amount}" DisplayBinding="{Binding Path=FeeAmount, Converter={StaticResource AssetAmountConverter}}"/>

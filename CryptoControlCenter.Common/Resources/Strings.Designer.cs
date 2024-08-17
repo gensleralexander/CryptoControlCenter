@@ -151,6 +151,15 @@ namespace CryptoControlCenter.Common.Resources {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Transactions-List contains invalid transactions. Please check database ähnelt.
+        /// </summary>
+        internal static string InvalidTransactions {
+            get {
+                return ResourceManager.GetString("InvalidTransactions", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die New Transaction added: ähnelt.
         /// </summary>
         internal static string NewTransaction {
@@ -174,6 +183,15 @@ namespace CryptoControlCenter.Common.Resources {
         internal static string Not {
             get {
                 return ResourceManager.GetString("Not", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die No transactions found for specified time range. Please check your parameters ähnelt.
+        /// </summary>
+        internal static string NoTransactions {
+            get {
+                return ResourceManager.GetString("NoTransactions", resourceCulture);
             }
         }
         
@@ -246,6 +264,15 @@ namespace CryptoControlCenter.Common.Resources {
         internal static string TransactionTask {
             get {
                 return ResourceManager.GetString("TransactionTask", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die An unhandled exception occured during the processing of transactions. The Excel File was saved at the last succesful transaction. ähnelt.
+        /// </summary>
+        internal static string UnhandledException {
+            get {
+                return ResourceManager.GetString("UnhandledException", resourceCulture);
             }
         }
     }

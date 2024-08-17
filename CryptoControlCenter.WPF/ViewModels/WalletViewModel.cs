@@ -5,7 +5,6 @@ using CryptoControlCenter.WPF.Dialogs;
 using CryptoControlCenter.WPF.Helper;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Threading.Tasks;
 using System.Windows.Data;
 using System.Windows.Input;
 

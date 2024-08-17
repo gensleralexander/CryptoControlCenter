@@ -44,7 +44,7 @@ namespace CryptoControlCenter.Common.DataProvider
 
         }
         /// <inheritdoc/>
-        public void ImportFromCSV(string csvFilePathTransactions, string csvFilePathWithdrawalDeposits, string csvFilePathDistribution)
+        public void ImportFromCSV(string csvFilePathTransactions, string csvFilePathWithdrawalDeposits, string csvFilePathDistribution, DateTime? startingPoint)
         {
             int id = 2000000000; //give new transaction an ID, because sometimes, transactions are identical and would falsly get dropped. ID gets overwritten when adding to DB
             var culture = new CultureInfo("en-US");
@@ -61,25 +61,29 @@ namespace CryptoControlCenter.Common.DataProvider
                     {
                         try
                         {
-                            BinanceSymbol symbol = CryptoCenter.InternalInstance.BinanceSymbols.First(x => x.Name == csv.GetField("Symbol"));
-                            bool isBuy = (csv.GetField("Side") == "BUY");
-                            transactions.Add(new Transaction(
-                                Wallet.WalletName,
-                                DateTime.Parse(csv.GetField("DateUTC")),
-                                isBuy ? Enums.TransactionType.Buy : Enums.TransactionType.Sell,
-                                isBuy ? symbol.QuoteAsset : symbol.BaseAsset,
-                                isBuy ? symbol.BaseAsset : symbol.QuoteAsset,
-                                isBuy ? decimal.Parse(Regex.Replace(csv.GetField("Quote"), "[^0-9.]", string.Empty), culture) : decimal.Parse(Regex.Replace(csv.GetField("Base"), "[^0-9.]", string.Empty), culture),
-                                isBuy ? decimal.Parse(Regex.Replace(csv.GetField("Base"), "[^0-9.]", string.Empty), culture) : decimal.Parse(Regex.Replace(csv.GetField("Quote"), "[^0-9.]", string.Empty), culture),
-                                Wallet.WalletName,
-                                Wallet.WalletName,
-                                -1.0m,
-                                decimal.Parse(Regex.Replace(csv.GetField("Fee"), "[^0-9.]", string.Empty), culture),
-                                Regex.Replace(csv.GetField("Fee"), @"[\d-.]", string.Empty))
+                            DateTime time = DateTime.Parse(csv.GetField("DateUTC"));
+                            if (time > startingPoint)
                             {
-                                TransactionID = id
-                            });
-                            id++;
+                                BinanceSymbol symbol = CryptoCenter.InternalInstance.BinanceSymbols.First(x => x.Name == csv.GetField("Symbol"));
+                                bool isBuy = (csv.GetField("Side") == "BUY");
+                                transactions.Add(new Transaction(
+                                    Wallet.WalletName,
+                                    time,
+                                    isBuy ? Enums.TransactionType.Buy : Enums.TransactionType.Sell,
+                                    isBuy ? symbol.QuoteAsset : symbol.BaseAsset,
+                                    isBuy ? symbol.BaseAsset : symbol.QuoteAsset,
+                                    isBuy ? decimal.Parse(Regex.Replace(csv.GetField("Quote"), "[^0-9.]", string.Empty), culture) : decimal.Parse(Regex.Replace(csv.GetField("Base"), "[^0-9.]", string.Empty), culture),
+                                    isBuy ? decimal.Parse(Regex.Replace(csv.GetField("Base"), "[^0-9.]", string.Empty), culture) : decimal.Parse(Regex.Replace(csv.GetField("Quote"), "[^0-9.]", string.Empty), culture),
+                                    Wallet.WalletName,
+                                    Wallet.WalletName,
+                                    -1.0m,
+                                    decimal.Parse(Regex.Replace(csv.GetField("Fee"), "[^0-9.]", string.Empty), culture),
+                                    Regex.Replace(csv.GetField("Fee"), @"[\d-.]", string.Empty))
+                                {
+                                    TransactionID = id
+                                });
+                                id++;
+                            }
                         }
                         catch { }
                     }
@@ -96,24 +100,28 @@ namespace CryptoControlCenter.Common.DataProvider
                     {
                         try
                         {
-                            bool isDeposit = (csv.GetField("Type") == "Deposit");
-                            transactions.Add(new Transaction(
-                                Wallet.WalletName,
-                                DateTime.Parse(csv.GetField("DateUTC")),
-                                Enums.TransactionType.Transfer,
-                                csv.GetField("Coin"),
-                                csv.GetField("Coin"),
-                                decimal.Parse(csv.GetField("Amount"), culture),
-                                decimal.Parse(csv.GetField("Amount"), culture),
-                                isDeposit ? string.Empty : Wallet.WalletName,
-                                isDeposit ? Wallet.WalletName : string.Empty,
-                                -1.0m,
-                                decimal.Parse(csv.GetField("TransactionFee"), culture),
-                                csv.GetField("Coin"))
+                            DateTime time = DateTime.Parse(csv.GetField("DateUTC"));
+                            if (time > startingPoint)
                             {
-                                TransactionID = id
-                            });
-                            id++;
+                                bool isDeposit = (csv.GetField("Type") == "Deposit");
+                                transactions.Add(new Transaction(
+                                    Wallet.WalletName,
+                                    time,
+                                    Enums.TransactionType.Transfer,
+                                    csv.GetField("Coin"),
+                                    csv.GetField("Coin"),
+                                    decimal.Parse(csv.GetField("Amount"), culture),
+                                    decimal.Parse(csv.GetField("Amount"), culture),
+                                    isDeposit ? string.Empty : Wallet.WalletName,
+                                    isDeposit ? Wallet.WalletName : string.Empty,
+                                    -1.0m,
+                                    decimal.Parse(csv.GetField("TransactionFee"), culture),
+                                    csv.GetField("Coin"))
+                                {
+                                    TransactionID = id
+                                });
+                                id++;
+                            }
                         }
                         catch { }
                     }
@@ -130,25 +138,29 @@ namespace CryptoControlCenter.Common.DataProvider
                     {
                         try
                         {
-                            if (csv.GetField("Operation") == "Distribution")
+                            DateTime time = DateTime.Parse(csv.GetField("DateUTC"));
+                            if (time > startingPoint)
                             {
-                                transactions.Add(new Transaction(
-                                    Wallet.WalletName,
-                                    DateTime.Parse(csv.GetField("DateUTC")),
-                                    Enums.TransactionType.Distribution,
-                                    csv.GetField("Coin"),
-                                    csv.GetField("Coin"),
-                                    decimal.Parse(csv.GetField("Change"), culture),
-                                    decimal.Parse(csv.GetField("Change"), culture),
-                                    Wallet.WalletName,
-                                    Wallet.WalletName,
-                                    -1.0m,
-                                    0.0m,
-                                    string.Empty)
+                                if (csv.GetField("Operation") == "Distribution")
                                 {
-                                    TransactionID = id
-                                });
-                                id++;
+                                    transactions.Add(new Transaction(
+                                        Wallet.WalletName,
+                                        time,
+                                        Enums.TransactionType.Distribution,
+                                        csv.GetField("Coin"),
+                                        csv.GetField("Coin"),
+                                        decimal.Parse(csv.GetField("Change"), culture),
+                                        decimal.Parse(csv.GetField("Change"), culture),
+                                        Wallet.WalletName,
+                                        Wallet.WalletName,
+                                        -1.0m,
+                                        0.0m,
+                                        string.Empty)
+                                    {
+                                        TransactionID = id
+                                    });
+                                    id++;
+                                }
                             }
                         }
                         catch { }
@@ -390,5 +402,6 @@ namespace CryptoControlCenter.Common.DataProvider
 #endif
             }
         }
+
     }
 }

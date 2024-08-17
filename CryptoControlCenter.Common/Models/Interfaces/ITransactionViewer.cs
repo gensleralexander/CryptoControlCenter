@@ -35,11 +35,11 @@ namespace CryptoControlCenter.Common.Models.Interfaces
         /// <summary>
         /// Amount of Start-Asset
         /// </summary>
-        public decimal AmountStart { get; }
+        public decimal? AmountStart { get; }
         /// <summary>
         /// Amount of Destination-Asset
         /// </summary>
-        public decimal AmountDestination { get; }
+        public decimal? AmountDestination { get; }
         /// <summary>
         /// ID of Start-Wallet
         /// </summary>
@@ -51,11 +51,11 @@ namespace CryptoControlCenter.Common.Models.Interfaces
         /// <summary>
         /// TransactionValue in FIAT money
         /// </summary>
-        public decimal TransactionValue { get; }
+        public decimal? TransactionValue { get; }
         /// <summary>
         /// Fee Amount
         /// </summary>
-        public decimal FeeAmount { get; }
+        public decimal? FeeAmount { get; }
         /// <summary>
         /// Asset used as fee
         /// </summary>
@@ -63,7 +63,7 @@ namespace CryptoControlCenter.Common.Models.Interfaces
         /// <summary>
         /// Fee Value in EUR
         /// </summary>
-        public decimal FeeValue { get; }
+        public decimal? FeeValue { get; }
         /// <summary>
         /// Returns the Trading Pair
         /// </summary>
@@ -76,5 +76,10 @@ namespace CryptoControlCenter.Common.Models.Interfaces
         /// Exchange Rate from Start to Destination Asset
         /// </summary>
         public decimal? GetExchangeRate();
+        /// <summary>
+        /// Validates a transaction, wether or not all necessary item is filled.
+        /// </summary>
+        /// <returns>True if valid, False if invalid</returns>
+        public bool Validate();
     }
 }
