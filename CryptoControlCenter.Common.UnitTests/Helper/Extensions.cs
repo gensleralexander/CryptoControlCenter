@@ -6,7 +6,6 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace CryptoControlCenter.Common.UnitTests.Helper
 {
@@ -18,6 +17,8 @@ namespace CryptoControlCenter.Common.UnitTests.Helper
     {
         /// <summary>
         /// Indicates, if an DateTime is within a specified TimeSpan compared to an other DateTime
+        /// If ts is positive, read it like "Will dt happen in the future ts-Amount relative to compareDT?"
+        /// If ts is negative, read it like "Did dt happened the past ts-Amount relative to compareDT?"
         /// </summary>
         /// <param name="dt">DateTime (newer than cDT)</param>
         /// <param name="compareDt">DateTime (older than dt)</param>

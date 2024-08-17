@@ -147,156 +147,153 @@ namespace CryptoControlCenter.Common
                     //Process transactions
                     foreach (ITransactionViewer transaction in transactions)
                     {
-                        if (transaction.TransactionValue > 0.0099m || transaction.TransactionType == TransactionType.Distribution)
-                        {
 #if DEBUG
-                            Console.Write(debugLfd + " --- ");
-                            Console.WriteLine(transaction.ToString());
-                            debugLfd++;
+                        Console.Write(debugLfd + " --- ");
+                        Console.WriteLine(transaction.ToString());
+                        debugLfd++;
 #endif
-                            //Check for a change in year -> Annual Financial Statement
-                            if (last != null && transaction.TransactionTime.Year > last.TransactionTime.Year)
+                        //Check for a change in year -> Annual Financial Statement
+                        if (last != null && transaction.TransactionTime.Year > last.TransactionTime.Year)
+                        {
+                            foreach (KeyValuePair<string, FinancialStatementHelper> exchange in fsDictionary)
                             {
-                                foreach (KeyValuePair<string, FinancialStatementHelper> exchange in fsDictionary)
+                                if (exchange.Value.processedTransactions > 0)
                                 {
-                                    if (exchange.Value.processedTransactions > 0)
-                                    {
-                                        worksheet = package.Workbook.Worksheets.First(x => x.Name == exchange.Key);
-                                        insertAnnualFinancialStatements(ref worksheet, last.TransactionTime.Year, exchange.Value);
-                                        exchange.Value.currentRow++;
-                                        worksheet.Cells[exchange.Value.currentRow, 1].Value = transaction.TransactionTime.Year;
-                                        worksheet.Cells[exchange.Value.currentRow, 1].Style.Font.Bold = true;
-                                        worksheet.Cells[exchange.Value.currentRow, 1].Style.Fill.PatternType = ExcelFillStyle.Solid;
-                                        worksheet.Cells[exchange.Value.currentRow, 1].Style.Fill.BackgroundColor.SetColor(ExcelIndexedColor.Indexed47);//Excel Orange
-                                        exchange.Value.currentRow++;
-                                    }
+                                    worksheet = package.Workbook.Worksheets.First(x => x.Name == exchange.Key);
+                                    insertAnnualFinancialStatements(ref worksheet, last.TransactionTime.Year, exchange.Value);
+                                    exchange.Value.currentRow++;
+                                    worksheet.Cells[exchange.Value.currentRow, 1].Value = transaction.TransactionTime.Year;
+                                    worksheet.Cells[exchange.Value.currentRow, 1].Style.Font.Bold = true;
+                                    worksheet.Cells[exchange.Value.currentRow, 1].Style.Fill.PatternType = ExcelFillStyle.Solid;
+                                    worksheet.Cells[exchange.Value.currentRow, 1].Style.Fill.BackgroundColor.SetColor(ExcelIndexedColor.Indexed47);//Excel Orange
+                                    exchange.Value.currentRow++;
                                 }
                             }
-                            try
-                            {
-                                worksheet = package.Workbook.Worksheets.First(x => x.Name == transaction.Wallet);
-                            }
-                            catch
-                            {
-                                throw new InvalidOperationException("No valid worksheet found for Location: " + transaction.Wallet);
-                            }
-                            fsDictionary.First(x => x.Key == worksheet.Name).Value.currentRow++;
-                            fsDictionary.First(x => x.Key == worksheet.Name).Value.currentNr++;
-                            int currentRow = fsDictionary.First(x => x.Key == worksheet.Name).Value.currentRow;
-                            //Process transaction
-                            ProcessResult result = ProcessResult.NoParagraph23;
-                            try
-                            {
-                                result = transaction.Process(ref fsDictionary, ref hodledAssets);
-                            }
-                            catch
-                            {
-#if DEBUG
-                                Console.WriteLine("Error occured during processing of transactions");
-                                Console.WriteLine("Saving Excel Sheet for debugging purpose...");
-#endif
-                                package.SaveAs(xlFile);
-                                throw new Exception(Strings.UnhandledException);
-                            }
-                            fsDictionary.First(x => x.Key == worksheet.Name).Value.processedTransactions++;
-                            //Insert common values
-                            worksheet.Cells[currentRow, 2].Value = fsDictionary.First(x => x.Key == worksheet.Name).Value.currentNr;
-                            worksheet.Cells[currentRow, 3].Style.Numberformat.Format = "dd.MM.yyyy";
-                            worksheet.Cells[currentRow, 3].Value = transaction.TransactionTime.Date;
-                            worksheet.Cells[currentRow, 4].Style.Numberformat.Format = "hh:mm:ss";
-                            worksheet.Cells[currentRow, 4].Value = transaction.TransactionTime.TimeOfDay;
-                            worksheet.Cells[currentRow, 8].Style.Numberformat.Format = "#,##0.00000000";
-                            worksheet.Cells[currentRow, 8].Value = transaction.AmountStart;
-                            worksheet.Cells[currentRow, 9].Value = transaction.AssetStart;
-                            worksheet.Cells[currentRow, 11].Style.Numberformat.Format = "#,##0.00 €";
-                            worksheet.Cells[currentRow, 12].Style.Numberformat.Format = "#,##0.00 €";
-
-                            if (result == ProcessResult.FullParagraph23)
-                            {
-                                worksheet.Cells[currentRow, 15].Value = "Komplette Menge " + transaction.AssetStart + " mit Haltedauer > 1 Jahr";
-                            }
-                            else if (result == ProcessResult.PartialParagraph23)
-                            {
-                                worksheet.Cells[currentRow, 15].Value = "Teilmenge " + transaction.AssetStart + " mit Haltedauer > 1 Jahr";
-                            }
-
-                            switch (transaction.TransactionType)
-                            {
-                                case TransactionType.Buy:
-                                case TransactionType.Sell:
-                                    worksheet.Cells[currentRow, 6].Value = transaction.Wallet;
-                                    worksheet.Cells[currentRow, 7].Value = transaction.GetTradingPair();
-                                    worksheet.Cells[currentRow + 1, 8].Style.Numberformat.Format = "#,##0.00000000";
-                                    worksheet.Cells[currentRow + 1, 8].Value = transaction.AmountDestination;
-                                    worksheet.Cells[currentRow + 1, 9].Value = transaction.AssetDestination;
-                                    worksheet.Cells[currentRow, 10].Value = transaction.GetExchangeRateString();
-                                    worksheet.Cells[currentRow + 1, 11].Style.Numberformat.Format = "#,##0.00 €";
-                                    worksheet.Cells[currentRow, 12].Value = transaction.TransactionValue;
-                                    worksheet.Cells[currentRow + 1, 12].Style.Numberformat.Format = "#,##0.00 €";
-                                    worksheet.Cells[currentRow + 1, 12].Value = transaction.TransactionValue;
-                                    worksheet.Cells[currentRow, 13].Value = transaction.FeeAmount + " " + transaction.FeeAsset;
-                                    worksheet.Cells[currentRow, 13].Style.HorizontalAlignment = ExcelHorizontalAlignment.Right;
-                                    worksheet.Cells[currentRow, 14].Style.Numberformat.Format = "#,##0.00 €";
-                                    worksheet.Cells[currentRow, 14].Value = transaction.FeeValue;
-                                    if (transaction.AssetStart.IsFIATcurrency())
-                                    {
-                                        worksheet.Cells[currentRow, 5].Value = "Kauf";
-                                        //worksheet.Cells[currentRow, 11].Value = 1.0m;
-                                        worksheet.Cells[currentRow + 1, 11].Value = transaction.TransactionValue / transaction.AmountDestination;
-
-                                    }
-                                    else if (transaction.AssetDestination.IsFIATcurrency())
-                                    {
-                                        worksheet.Cells[currentRow, 5].Value = "Verkauf";
-                                        worksheet.Cells[currentRow, 11].Value = transaction.TransactionValue / transaction.AmountStart;
-                                        //worksheet.Cells[currentRow + 1, 11].Value = 1.0m;
-
-                                    }
-                                    else
-                                    {
-                                        worksheet.Cells[currentRow, 5].Value = "Tausch";
-                                        worksheet.Cells[currentRow, 11].Value = transaction.TransactionValue / transaction.AmountStart;
-                                        worksheet.Cells[currentRow + 1, 11].Value = transaction.TransactionValue / transaction.AmountDestination;
-                                    }
-                                    currentRow++;
-                                    break;
-                                case TransactionType.Transfer:
-                                    worksheet.Cells[currentRow, 5].Value = "Transfer";
-                                    worksheet.Cells[currentRow, 6].Value = transaction.LocationStart;
-                                    worksheet.Cells[currentRow, 7].Value = transaction.LocationDestination;
-                                    worksheet.Cells[currentRow, 11].Value = transaction.TransactionValue / transaction.AmountStart;
-                                    worksheet.Cells[currentRow, 12].Value = transaction.TransactionValue;
-                                    break;
-                                case TransactionType.BankDeposit:
-                                    worksheet.Cells[currentRow, 5].Value = "Einzahlung";
-                                    worksheet.Cells[currentRow, 6].Value = "Bank";
-                                    worksheet.Cells[currentRow, 7].Value = transaction.LocationDestination;
-                                    worksheet.Cells[currentRow, 8].Value = transaction.AmountDestination;
-                                    worksheet.Cells[currentRow, 9].Value = transaction.AssetDestination;
-                                    //worksheet.Cells[currentRow, 11].Value = transaction.TransactionValue / transaction.AmountStart;
-                                    worksheet.Cells[currentRow, 12].Value = transaction.TransactionValue;
-                                    break;
-                                case TransactionType.BankWithdrawal:
-                                    worksheet.Cells[currentRow, 5].Value = "Auszahlung";
-                                    worksheet.Cells[currentRow, 6].Value = transaction.LocationStart;
-                                    worksheet.Cells[currentRow, 7].Value = "Bank";
-                                    worksheet.Cells[currentRow, 8].Value = transaction.AmountDestination;
-                                    worksheet.Cells[currentRow, 9].Value = transaction.AssetDestination;
-                                    //worksheet.Cells[currentRow, 11].Value = transaction.TransactionValue / transaction.AmountStart;
-                                    worksheet.Cells[currentRow, 12].Value = transaction.TransactionValue;
-                                    break;
-                                case TransactionType.Distribution:
-                                    worksheet.Cells[currentRow, 5].Value = "Distribution";
-                                    worksheet.Cells[currentRow, 8].Value = transaction.AmountDestination;
-                                    worksheet.Cells[currentRow, 9].Value = transaction.AssetDestination;
-                                    worksheet.Cells[currentRow, 12].Value = 0.00m;
-                                    worksheet.Cells[currentRow, 15].Value = "Distributionen werden bei Veräußerung mit Anschaffungskosten 0€ verrechnet.";
-                                    break;
-                                case TransactionType.Dust:
-                                    break;
-                            }
-                            fsDictionary.First(x => x.Key == worksheet.Name).Value.currentRow++;
                         }
+                        try
+                        {
+                            worksheet = package.Workbook.Worksheets.First(x => x.Name == transaction.Wallet);
+                        }
+                        catch
+                        {
+                            throw new InvalidOperationException("No valid worksheet found for Location: " + transaction.Wallet);
+                        }
+                        fsDictionary.First(x => x.Key == worksheet.Name).Value.currentRow++;
+                        fsDictionary.First(x => x.Key == worksheet.Name).Value.currentNr++;
+                        int currentRow = fsDictionary.First(x => x.Key == worksheet.Name).Value.currentRow;
+                        //Process transaction
+                        ProcessResult result = ProcessResult.NoParagraph23;
+                        try
+                        {
+                            result = transaction.Process(ref fsDictionary, ref hodledAssets);
+                        }
+                        catch
+                        {
+#if DEBUG
+                            Console.WriteLine("Error occured during processing of transactions");
+                            Console.WriteLine("Saving Excel Sheet for debugging purpose...");
+#endif
+                            package.SaveAs(xlFile);
+                            throw new Exception(Strings.UnhandledException);
+                        }
+                        fsDictionary.First(x => x.Key == worksheet.Name).Value.processedTransactions++;
+                        //Insert common values
+                        worksheet.Cells[currentRow, 2].Value = fsDictionary.First(x => x.Key == worksheet.Name).Value.currentNr;
+                        worksheet.Cells[currentRow, 3].Style.Numberformat.Format = "dd.MM.yyyy";
+                        worksheet.Cells[currentRow, 3].Value = transaction.TransactionTime.Date;
+                        worksheet.Cells[currentRow, 4].Style.Numberformat.Format = "hh:mm:ss";
+                        worksheet.Cells[currentRow, 4].Value = transaction.TransactionTime.TimeOfDay;
+                        worksheet.Cells[currentRow, 8].Style.Numberformat.Format = "#,##0.00000000";
+                        worksheet.Cells[currentRow, 8].Value = transaction.AmountStart;
+                        worksheet.Cells[currentRow, 9].Value = transaction.AssetStart;
+                        worksheet.Cells[currentRow, 11].Style.Numberformat.Format = "#,##0.00 €";
+                        worksheet.Cells[currentRow, 12].Style.Numberformat.Format = "#,##0.00 €";
+
+                        if (result == ProcessResult.FullParagraph23)
+                        {
+                            worksheet.Cells[currentRow, 15].Value = "Komplette Menge " + transaction.AssetStart + " mit Haltedauer > 1 Jahr";
+                        }
+                        else if (result == ProcessResult.PartialParagraph23)
+                        {
+                            worksheet.Cells[currentRow, 15].Value = "Teilmenge " + transaction.AssetStart + " mit Haltedauer > 1 Jahr";
+                        }
+
+                        switch (transaction.TransactionType)
+                        {
+                            case TransactionType.Buy:
+                            case TransactionType.Sell:
+                                worksheet.Cells[currentRow, 6].Value = transaction.Wallet;
+                                worksheet.Cells[currentRow, 7].Value = transaction.GetTradingPair();
+                                worksheet.Cells[currentRow + 1, 8].Style.Numberformat.Format = "#,##0.00000000";
+                                worksheet.Cells[currentRow + 1, 8].Value = transaction.AmountDestination;
+                                worksheet.Cells[currentRow + 1, 9].Value = transaction.AssetDestination;
+                                worksheet.Cells[currentRow, 10].Value = transaction.GetExchangeRateString();
+                                worksheet.Cells[currentRow + 1, 11].Style.Numberformat.Format = "#,##0.00 €";
+                                worksheet.Cells[currentRow, 12].Value = transaction.TransactionValue;
+                                worksheet.Cells[currentRow + 1, 12].Style.Numberformat.Format = "#,##0.00 €";
+                                worksheet.Cells[currentRow + 1, 12].Value = transaction.TransactionValue;
+                                worksheet.Cells[currentRow, 13].Value = transaction.FeeAmount + " " + transaction.FeeAsset;
+                                worksheet.Cells[currentRow, 13].Style.HorizontalAlignment = ExcelHorizontalAlignment.Right;
+                                worksheet.Cells[currentRow, 14].Style.Numberformat.Format = "#,##0.00 €";
+                                worksheet.Cells[currentRow, 14].Value = transaction.FeeValue;
+                                if (transaction.AssetStart.IsFIATcurrency())
+                                {
+                                    worksheet.Cells[currentRow, 5].Value = "Kauf";
+                                    //worksheet.Cells[currentRow, 11].Value = 1.0m;
+                                    worksheet.Cells[currentRow + 1, 11].Value = transaction.TransactionValue / transaction.AmountDestination;
+
+                                }
+                                else if (transaction.AssetDestination.IsFIATcurrency())
+                                {
+                                    worksheet.Cells[currentRow, 5].Value = "Verkauf";
+                                    worksheet.Cells[currentRow, 11].Value = transaction.TransactionValue / transaction.AmountStart;
+                                    //worksheet.Cells[currentRow + 1, 11].Value = 1.0m;
+
+                                }
+                                else
+                                {
+                                    worksheet.Cells[currentRow, 5].Value = "Tausch";
+                                    worksheet.Cells[currentRow, 11].Value = transaction.TransactionValue / transaction.AmountStart;
+                                    worksheet.Cells[currentRow + 1, 11].Value = transaction.TransactionValue / transaction.AmountDestination;
+                                }
+                                currentRow++;
+                                break;
+                            case TransactionType.Transfer:
+                                worksheet.Cells[currentRow, 5].Value = "Transfer";
+                                worksheet.Cells[currentRow, 6].Value = transaction.LocationStart;
+                                worksheet.Cells[currentRow, 7].Value = transaction.LocationDestination;
+                                worksheet.Cells[currentRow, 11].Value = transaction.TransactionValue / transaction.AmountStart;
+                                worksheet.Cells[currentRow, 12].Value = transaction.TransactionValue;
+                                break;
+                            case TransactionType.BankDeposit:
+                                worksheet.Cells[currentRow, 5].Value = "Einzahlung";
+                                worksheet.Cells[currentRow, 6].Value = "Bank";
+                                worksheet.Cells[currentRow, 7].Value = transaction.LocationDestination;
+                                worksheet.Cells[currentRow, 8].Value = transaction.AmountDestination;
+                                worksheet.Cells[currentRow, 9].Value = transaction.AssetDestination;
+                                //worksheet.Cells[currentRow, 11].Value = transaction.TransactionValue / transaction.AmountStart;
+                                worksheet.Cells[currentRow, 12].Value = transaction.TransactionValue;
+                                break;
+                            case TransactionType.BankWithdrawal:
+                                worksheet.Cells[currentRow, 5].Value = "Auszahlung";
+                                worksheet.Cells[currentRow, 6].Value = transaction.LocationStart;
+                                worksheet.Cells[currentRow, 7].Value = "Bank";
+                                worksheet.Cells[currentRow, 8].Value = transaction.AmountDestination;
+                                worksheet.Cells[currentRow, 9].Value = transaction.AssetDestination;
+                                //worksheet.Cells[currentRow, 11].Value = transaction.TransactionValue / transaction.AmountStart;
+                                worksheet.Cells[currentRow, 12].Value = transaction.TransactionValue;
+                                break;
+                            case TransactionType.Distribution:
+                                worksheet.Cells[currentRow, 5].Value = "Distribution";
+                                worksheet.Cells[currentRow, 8].Value = transaction.AmountDestination;
+                                worksheet.Cells[currentRow, 9].Value = transaction.AssetDestination;
+                                worksheet.Cells[currentRow, 12].Value = 0.00m;
+                                worksheet.Cells[currentRow, 15].Value = "Distributionen werden bei Veräußerung mit Anschaffungskosten 0€ verrechnet.";
+                                break;
+                            case TransactionType.Dust:
+                                break;
+                        }
+                        fsDictionary.First(x => x.Key == worksheet.Name).Value.currentRow++;
                         last = transaction;
                     }
                     //End of transaction loop

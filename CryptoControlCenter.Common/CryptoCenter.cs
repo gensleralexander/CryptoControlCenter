@@ -235,9 +235,10 @@ namespace CryptoControlCenter.Common
         {
             get
             {
-                if (currentAssets == null)
+                if (currentAssets == null || InternalInstance.ContainsMissingValues)
                 {
                     currentAssets = new ObservableCollection<WalletBalance>();
+                    InternalInstance.ContainsMissingValues = false;
                     SortedSet<HodledAsset> hodledAssets = new SortedSet<HodledAsset>();
                     List<WalletBalance> list = new List<WalletBalance>();
                     List<Transaction> transactions = SQLiteDatabaseManager.Database.Table<Transaction>().ToListAsync().Result;
@@ -259,23 +260,22 @@ namespace CryptoControlCenter.Common
                         wallets.AddRange(transactions.Select(x => x.LocationDestination));
                         foreach (string walletname in wallets.Distinct())
                         {
-                            if (!string.IsNullOrWhiteSpace(walletname) && walletname != "Bank" && walletname != "Unbekanntes Wallet")
+                            if (!string.IsNullOrWhiteSpace(walletname) && walletname != "Bank")
                             {
                                 fshelper.Add(walletname, new FinancialStatementHelper());
                             }
                         }
-                        if (!transactions.Any(x => x.TransactionValue == -1.0m))
+                        try
                         {
-                            try
+                            foreach (Transaction transaction in transactions)
                             {
-                                foreach (Transaction transaction in transactions)
-                                {
-                                    transaction.Process(ref fshelper, ref hodledAssets);
-                                }
+                                transaction.Process(ref fshelper, ref hodledAssets);
                             }
-                            catch { InternalInstance.ContainsMissingValues = true; }
                         }
-                        else { InternalInstance.ContainsMissingValues = true; }
+                        catch
+                        {
+                            InternalInstance.ContainsMissingValues = true;
+                        }
                         if (!InternalInstance.ContainsMissingValues)
                         {
                             WalletBalance item;
@@ -292,10 +292,11 @@ namespace CryptoControlCenter.Common
                                     {
                                         isLeapYear = false;
                                     }
-                                    bool taxfree = asset.Received.IsWithinTimeSpan(DateTime.UtcNow, new TimeSpan(isLeapYear ? -366 : -365, 0, 0, 0));
+                                    //Is the asset younger than one year? > not taxfree
+                                    bool taxfree = !asset.Received.IsWithinTimeSpan(DateTime.UtcNow, new TimeSpan(isLeapYear ? -366 : -365, 0, 0, 0));
                                     try
                                     {
-                                        item = list.First(x => x.Asset == asset.Asset && x.IsTaxfree == taxfree);
+                                        item = list.First(x => x.Asset == asset.Asset && asset.Location == x.Wallet && x.IsTaxfree == taxfree);
                                         item.CurrentAmount += (double)asset.CurrentAmount;
                                     }
                                     catch
@@ -577,7 +578,7 @@ namespace CryptoControlCenter.Common
                 OnPropertyChanged("CurrentAssets");
             }
         }
-        
+
         /// <inheritdoc/>
         public void SynchronizeWallets()
         {

@@ -394,6 +394,15 @@ namespace CryptoControlCenter.WPF.Resources {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Tax report successfully created: ähnelt.
+        /// </summary>
+        public static string ReportCreated {
+            get {
+                return ResourceManager.GetString("ReportCreated", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Save ähnelt.
         /// </summary>
         public static string Save {

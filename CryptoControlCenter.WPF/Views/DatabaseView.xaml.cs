@@ -84,7 +84,8 @@ namespace CryptoControlCenter.WPF.Views
                     Properties.Settings.Default.LastAccessFilePath = Path.GetDirectoryName(saveFileDialog.FileName);
                     try
                     {
-                        await DocumentGenerator.GenerateCryptoTaxReport(saveFileDialog.FileName, pickerResult.Year);
+                        string path = await DocumentGenerator.GenerateCryptoTaxReport(saveFileDialog.FileName, pickerResult.Year);
+                        MessageBox.Show(Strings.ReportCreated + Environment.NewLine + path, "Success", MessageBoxButton.OK, MessageBoxImage.Information);
                     }
                     catch (Exception ex)
                     {
