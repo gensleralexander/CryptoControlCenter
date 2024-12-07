@@ -4,6 +4,7 @@
              xmlns:system="clr-namespace:System;assembly=System.Runtime"
              xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
              xmlns:converter="clr-namespace:CryptoControlCenter.WPF.Converter"
+             xmlns:syncfusion="http://schemas.syncfusion.com/wpf"
              StartupUri="MainWindow.xaml">
     <Application.Resources>
         <system:Double x:Key="AppFontSize">16</system:Double>
@@ -23,10 +24,20 @@
         <converter:SunburstLabelConverter x:Key="SunburstLabelConverter"/>
         <converter:BoolVisibilityConverter x:Key="BoolVisibilityConverter"/>
         <converter:AssetAmountConverter x:Key="AssetAmountConverter"/>
+        <converter:AssetValueConverter x:Key="AssetValueConverter"/>
+        <converter:ProfitCellStyleConverter x:Key="ProfitCellStyleConverter"/>
+        <converter:DateTimeConverter x:Key="DateTimeConverter"/>
 
         <Style TargetType="iconPacks:PackIconMaterial">
             <Setter Property="Width" Value="{DynamicResource ButtonSize}"/>
             <Setter Property="Height" Value="{DynamicResource ButtonSize}"/>
+        </Style>
+
+        <Style TargetType="syncfusion:GridStackedHeaderCellControl">
+            <Setter Property="Foreground" Value="{StaticResource Foreground}"/>
+            <Setter Property="BorderBrush" Value="{StaticResource Selected}"/>
+            <Setter Property="Background" Value="{StaticResource Background}"/>
+            <Setter Property="FontSize" Value="{StaticResource AppFontSizeHeaders}"/>
         </Style>
 
         <Style TargetType="Button">

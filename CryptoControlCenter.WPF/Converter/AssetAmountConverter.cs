@@ -10,7 +10,11 @@ namespace CryptoControlCenter.WPF.Converter
         {
             if (value != null && value.GetType() == typeof(decimal))
             {
-                return ((decimal)value).ToString("0.#############################");
+                return ((decimal)value).ToString("0.#######");
+            }
+            else if(value != null && value.GetType() == typeof(double))
+            {
+                return ((double)value).ToString("0.#######");
             }
             else return string.Empty;
         }

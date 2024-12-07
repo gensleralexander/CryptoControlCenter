@@ -8,10 +8,9 @@
       xmlns:syncfusion="http://schemas.syncfusion.com/wpf"
       mc:Ignorable="d" 
       d:DesignHeight="450" d:DesignWidth="1000" Width="Auto">
-
     <Grid>
         <Grid.ColumnDefinitions>
-
+            
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
@@ -29,22 +28,27 @@
             </StackPanel>
         </StackPanel>
 
-        <syncfusion:SfDataGrid x:Name="TransactionsGrid" SelectionChanged="TransactionsGrid_SelectionChanged" Visibility="Hidden" CurrentCellEndEdit="TransactionsGrid_CurrentCellEndEdit" CurrentCellBeginEdit="TransactionsGrid_CurrentCellBeginEdit" EditTrigger="OnTap" EditorSelectionBehavior="SelectAll" LostFocusBehavior="Default" Grid.Row="1" ColumnSizer="Auto" AllowResizingColumns="True" SelectionUnit="Cell" AutoGenerateColumns="False" ItemsSource="{Binding Transactions}" Margin="1">
+        <syncfusion:SfDataGrid x:Name="TransactionsGrid" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" SelectionChanged="TransactionsGrid_SelectionChanged" Visibility="Hidden" CurrentCellEndEdit="TransactionsGrid_CurrentCellEndEdit" CurrentCellBeginEdit="TransactionsGrid_CurrentCellBeginEdit" EditTrigger="OnTap" EditorSelectionBehavior="SelectAll" LostFocusBehavior="Default" Grid.Row="1" ColumnSizer="Star" AllowResizingColumns="True" SelectionUnit="Cell" AutoGenerateColumns="False" ItemsSource="{Binding Transactions}" Margin="1">
+            <syncfusion:SfDataGrid.HeaderTemplate>
+                <DataTemplate>
+                    <TextBlock Text="{Binding}" Foreground="{StaticResource Foreground}"/>
+                </DataTemplate>
+            </syncfusion:SfDataGrid.HeaderTemplate>
             <syncfusion:SfDataGrid.Columns>
-                <syncfusion:GridNumericColumn TextAlignment="Center" AllowEditing="False" MappingName="TransactionID" HeaderText="ID" NumberDecimalDigits="0"/>
-                <syncfusion:GridTextColumn TextAlignment="Center" AllowEditing="True" MappingName="Wallet"/>
-                <syncfusion:GridDateTimeColumn TextAlignment="Center" AllowEditing="True" Pattern="SortableDateTime" MappingName="TransactionTime" HeaderText="{x:Static res:Strings.TransactionTime}"/>
-                <syncfusion:GridTextColumn TextAlignment="Center" AllowEditing="True" MappingName="TransactionType" HeaderText="{x:Static res:Strings.Type}"/>
-                <syncfusion:GridNumericColumn TextAlignment="Center" AllowEditing="True" MappingName="AmountStart" HeaderText="{x:Static res:Strings.Amount}" DisplayBinding="{Binding Path=AmountStart, Converter={StaticResource AssetAmountConverter}}"/>
-                <syncfusion:GridTextColumn TextAlignment="Center" AllowEditing="True" MappingName="AssetStart" HeaderText="{x:Static res:Strings.Asset}"/>
-                <syncfusion:GridComboBoxColumn TextAlignment="Center" ItemsSource="{Binding WalletNames}" AllowEditing="True" MappingName="LocationStart" HeaderText="{x:Static res:Strings.On}"/>
-                <syncfusion:GridNumericColumn TextAlignment="Center" AllowEditing="True" MappingName="AmountDestination" HeaderText="{x:Static res:Strings.Amount}" DisplayBinding="{Binding Path=AmountDestination, Converter={StaticResource AssetAmountConverter}}"/>
-                <syncfusion:GridTextColumn TextAlignment="Center" AllowEditing="True" MappingName="AssetDestination" HeaderText="{x:Static res:Strings.Asset}"/>
-                <syncfusion:GridComboBoxColumn TextAlignment="Center" ItemsSource="{Binding WalletNames}" AllowEditing="True" MappingName="LocationDestination" HeaderText="{x:Static res:Strings.On}"/>
-                <syncfusion:GridNumericColumn TextAlignment="Center" AllowEditing="True" MappingName="TransactionValue" HeaderText="{x:Static res:Strings.Value}" NumberDecimalDigits="2"/>
-                <syncfusion:GridNumericColumn TextAlignment="Center" AllowEditing="True" MappingName="FeeAmount" HeaderText="{x:Static res:Strings.Amount}" DisplayBinding="{Binding Path=FeeAmount, Converter={StaticResource AssetAmountConverter}}"/>
-                <syncfusion:GridTextColumn TextAlignment="Center" AllowEditing="True" MappingName="FeeAsset" HeaderText="{x:Static res:Strings.Asset}"/>
-                <syncfusion:GridNumericColumn TextAlignment="Center" AllowEditing="True" MappingName="FeeValue" HeaderText="{x:Static res:Strings.FeeValue}" NumberDecimalDigits="2"/>
+                <syncfusion:GridNumericColumn ColumnSizer="Star" TextAlignment="Center" AllowEditing="False" MappingName="TransactionID" HeaderText="ID" NumberDecimalDigits="0"/>
+                <syncfusion:GridTextColumn ColumnSizer="Star" TextAlignment="Center" AllowEditing="True" MappingName="Wallet"/>
+                <syncfusion:GridDateTimeColumn ColumnSizer="Auto" TextAlignment="Center" AllowEditing="True" Pattern="SortableDateTime" MappingName="TransactionTime" DisplayBinding="{Binding TransactionTime, Converter={StaticResource DateTimeConverter}}" HeaderText="{x:Static res:Strings.TransactionTime}"/>
+                <syncfusion:GridTextColumn ColumnSizer="Star" TextAlignment="Center" AllowEditing="True" MappingName="TransactionType" HeaderText="{x:Static res:Strings.Type}"/>
+                <syncfusion:GridNumericColumn ColumnSizer="Star" TextAlignment="Center" AllowEditing="True" MappingName="AmountStart" HeaderText="{x:Static res:Strings.Amount}" DisplayBinding="{Binding Path=AmountStart, Converter={StaticResource AssetAmountConverter}}"/>
+                <syncfusion:GridTextColumn ColumnSizer="Star" TextAlignment="Center" AllowEditing="True" MappingName="AssetStart" HeaderText="{x:Static res:Strings.Asset}"/>
+                <syncfusion:GridComboBoxColumn ColumnSizer="Star" TextAlignment="Center" ItemsSource="{Binding WalletNames}" AllowEditing="True" MappingName="LocationStart" HeaderText="{x:Static res:Strings.On}"/>
+                <syncfusion:GridNumericColumn ColumnSizer="Star" TextAlignment="Center" AllowEditing="True" MappingName="AmountDestination" HeaderText="{x:Static res:Strings.Amount}" DisplayBinding="{Binding Path=AmountDestination, Converter={StaticResource AssetAmountConverter}}"/>
+                <syncfusion:GridTextColumn ColumnSizer="Star" TextAlignment="Center" AllowEditing="True" MappingName="AssetDestination" HeaderText="{x:Static res:Strings.Asset}"/>
+                <syncfusion:GridComboBoxColumn ColumnSizer="Star" TextAlignment="Center" ItemsSource="{Binding WalletNames}" AllowEditing="True" MappingName="LocationDestination" HeaderText="{x:Static res:Strings.On}"/>
+                <syncfusion:GridNumericColumn ColumnSizer="Auto" TextAlignment="Center" AllowEditing="True" MappingName="TransactionValue" DisplayBinding="{Binding TransactionValue, StringFormat='{}{0:c} €'}" HeaderText="{x:Static res:Strings.Value}" NumberDecimalDigits="2"/>
+                <syncfusion:GridNumericColumn ColumnSizer="Star" TextAlignment="Center" AllowEditing="True" MappingName="FeeAmount" HeaderText="{x:Static res:Strings.Amount}" DisplayBinding="{Binding Path=FeeAmount, Converter={StaticResource AssetAmountConverter}}"/>
+                <syncfusion:GridTextColumn ColumnSizer="Star" TextAlignment="Center" AllowEditing="True" MappingName="FeeAsset" HeaderText="{x:Static res:Strings.Asset}"/>
+                <syncfusion:GridNumericColumn ColumnSizer="Star" TextAlignment="Center" AllowEditing="True" MappingName="FeeValue" HeaderText="{x:Static res:Strings.FeeValue}" DisplayBinding="{Binding FeeValue, StringFormat='{}{0:c} €'}" NumberDecimalDigits="2"/>
             </syncfusion:SfDataGrid.Columns>
             <syncfusion:SfDataGrid.StackedHeaderRows>
                 <syncfusion:StackedHeaderRow>

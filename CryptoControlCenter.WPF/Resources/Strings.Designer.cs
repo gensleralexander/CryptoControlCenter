@@ -106,7 +106,7 @@ namespace CryptoControlCenter.WPF.Resources {
         }
         
         /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die Assets ähnelt.
+        ///   Sucht eine lokalisierte Zeichenfolge, die Crypto-Assets ähnelt.
         /// </summary>
         public static string Assets {
             get {
@@ -183,6 +183,24 @@ namespace CryptoControlCenter.WPF.Resources {
         public static string Currency {
             get {
                 return ResourceManager.GetString("Currency", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Current Price ähnelt.
+        /// </summary>
+        public static string CurrentPrice {
+            get {
+                return ResourceManager.GetString("CurrentPrice", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Database ähnelt.
+        /// </summary>
+        public static string Database {
+            get {
+                return ResourceManager.GetString("Database", resourceCulture);
             }
         }
         
@@ -268,7 +286,7 @@ namespace CryptoControlCenter.WPF.Resources {
         }
         
         /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die Fee Value in € ähnelt.
+        ///   Sucht eine lokalisierte Zeichenfolge, die Fee Value ähnelt.
         /// </summary>
         public static string FeeValue {
             get {
@@ -376,6 +394,15 @@ namespace CryptoControlCenter.WPF.Resources {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die No ähnelt.
+        /// </summary>
+        public static string No {
+            get {
+                return ResourceManager.GetString("No", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Not ähnelt.
         /// </summary>
         public static string Not {
@@ -394,11 +421,56 @@ namespace CryptoControlCenter.WPF.Resources {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Positions ähnelt.
+        /// </summary>
+        public static string Positions {
+            get {
+                return ResourceManager.GetString("Positions", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Profit ähnelt.
+        /// </summary>
+        public static string Profit {
+            get {
+                return ResourceManager.GetString("Profit", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Profit to Buy Time ähnelt.
+        /// </summary>
+        public static string ProfitBuy {
+            get {
+                return ResourceManager.GetString("ProfitBuy", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Profit to current Value ähnelt.
+        /// </summary>
+        public static string ProfitCurrent {
+            get {
+                return ResourceManager.GetString("ProfitCurrent", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Tax report successfully created: ähnelt.
         /// </summary>
         public static string ReportCreated {
             get {
                 return ResourceManager.GetString("ReportCreated", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Reset Prices ähnelt.
+        /// </summary>
+        public static string ResetPrices {
+            get {
+                return ResourceManager.GetString("ResetPrices", resourceCulture);
             }
         }
         
@@ -426,6 +498,15 @@ namespace CryptoControlCenter.WPF.Resources {
         public static string SelectYearFull {
             get {
                 return ResourceManager.GetString("SelectYearFull", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Settings ähnelt.
+        /// </summary>
+        public static string Settings {
+            get {
+                return ResourceManager.GetString("Settings", resourceCulture);
             }
         }
         
@@ -475,6 +556,15 @@ namespace CryptoControlCenter.WPF.Resources {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Total:  ähnelt.
+        /// </summary>
+        public static string Total {
+            get {
+                return ResourceManager.GetString("Total", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Transactions ähnelt.
         /// </summary>
         public static string Transactions {
@@ -511,11 +601,20 @@ namespace CryptoControlCenter.WPF.Resources {
         }
         
         /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die Value in € ähnelt.
+        ///   Sucht eine lokalisierte Zeichenfolge, die Value ähnelt.
         /// </summary>
         public static string Value {
             get {
                 return ResourceManager.GetString("Value", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Value at Buy-Time ähnelt.
+        /// </summary>
+        public static string ValueAtBuyRate {
+            get {
+                return ResourceManager.GetString("ValueAtBuyRate", resourceCulture);
             }
         }
         
@@ -543,6 +642,42 @@ namespace CryptoControlCenter.WPF.Resources {
         public static string WarningDatabase {
             get {
                 return ResourceManager.GetString("WarningDatabase", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die What If? ähnelt.
+        /// </summary>
+        public static string WhatIf {
+            get {
+                return ResourceManager.GetString("WhatIf", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die What if Price hits? ähnelt.
+        /// </summary>
+        public static string WhatIfPrice {
+            get {
+                return ResourceManager.GetString("WhatIfPrice", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die ...then Value would be ähnelt.
+        /// </summary>
+        public static string WhatIfValue {
+            get {
+                return ResourceManager.GetString("WhatIfValue", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Yes ähnelt.
+        /// </summary>
+        public static string Yes {
+            get {
+                return ResourceManager.GetString("Yes", resourceCulture);
             }
         }
         

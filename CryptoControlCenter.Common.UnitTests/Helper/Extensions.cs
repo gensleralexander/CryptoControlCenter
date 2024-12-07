@@ -218,7 +218,7 @@ namespace CryptoControlCenter.Common.UnitTests.Helper
             Assert.AreEqual(ProcessResult.NoParagraph23, results[6], "Process: Result[6] not as expected");
             Assert.AreEqual(ProcessResult.NoParagraph23, results[7], "Process: Result[7] not as expected");
             //a2 has 3 BTC, a5 has 9.5 BTC
-            asset2.Location = "Test2";  //3 to Test2
+            asset2.Wallet = "Test2";  //3 to Test2
             asset5.CurrentAmount = 5.0m; //4 to Test2, 0.5 fees
             asset5.CurrentValueOnBuyRate = 5.0m;
             HodledAsset asset6 = new HodledAsset("Test2", "BTC", 4.0m, 4.0m, asset5.Received);
@@ -242,7 +242,7 @@ namespace CryptoControlCenter.Common.UnitTests.Helper
             results[9] = transactions[9].Process(ref fsHelper, ref set); //Deposit to Test (gets dropped)
             Assert.AreEqual(ProcessResult.NoParagraph23, results[8], "Process: Result[8] not as expected");
             Assert.AreEqual(ProcessResult.NoParagraph23, results[9], "Process: Result[9] not as expected");
-            asset2.Location = "Test"; //3 to Test
+            asset2.Wallet = "Test"; //3 to Test
             HodledAsset asset7 = new HodledAsset("Test", "BTC", 3.5m, 3.5m, asset6.Received);
             asset6.CurrentAmount = 0.0m; // -0.5 fee
             asset6.CurrentValueOnBuyRate = 0.0m;

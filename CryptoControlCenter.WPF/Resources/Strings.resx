@@ -133,7 +133,7 @@
     <value>Asset</value>
   </data>
   <data name="Assets" xml:space="preserve">
-    <value>Assets</value>
+    <value>Crypto-Assets</value>
   </data>
   <data name="Before" xml:space="preserve">
     <value>before</value>
@@ -158,6 +158,12 @@
   </data>
   <data name="Currency" xml:space="preserve">
     <value>Currency</value>
+  </data>
+  <data name="CurrentPrice" xml:space="preserve">
+    <value>Current Price</value>
+  </data>
+  <data name="Database" xml:space="preserve">
+    <value>Database</value>
   </data>
   <data name="Delete" xml:space="preserve">
     <value>Delete</value>
@@ -187,7 +193,7 @@
     <value>Fee</value>
   </data>
   <data name="FeeValue" xml:space="preserve">
-    <value>Fee Value in €</value>
+    <value>Fee Value</value>
   </data>
   <data name="Filter" xml:space="preserve">
     <value>Only show rows that need inspection</value>
@@ -222,14 +228,32 @@
   <data name="MissingValues" xml:space="preserve">
     <value>Database has missing or incorrect values. Please switch to Database Tab and synchronize/fill missing/correct wrong informations. It is advised to add all wallets first for best results.</value>
   </data>
+  <data name="No" xml:space="preserve">
+    <value>No</value>
+  </data>
   <data name="Not" xml:space="preserve">
     <value>Not</value>
   </data>
   <data name="On" xml:space="preserve">
     <value>on</value>
   </data>
+  <data name="Positions" xml:space="preserve">
+    <value>Positions</value>
+  </data>
+  <data name="Profit" xml:space="preserve">
+    <value>Profit</value>
+  </data>
+  <data name="ProfitBuy" xml:space="preserve">
+    <value>Profit to Buy Time</value>
+  </data>
+  <data name="ProfitCurrent" xml:space="preserve">
+    <value>Profit to current Value</value>
+  </data>
   <data name="ReportCreated" xml:space="preserve">
     <value>Tax report successfully created:</value>
+  </data>
+  <data name="ResetPrices" xml:space="preserve">
+    <value>Reset Prices</value>
   </data>
   <data name="Save" xml:space="preserve">
     <value>Save</value>
@@ -239,6 +263,9 @@
   </data>
   <data name="SelectYearFull" xml:space="preserve">
     <value>Please select the year, for which the tax report should be generated:</value>
+  </data>
+  <data name="Settings" xml:space="preserve">
+    <value>Settings</value>
   </data>
   <data name="SoftwareLicense" xml:space="preserve">
     <value>THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.</value>
@@ -255,6 +282,9 @@
   <data name="To" xml:space="preserve">
     <value>to</value>
   </data>
+  <data name="Total" xml:space="preserve">
+    <value>Total: </value>
+  </data>
   <data name="Transactions" xml:space="preserve">
     <value>Transactions</value>
   </data>
@@ -268,7 +298,10 @@
     <value>An unhandled exception has occured: </value>
   </data>
   <data name="Value" xml:space="preserve">
-    <value>Value in €</value>
+    <value>Value</value>
+  </data>
+  <data name="ValueAtBuyRate" xml:space="preserve">
+    <value>Value at Buy-Time</value>
   </data>
   <data name="Wallets" xml:space="preserve">
     <value>Wallets</value>
@@ -278,6 +311,18 @@
   </data>
   <data name="WarningDatabase" xml:space="preserve">
     <value>Warning! Editing values can lead to database inconsistency. Proceed with caution.</value>
+  </data>
+  <data name="WhatIf" xml:space="preserve">
+    <value>What If?</value>
+  </data>
+  <data name="WhatIfPrice" xml:space="preserve">
+    <value>What if Price hits?</value>
+  </data>
+  <data name="WhatIfValue" xml:space="preserve">
+    <value>...then Value would be</value>
+  </data>
+  <data name="Yes" xml:space="preserve">
+    <value>Yes</value>
   </data>
   <data name="Zoom" xml:space="preserve">
     <value>Font Size</value>

@@ -153,6 +153,9 @@
   <data name="NewTransaction" xml:space="preserve">
     <value>Neue Transaktion hinzugefügt: </value>
   </data>
+  <data name="No" xml:space="preserve">
+    <value>Nein</value>
+  </data>
   <data name="NoCachedSymbols" xml:space="preserve">
     <value>Keine gespeicherten Handelspaare gefunden.</value>
   </data>
@@ -188,5 +191,8 @@
   </data>
   <data name="UnhandledException" xml:space="preserve">
     <value>Ein unbekannter Fehler ist beim Verarbeiten der Transaktionen aufgetreten. Die Excel-Datei wurde an der letzten gültigen Transaktion gespeichert.</value>
+  </data>
+  <data name="Yes" xml:space="preserve">
+    <value>Ja</value>
   </data>
 </root>

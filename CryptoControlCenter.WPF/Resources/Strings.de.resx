@@ -133,7 +133,7 @@
     <value>Währung</value>
   </data>
   <data name="Assets" xml:space="preserve">
-    <value>Vermögenswerte</value>
+    <value>Krypto-Vermögenswerte</value>
   </data>
   <data name="Before" xml:space="preserve">
     <value>vorher</value>
@@ -158,6 +158,12 @@
   </data>
   <data name="Currency" xml:space="preserve">
     <value>Währung</value>
+  </data>
+  <data name="CurrentPrice" xml:space="preserve">
+    <value>Aktueller Preis</value>
+  </data>
+  <data name="Database" xml:space="preserve">
+    <value>Datenbank</value>
   </data>
   <data name="Delete" xml:space="preserve">
     <value>Löschen</value>
@@ -187,7 +193,7 @@
     <value>Gebühr</value>
   </data>
   <data name="FeeValue" xml:space="preserve">
-    <value>Gebührwert in €</value>
+    <value>Gebührenwert</value>
   </data>
   <data name="Filter" xml:space="preserve">
     <value>Zeige nur auffällige Zeilen</value>
@@ -200,6 +206,9 @@
   </data>
   <data name="GenericWallet" xml:space="preserve">
     <value>Generisches Wallet</value>
+  </data>
+  <data name="Info" xml:space="preserve">
+    <value>Info</value>
   </data>
   <data name="Language" xml:space="preserve">
     <value>Sprache</value>
@@ -222,14 +231,32 @@
   <data name="MissingValues" xml:space="preserve">
     <value>Datenbank enthält fehlende oder fehlerhafte Werte. Bitte wechseln Sie zum Datenbank-Tab und synchronisieren Sie Ihre Assets, füllen die fehlenden Werte händisch aus oder korrigieren die fehlerhaften Werte. Es wird empfohlen, vorher alle Wallets hinzuzufügen um das beste Ergebnis bei der automatischen Synchronisation zu erzielen.</value>
   </data>
+  <data name="No" xml:space="preserve">
+    <value>Nein</value>
+  </data>
   <data name="Not" xml:space="preserve">
     <value>Nicht</value>
   </data>
   <data name="On" xml:space="preserve">
     <value>auf</value>
   </data>
+  <data name="Positions" xml:space="preserve">
+    <value>Positionen</value>
+  </data>
+  <data name="Profit" xml:space="preserve">
+    <value>Profit</value>
+  </data>
+  <data name="ProfitBuy" xml:space="preserve">
+    <value>Profit zum Kaufzeitpunkt</value>
+  </data>
+  <data name="ProfitCurrent" xml:space="preserve">
+    <value>Profit zum aktuellen Wert</value>
+  </data>
   <data name="ReportCreated" xml:space="preserve">
     <value>Steuerbericht erfolgreich erstellt:</value>
+  </data>
+  <data name="ResetPrices" xml:space="preserve">
+    <value>Preise zurücksetzen</value>
   </data>
   <data name="Save" xml:space="preserve">
     <value>Speichern</value>
@@ -239,6 +266,9 @@
   </data>
   <data name="SelectYearFull" xml:space="preserve">
     <value>Bitte wählen Sie das Jahr aus, für das der Steuerreport erstellt werden soll:</value>
+  </data>
+  <data name="Settings" xml:space="preserve">
+    <value>Einstellungen</value>
   </data>
   <data name="SoftwareLicense" xml:space="preserve">
     <value>DIE SOFTWARE WIRD OHNE MÄNGELGEWÄHR BEREITGESTELLT, OHNE AUSDRÜCKLICHE ODER STILLSCHWEIGENDE GEWÄHRLEISTUNG, EINSCHLIESSLICH, ABER NICHT BESCHRÄNKT AUF GEWÄHRLEISTUNGEN DER MARKTFÄHIGKEIT, EIGNUNG FÜR EINEN BESTIMMTEN ZWECK UND NICHTVERLETZUNG VON RECHTEN DRITTER. DIE AUTOREN ODER URHEBERRECHTSINHABER SIND IN KEINEM FALL HAFTBAR FÜR ANSPRÜCHE, SCHÄDEN ODER SONSTIGE HAFTUNG, OB AUS VERTRAG, UNERLAUBTER HANDLUNG ODER ANDERWEITIG, DIE SICH AUS DER NUTZUNG ODER IM ZUSAMMENHANG MIT DER SOFTWARE ODER ANDEREN HANDLUNGEN MIT DER SOFTWARE ERGEBEN.</value>
@@ -255,6 +285,9 @@
   <data name="To" xml:space="preserve">
     <value>nach</value>
   </data>
+  <data name="Total" xml:space="preserve">
+    <value>Total: </value>
+  </data>
   <data name="Transactions" xml:space="preserve">
     <value>Transaktionen</value>
   </data>
@@ -268,7 +301,10 @@
     <value>Ein unbehandelter Fehler ist aufgetreten: </value>
   </data>
   <data name="Value" xml:space="preserve">
-    <value>Wert in €</value>
+    <value>Wert</value>
+  </data>
+  <data name="ValueAtBuyRate" xml:space="preserve">
+    <value>Wert bei Kauf</value>
   </data>
   <data name="Wallets" xml:space="preserve">
     <value>Wallets</value>
@@ -278,6 +314,18 @@
   </data>
   <data name="WarningDatabase" xml:space="preserve">
     <value>Warnung! Das Bearbeiten von Einträgen kann zur Inkonsistenz der Datenbank führen.</value>
+  </data>
+  <data name="WhatIf" xml:space="preserve">
+    <value>Was wäre wenn?</value>
+  </data>
+  <data name="WhatIfPrice" xml:space="preserve">
+    <value>Was wäre bei Preis?</value>
+  </data>
+  <data name="WhatIfValue" xml:space="preserve">
+    <value>...dann wäre der Wert</value>
+  </data>
+  <data name="Yes" xml:space="preserve">
+    <value>Ja</value>
   </data>
   <data name="Zoom" xml:space="preserve">
     <value>Textgröße</value>

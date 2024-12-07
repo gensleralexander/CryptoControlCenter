@@ -153,6 +153,9 @@
   <data name="NewTransaction" xml:space="preserve">
     <value>New Transaction added:</value>
   </data>
+  <data name="No" xml:space="preserve">
+    <value>No</value>
+  </data>
   <data name="NoCachedSymbols" xml:space="preserve">
     <value>No Cached Data found.</value>
   </data>
@@ -188,5 +191,8 @@
   </data>
   <data name="UnhandledException" xml:space="preserve">
     <value>An unhandled exception occured during the processing of transactions. The Excel File was saved at the last succesful transaction.</value>
+  </data>
+  <data name="Yes" xml:space="preserve">
+    <value>Yes</value>
   </data>
 </root>

@@ -39,6 +39,10 @@ namespace CryptoControlCenter.Common
         /// </summary>
         public bool QueueRunning { get; }
         /// <summary>
+        /// Refreshes the balances/assets with the current values.
+        /// </summary>
+        public void RefreshBalanceValues();
+        /// <summary>
         /// Method to create a new Wallet and adds them to the Lists.
         /// </summary>
         /// <param name="walletName">Name of the new Wallet</param>

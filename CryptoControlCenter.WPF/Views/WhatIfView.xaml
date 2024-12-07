@@ -1,0 +1,129 @@
+﻿<UserControl x:Class="CryptoControlCenter.WPF.Views.WhatIfView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:CryptoControlCenter.WPF.Views"
+             xmlns:helper="clr-namespace:CryptoControlCenter.WPF.Helper"
+             xmlns:syncfusion="http://schemas.syncfusion.com/wpf"
+             xmlns:vm="clr-namespace:CryptoControlCenter.WPF.ViewModels"
+             xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
+             xmlns:res="clr-namespace:CryptoControlCenter.WPF.Resources"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800"
+             Background="{StaticResource Background}">
+    <UserControl.Resources>
+        <helper:ProfitAggregate x:Key="profitAggregate"/>
+    </UserControl.Resources>
+    <UserControl.DataContext>
+        <vm:WhatIfViewModel/>
+    </UserControl.DataContext>
+    <Grid Margin="2">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <StackPanel Grid.Column="0" Grid.Row="0">
+            <TextBlock Text="{x:Static res:Strings.Wallets}" FontSize="{DynamicResource AppFontSizeHeaders}" Margin="0,3,0,10"/>
+            <ListBox x:Name="WalletList" SelectedItem="{Binding SelectedWallet,Mode=TwoWay}" ItemsSource="{Binding Wallets}" Margin="0,0,0,30" BorderThickness="0" Background="{StaticResource Background}">
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <TextBlock Text="{Binding WalletName}" Foreground="{StaticResource Foreground}" FontSize="{DynamicResource AppFontSize}"/>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
+            <TextBlock Text="{x:Static res:Strings.WhatIf}" FontSize="{DynamicResource AppFontSizeHeaders}" Margin="0,3,0,10"/>
+        </StackPanel>
+
+        <StackPanel Grid.Row="0" Grid.Column="1" HorizontalAlignment="Right" Width="Auto" Margin="20">
+            <Button x:Name="ResetPrices" Width="Auto" Command="{Binding ResetCommand}">
+                <Button.Content>
+                    <StackPanel Orientation="Horizontal">
+                        <iconPacks:PackIconMaterial Kind="Restore" VerticalAlignment="Center" 
+                                              HorizontalAlignment="Center" Margin="10"/>
+                        <TextBlock Text="{x:Static res:Strings.ResetPrices}" Margin="0,10,10,10"/>
+                    </StackPanel>
+                </Button.Content>
+            </Button>
+        </StackPanel>
+
+        <syncfusion:SfDataGrid x:Name="WhatIfList" LiveDataUpdateMode="AllowSummaryUpdate" Grid.Column="0" Grid.ColumnSpan="2" Grid.Row="1" AllowEditing="True" NavigationMode="Cell" CurrentCellBeginEdit="WhatIfList_CurrentCellBeginEdit" CurrentCellEndEdit="WhatIfList_CurrentCellEndEdit" EditTrigger="OnTap" EditorSelectionBehavior="SelectAll" LostFocusBehavior="Default" ColumnSizer="Auto" AllowResizingColumns="True" SelectionUnit="Cell" AutoGenerateColumns="False" ItemsSource="{Binding Balances}">
+            <syncfusion:SfDataGrid.TableSummaryCellStyle>
+                <Style TargetType="syncfusion:GridTableSummaryCell">
+                    <Setter Property="HorizontalAlignment" Value="Stretch"/>
+                    <Setter Property="HorizontalContentAlignment" Value="Center"/>
+                    <Setter Property="BorderThickness" Value="0"/>
+                </Style>
+            </syncfusion:SfDataGrid.TableSummaryCellStyle>
+            <syncfusion:SfDataGrid.HeaderTemplate>
+                <DataTemplate>
+                    <TextBlock Text="{Binding}" Foreground="{StaticResource OnMouseOver}"/>
+                </DataTemplate>
+            </syncfusion:SfDataGrid.HeaderTemplate>
+            <syncfusion:SfDataGrid.Columns>
+                <syncfusion:GridTextColumn TextAlignment="Center" ColumnSizer="Auto" AllowEditing="False" MappingName="Asset"/>
+                <syncfusion:GridNumericColumn TextAlignment="Center" ColumnSizer="Auto" AllowEditing="False" MappingName="CurrentAmount" DisplayBinding="{Binding Path=CurrentAmount, Converter={StaticResource AssetAmountConverter}}" HeaderText="{x:Static res:Strings.Amount}"/>
+                <syncfusion:GridNumericColumn TextAlignment="Center" ColumnSizer="Star" AllowEditing="False" MappingName="CurrentValue" HeaderText="{x:Static res:Strings.Value}" DisplayBinding="{Binding Path=CurrentValue, Converter={StaticResource AssetValueConverter}}"/>
+                <syncfusion:GridNumericColumn TextAlignment="Center" ColumnSizer="Star" AllowEditing="False" MappingName="CurrentValueOnBuyRate" HeaderText="{x:Static res:Strings.ValueAtBuyRate}" DisplayBinding="{Binding Path=CurrentValueOnBuyRate, Converter={StaticResource AssetValueConverter}}"/>
+                <syncfusion:GridNumericColumn TextAlignment="Center" ColumnSizer="Auto" AllowEditing="False" MappingName="CurrentPrice" HeaderText="{x:Static res:Strings.CurrentPrice}" DisplayBinding="{Binding Path=CurrentPrice, Converter={StaticResource AssetValueConverter}}"/>
+                <syncfusion:GridNumericColumn TextAlignment="Center" Width="180" AllowEditing="True" MappingName="WhatIfPrice" HeaderText="{x:Static res:Strings.WhatIfPrice}">
+                    <syncfusion:GridNumericColumn.HeaderTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding}" Foreground="{StaticResource Foreground}"/>
+                        </DataTemplate>
+                    </syncfusion:GridNumericColumn.HeaderTemplate>
+                    <syncfusion:GridNumericColumn.CellTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding Path=WhatIfPrice, Converter={StaticResource AssetValueConverter}}" TextAlignment="Center" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Foreground="{StaticResource Foreground}" Background="{StaticResource ListBackground}"/>
+                        </DataTemplate>
+                    </syncfusion:GridNumericColumn.CellTemplate>
+                </syncfusion:GridNumericColumn>
+                <syncfusion:GridNumericColumn TextAlignment="Center" ColumnSizer="Auto" AllowEditing="False" MappingName="WhatIfValue" HeaderText="{x:Static res:Strings.WhatIfValue}" DisplayBinding="{Binding Path=WhatIfValue, Converter={StaticResource AssetValueConverter}}"/>
+                <syncfusion:GridNumericColumn TextAlignment="Center" Width="160" AllowEditing="False" MappingName="WhatIfProfitCurrent" HeaderText="{x:Static res:Strings.ProfitCurrent}">
+                    <syncfusion:GridNumericColumn.CellTemplate>
+                        <DataTemplate>
+                            <TextBlock Foreground="{Binding WhatIfProfitCurrent, Converter={StaticResource ProfitCellStyleConverter}}" VerticalAlignment="Center" HorizontalAlignment="Center">
+                            <Run Text="{Binding WhatIfProfitCurrent, StringFormat=0.###, Mode=OneWay}"/>
+                            <Run Text="%"/>
+                            </TextBlock>
+                        </DataTemplate>
+                    </syncfusion:GridNumericColumn.CellTemplate>
+                </syncfusion:GridNumericColumn>
+                <syncfusion:GridNumericColumn TextAlignment="Center" Width="150" AllowEditing="False" MappingName="WhatIfProfitBuy" HeaderText="{x:Static res:Strings.ProfitBuy}">
+                    <syncfusion:GridNumericColumn.CellTemplate>
+                        <DataTemplate>
+                            <TextBlock Foreground="{Binding WhatIfProfitBuy, Converter={StaticResource ProfitCellStyleConverter}}" VerticalAlignment="Center" HorizontalAlignment="Center">
+                            <Run Text="{Binding WhatIfProfitBuy, StringFormat=0.###, Mode=OneWay}"/>
+                            <Run Text="%"/>
+                            </TextBlock>
+                        </DataTemplate>
+                    </syncfusion:GridNumericColumn.CellTemplate>
+                </syncfusion:GridNumericColumn>
+            </syncfusion:SfDataGrid.Columns>
+            <syncfusion:SfDataGrid.TableSummaryRows>
+                <syncfusion:GridTableSummaryRow ShowSummaryInRow="False" Position="Top">
+                    <syncfusion:GridSummaryRow.SummaryColumns>
+                        <syncfusion:GridSummaryColumn Name="CurrentValue" Format="'{Sum:c}'" MappingName="CurrentValue" SummaryType="DoubleAggregate"/>
+                        <syncfusion:GridSummaryColumn Name="ValueBuy" Format="'{Sum:c}'" MappingName="CurrentValueOnBuyRate" SummaryType="DoubleAggregate"/>
+                        <syncfusion:GridSummaryColumn Name="WhatIfValue" Format="'{Sum:c}'" MappingName="WhatIfValue" SummaryType="DoubleAggregate"/>
+                        <syncfusion:GridSummaryColumn Name="ProfitCurrent" Format="'{ProfitCurrent:0.#### %}'" MappingName="WhatIfProfitCurrent" CustomAggregate="{StaticResource profitAggregate}" SummaryType="Custom"/>
+                        <syncfusion:GridSummaryColumn Name="ProfitBuy" Format="'{ProfitBuy:0.### %}'" MappingName="WhatIfProfitBuy" CustomAggregate="{StaticResource profitAggregate}" SummaryType="Custom"/>
+                    </syncfusion:GridSummaryRow.SummaryColumns>
+                </syncfusion:GridTableSummaryRow>
+            </syncfusion:SfDataGrid.TableSummaryRows>
+        </syncfusion:SfDataGrid>
+
+        <RichTextBox x:Name="Warning" Visibility="{Binding ContainsMissingValues, Converter={StaticResource BoolVisibilityConverter}}" Grid.Row="1" Grid.Column="0" IsReadOnly="True" FontSize="{DynamicResource AppFontSize}" Foreground="{StaticResource Foreground}" Background="{StaticResource Background}" BorderThickness="0" MinWidth="500" Margin="10,50,0,0" HorizontalAlignment="Center">
+            <FlowDocument>
+                <Paragraph Background="{StaticResource Background}">
+                    <Run Text="{x:Static res:Strings.MissingValues}"/>
+                </Paragraph>
+            </FlowDocument>
+        </RichTextBox>
+    </Grid>
+</UserControl>

@@ -4,23 +4,30 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:vm="clr-namespace:CryptoControlCenter.WPF.ViewModels"
-             xmlns:mock="clr-namespace:CryptoControlCenter.WPF.MockData"
+             xmlns:helper="clr-namespace:CryptoControlCenter.WPF.Helper"
              xmlns:sunburst="clr-namespace:Syncfusion.UI.Xaml.SunburstChart;assembly=Syncfusion.SfSunburstChart.WPF"
+             xmlns:syncfusion="http://schemas.syncfusion.com/wpf"
              xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
              xmlns:res="clr-namespace:CryptoControlCenter.WPF.Resources"
              mc:Ignorable="d" 
-             d:DesignHeight="500" d:DesignWidth="800"
+             d:DesignHeight="1080" d:DesignWidth="1920"
              Background="{StaticResource Background}">
+    <UserControl.Resources>
+        <helper:AmountAggregate x:Key="amountAggregate"/>
+        <DataTemplate x:Key="defaultHeaderTemplate">
+            <TextBlock Text="{Binding}" Foreground="{StaticResource Foreground}"/>
+        </DataTemplate>
+    </UserControl.Resources>
     <UserControl.DataContext>
-        <!--<mock:MockViewModel/>-->
         <vm:WalletViewModel/>
     </UserControl.DataContext>
     <Grid Margin="2">
         <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="700"/>
             <ColumnDefinition Width="*"/>
-            <ColumnDefinition Width="3*"/>
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
@@ -55,73 +62,111 @@
             </Button>
         </StackPanel>
 
+        <StackPanel Orientation="Horizontal" Grid.Row="0" Grid.Column="1" HorizontalAlignment="Right">
+            <Button x:Name="SwitchLevels" Click="SwitchLevels_Click">
+                <Button.Content>
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="{x:Static res:Strings.Currency}" Margin="10,10,0,10"/>
+                        <iconPacks:PackIconMaterial Kind="CompareVertical" VerticalAlignment="Center" 
+                                              HorizontalAlignment="Center" Margin="0,10,0,10"/>
+                        <TextBlock Text="{x:Static res:Strings.Taxfree}" Margin="0,10,10,10"/>
+                    </StackPanel>
+                </Button.Content>
+            </Button>
+        </StackPanel>
+
         <StackPanel Grid.Column="0" Grid.Row="1">
-            <TextBlock Text="{x:Static res:Strings.Wallets}" FontSize="{DynamicResource AppFontSizeHeaders}" Margin="0,10,0,10"/>
-            <ListBox x:Name="WalletList" SelectedItem="{Binding SelectedWallet,Mode=TwoWay}" ItemsSource="{Binding Wallets}" BorderThickness="0" Background="{StaticResource Background}">
+            <TextBlock Text="{x:Static res:Strings.Wallets}" FontSize="{DynamicResource AppFontSizeHeaders}" Margin="0,3,0,10"/>
+            <ListBox x:Name="WalletList" SelectedItem="{Binding SelectedWallet,Mode=TwoWay}" ItemsSource="{Binding Wallets}" Margin="0,0,0,30" BorderThickness="0" Background="{StaticResource Background}">
                 <ListBox.ItemTemplate>
                     <DataTemplate>
                         <TextBlock Text="{Binding WalletName}" Foreground="{StaticResource Foreground}" FontSize="{DynamicResource AppFontSize}"/>
                     </DataTemplate>
                 </ListBox.ItemTemplate>
             </ListBox>
+            <TextBlock Text="{x:Static res:Strings.Positions}" FontSize="{DynamicResource AppFontSizeHeaders}" Margin="0,3,0,10"/>
         </StackPanel>
 
-        <StackPanel Grid.Row="1" Grid.Column="1">
-            <TextBlock Text="{x:Static res:Strings.Assets}" FontSize="{DynamicResource AppFontSizeHeaders}" HorizontalAlignment="Center" Margin="0,10,0,0"/>
-            <sunburst:SfSunburstChart x:Name="Sunburst" InnerRadius="0.35" Background="{StaticResource Background}" Palette="Pineapple" HorizontalContentAlignment="Center" EnableAnimation="True" AnimationType="FadeIn" AnimationDuration="1200" ValueMemberPath="CurrentValue" StrokeThickness="2" Stroke="{StaticResource Background}" Foreground="{StaticResource PrimaryLightBrush}" d:DataContext="{d:DesignInstance Type=mock:MockViewModel,IsDesignTimeCreatable=True}" ItemsSource="{Binding Balances}">
-                <sunburst:SfSunburstChart.Levels>
-                    <!--<sunburst:SunburstHierarchicalLevel GroupMemberPath="Wallet"/>-->
-                    <sunburst:SunburstHierarchicalLevel GroupMemberPath="Asset"/>
-                    <sunburst:SunburstHierarchicalLevel GroupMemberPath="TaxfreeString"/>
-                </sunburst:SfSunburstChart.Levels>
-                <!--<sunburst:SfSunburstChart.Legend>
-    <sunburst:SunburstLegend DockPosition="Top" Foreground="{StaticResource Foreground}" ClickAction="ToggleSegmentVisibility"/>
-</sunburst:SfSunburstChart.Legend>-->
-                <sunburst:SfSunburstChart.DataLabelInfo>
-                    <sunburst:SunburstDataLabelInfo LabelOverflowMode="Trim" LabelRotationMode="Normal" FontWeight="DemiBold">
-                        <sunburst:SunburstDataLabelInfo.LabelTemplate>
-                            <DataTemplate>
-                                <TextBlock Text="{Binding Category}" FontSize="{DynamicResource AppFontSize}" Foreground="Black"/>
-                            </DataTemplate>
-                        </sunburst:SunburstDataLabelInfo.LabelTemplate>
-                    </sunburst:SunburstDataLabelInfo>
-                </sunburst:SfSunburstChart.DataLabelInfo>
-                <sunburst:SfSunburstChart.Behaviors>
-                    <sunburst:SunburstToolTipBehavior HorizontalAlignment="Right" EnableAnimation="True">
-                        <sunburst:SunburstToolTipBehavior.ToolTipTemplate>
-                            <DataTemplate>
-                                <Border Background="{Binding Interior}" BorderThickness="0">
-                                    <StackPanel Orientation="Horizontal">
-                                        <TextBlock Foreground="Black" Text="{Binding Value, Converter={StaticResource SunburstLabelConverter}}"/>
-                                    </StackPanel>
-                                </Border>
-                            </DataTemplate>
-                        </sunburst:SunburstToolTipBehavior.ToolTipTemplate>
-                    </sunburst:SunburstToolTipBehavior>
-                    <sunburst:SunburstZoomingBehavior ToolBarHorizontalAlignment="Center" ToolBarVerticalAlignment="Center"/>
-                </sunburst:SfSunburstChart.Behaviors>
+        <syncfusion:SfDataGrid x:Name="PositionsList" Grid.Column="0" Grid.Row="2" SelectionMode="None" ColumnSizer="Star" AllowResizingColumns="True" AutoGenerateColumns="False" ItemsSource="{Binding Positions}">
+            <syncfusion:SfDataGrid.TableSummaryCellStyle>
+                <Style TargetType="syncfusion:GridTableSummaryCell">
+                    <Setter Property="HorizontalAlignment" Value="Stretch"/>
+                    <Setter Property="HorizontalContentAlignment" Value="Center"/>
+                    <Setter Property="BorderThickness" Value="0"/>
+                </Style>
+            </syncfusion:SfDataGrid.TableSummaryCellStyle>
+            <syncfusion:SfDataGrid.Columns>
+                <syncfusion:GridTextColumn HeaderTemplate="{StaticResource defaultHeaderTemplate}" TextAlignment="Center" ColumnSizer="Auto" AllowEditing="False" MappingName="Asset"/>
+                <syncfusion:GridNumericColumn HeaderTemplate="{StaticResource defaultHeaderTemplate}" TextAlignment="Center" ColumnSizer="Auto" AllowEditing="False" MappingName="CurrentAmount" DisplayBinding="{Binding Path=CurrentAmount, Converter={StaticResource AssetAmountConverter}}" HeaderText="{x:Static res:Strings.Amount}"/>
+                <syncfusion:GridNumericColumn HeaderTemplate="{StaticResource defaultHeaderTemplate}" TextAlignment="Center" ColumnSizer="Star" AllowEditing="False" MappingName="CurrentValue" HeaderText="{x:Static res:Strings.Value}" DisplayBinding="{Binding Path=CurrentValue, Converter={StaticResource AssetValueConverter}}"/>
+                <syncfusion:GridNumericColumn HeaderTemplate="{StaticResource defaultHeaderTemplate}" TextAlignment="Center" ColumnSizer="Star" AllowEditing="False" MappingName="CurrentValueOnBuyRate" HeaderText="{x:Static res:Strings.ValueAtBuyRate}" DisplayBinding="{Binding Path=CurrentValueOnBuyRate, Converter={StaticResource AssetValueConverter}}"/>
+                <syncfusion:GridNumericColumn HeaderTemplate="{StaticResource defaultHeaderTemplate}" TextAlignment="Center" ColumnSizer="Auto" AllowEditing="False" MappingName="Profit" HeaderText="{x:Static res:Strings.Profit}">
+                    <syncfusion:GridNumericColumn.CellTemplate>
+                        <DataTemplate>
+                            <TextBlock Foreground="{Binding Profit, Converter={StaticResource ProfitCellStyleConverter}}" VerticalAlignment="Center" HorizontalAlignment="Center">
+                                <Run Text="{Binding Profit, StringFormat=0.###, Mode=OneWay}"/>
+                                <Run Text="%"/>
+                            </TextBlock>
+                        </DataTemplate>
+                    </syncfusion:GridNumericColumn.CellTemplate>
+                </syncfusion:GridNumericColumn>
+                <syncfusion:GridDateTimeColumn HeaderTemplate="{StaticResource defaultHeaderTemplate}" TextAlignment="Center" ColumnSizer="Auto" AllowEditing="False" Pattern="SortableDateTime" MappingName="Received" DisplayBinding="{Binding Received, Converter={StaticResource DateTimeConverter}}" HeaderText="{x:Static res:Strings.TransactionTime}"/>
+                <syncfusion:GridTextColumn HeaderTemplate="{StaticResource defaultHeaderTemplate}" TextAlignment="Center" Width="70" AllowEditing="False" MappingName="TaxfreeString" HeaderText="{x:Static res:Strings.Taxfree}"/>
+            </syncfusion:SfDataGrid.Columns>
+            <syncfusion:SfDataGrid.TableSummaryRows>
+                <syncfusion:GridTableSummaryRow ShowSummaryInRow="False" Position="Top">
+                    <syncfusion:GridSummaryRow.SummaryColumns>
+                        <syncfusion:GridSummaryColumn Name="Amount" CustomAggregate="{StaticResource amountAggregate}" SummaryType="Custom" Format="'{CurrentAmount:0.######}'" MappingName="CurrentAmount"/>
+                        <syncfusion:GridSummaryColumn Name="Value" Format="'{Sum:c}'" MappingName="CurrentValue" SummaryType="DoubleAggregate"/>
+                    </syncfusion:GridSummaryRow.SummaryColumns>
+                </syncfusion:GridTableSummaryRow>
+            </syncfusion:SfDataGrid.TableSummaryRows>
+        </syncfusion:SfDataGrid>
 
-                <!--<sunburst:SfSunburstChart.ColorModel>
-    <sunburst:SunburstColorModel>
-        <sunburst:SunburstColorModel.CustomBrushes>
-            <LinearGradientBrush>
-                <GradientStop Color="Yellow" Offset="0"/>
-            </LinearGradientBrush>
-
-            <LinearGradientBrush>
-                <GradientStop Color="Blue" Offset="0"/>
-            </LinearGradientBrush>
-
-            <LinearGradientBrush>
-                <GradientStop Color="Green" Offset="0"/>
-            </LinearGradientBrush>
-        </sunburst:SunburstColorModel.CustomBrushes>
-    </sunburst:SunburstColorModel>
-</sunburst:SfSunburstChart.ColorModel>-->
-            </sunburst:SfSunburstChart>
+        <StackPanel Grid.Row="1" Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Center">
+            <TextBlock Text="{x:Static res:Strings.Assets}" FontSize="{DynamicResource AppFontSizeHeaders}" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+            <TextBlock FontSize="{DynamicResource AppFontSizeHeaders}" Margin="0,10,0,0" VerticalAlignment="Center" HorizontalAlignment="Center" >
+                <Run Text="{x:Static res:Strings.Total}"/>
+                <Run Text="{Binding TotalBalance, Mode=OneWay}"/>
+            </TextBlock>
         </StackPanel>
 
-        <RichTextBox x:Name="Warning" Visibility="{Binding ContainsMissingValues, Converter={StaticResource BoolVisibilityConverter}}" Grid.Row="1" Grid.Column="1" IsReadOnly="True" FontSize="{DynamicResource AppFontSize}" Foreground="{StaticResource Foreground}" Background="{StaticResource Background}" BorderThickness="0" MinWidth="500" MaxWidth="900" Margin="10,50,0,0" HorizontalAlignment="Center">
+        <sunburst:SfSunburstChart x:Name="Sunburst" Grid.Row="2" Grid.Column="1" SelectionChanged="Sunburst_SelectionChanged" InnerRadius="0.35" Background="{StaticResource Background}" Palette="LightCandy" EnableAnimation="True" AnimationType="FadeIn" AnimationDuration="1200" ValueMemberPath="CurrentValue" StrokeThickness="2" Stroke="{StaticResource Background}" Foreground="{StaticResource PrimaryLightBrush}" ItemsSource="{Binding Balances}" VerticalContentAlignment="Stretch" HorizontalContentAlignment="Stretch" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+            <sunburst:SfSunburstChart.Levels>
+                <sunburst:SunburstHierarchicalLevel GroupMemberPath="Asset"/>
+                <sunburst:SunburstHierarchicalLevel GroupMemberPath="TaxfreeString"/>
+            </sunburst:SfSunburstChart.Levels>
+            <sunburst:SfSunburstChart.Legend>
+                <sunburst:SunburstLegend DockPosition="Top" FontSize="{DynamicResource AppFontSize}" Foreground="{StaticResource Foreground}" ClickAction="ToggleSegmentVisibility"/>
+            </sunburst:SfSunburstChart.Legend>
+            <sunburst:SfSunburstChart.DataLabelInfo>
+                <sunburst:SunburstDataLabelInfo LabelOverflowMode="Trim" FontWeight="DemiBold">
+                    <sunburst:SunburstDataLabelInfo.LabelTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding Category}" FontSize="{DynamicResource AppFontSize}" Foreground="Black"/>
+                        </DataTemplate>
+                    </sunburst:SunburstDataLabelInfo.LabelTemplate>
+                </sunburst:SunburstDataLabelInfo>
+            </sunburst:SfSunburstChart.DataLabelInfo>
+            <sunburst:SfSunburstChart.Behaviors>
+                <sunburst:SunburstToolTipBehavior HorizontalAlignment="Right" EnableAnimation="True" HorizontalOffset="7" VerticalOffset="2">
+                    <sunburst:SunburstToolTipBehavior.ToolTipTemplate>
+                        <DataTemplate>
+                            <Border Background="{Binding Interior}" BorderThickness="0">
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock Foreground="Black" Text="{Binding Value, Converter={StaticResource SunburstLabelConverter}}"/>
+                                </StackPanel>
+                            </Border>
+                        </DataTemplate>
+                    </sunburst:SunburstToolTipBehavior.ToolTipTemplate>
+                </sunburst:SunburstToolTipBehavior>
+                <!--Funktioniert unzuverlässig zusammen mit SelectedCoin für DataGrid-->
+                <!--<sunburst:SunburstZoomingBehavior ToolBarHorizontalAlignment="Center" ToolBarVerticalAlignment="Center"/>-->
+                <sunburst:SunburstSelectionBehavior EnableSelection="True" SelectionMode="MouseClick" SelectionType="Group" SelectionCursor="Hand"/>
+            </sunburst:SfSunburstChart.Behaviors>
+        </sunburst:SfSunburstChart>
+
+        <RichTextBox x:Name="Warning" Visibility="{Binding ContainsMissingValues, Converter={StaticResource BoolVisibilityConverter}}" Grid.Row="1" Grid.Column="1" IsReadOnly="True" FontSize="{DynamicResource AppFontSize}" Foreground="{StaticResource Foreground}" Background="{StaticResource Background}" BorderThickness="0" MinWidth="500" Margin="10,50,0,0" HorizontalAlignment="Center">
             <FlowDocument>
                 <Paragraph Background="{StaticResource Background}">
                     <Run Text="{x:Static res:Strings.MissingValues}"/>

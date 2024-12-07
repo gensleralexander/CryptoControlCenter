@@ -15,11 +15,15 @@ namespace CryptoControlCenter.Common.Models.Interfaces
         /// <summary>
         /// Amount of Asset
         /// </summary>
-        public double CurrentAmount { get; }
+        public decimal CurrentAmount { get; }
         /// <summary>
         /// Value of Asset
         /// </summary>
-        public double CurrentValue { get; }
+        public decimal CurrentValue { get; }
+        /// <summary>
+        /// Value of the current amount with the original buy price
+        /// </summary>
+        public decimal CurrentValueOnBuyRate { get; }
         /// <summary>
         /// Determines, wether a balance is taxfree (§23 EStG, german tax law)
         /// </summary>
@@ -28,5 +32,13 @@ namespace CryptoControlCenter.Common.Models.Interfaces
         /// Returns the boolean Taxfree as string
         /// </summary>
         public string TaxfreeString { get; }
+        /// <summary>
+        /// DateTime, when the asset was received (through Deposit or Trade)
+        /// </summary>
+        public DateTime Received { get; }
+        /// <summary>
+        /// The current profit of the asset in %
+        /// </summary>
+        public decimal Profit { get; }
     }
 }

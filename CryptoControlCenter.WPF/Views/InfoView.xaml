@@ -21,7 +21,8 @@
                 <Run Text="{Binding AppVersion, Mode=OneTime}"/>
             </TextBlock>
             <TextBlock Margin="10,0,0,20">
-                <Run Text="Database: "/>
+                <Run Text="{x:Static res:Strings.Database}"/>
+                <Run Text=": "/>
                 <Run Text="{Binding DatabaseVersion, Mode=OneTime}"/>
             </TextBlock>
             <!--Disclaimer-->

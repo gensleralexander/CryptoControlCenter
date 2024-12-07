@@ -13,21 +13,21 @@
         skin:SfSkinManager.Theme="{skin:SkinManagerExtension ThemeName=MaterialDark}" Background="{StaticResource Background}"
         mc:Ignorable="d"
         Closed="ChromelessWindow_Closed"
-        Title="{Binding SelectedItem, ElementName=NavigationMenuListBox,Converter={StaticResource TitleConverter}}" Icon="/Resources/Logo48.png" d:DesignHeight="800" d:DesignWidth="1280" TitleFontSize="14" TitleTextAlignment="Center" TitleBarForeground="{StaticResource Foreground}" TitleBarBackground="{StaticResource Background}" CornerRadius="6" AllowsTransparency="True" UseNativeChrome="True">
+        Title="{Binding SelectedItem, ElementName=NavigationMenuListBox,Converter={StaticResource TitleConverter}}" Icon="/Resources/Logo48.png" d:DesignHeight="1080" d:DesignWidth="1920" TitleFontSize="14" TitleTextAlignment="Center" TitleBarForeground="{StaticResource Foreground}" TitleBarBackground="{StaticResource Background}" CornerRadius="6" AllowsTransparency="True" UseNativeChrome="True">
     <Window.Resources>
         <x:Array x:Key="NavigationMenuItems" Type="system:String">
-            <system:String>Dashboard</system:String>
             <system:String>Wallets</system:String>
+            <system:String>What If</system:String>
             <system:String>Database</system:String>
             <system:String>Settings</system:String>
             <system:String>Info</system:String>
         </x:Array>
 
-        <DataTemplate x:Key="DashboardTemplate">
-            <views:DashboardView/>
-        </DataTemplate>
         <DataTemplate x:Key="WalletsTemplate">
             <views:WalletView/>
+        </DataTemplate>
+        <DataTemplate x:Key="WhatIfTemplate">
+            <views:WhatIfView/>
         </DataTemplate>
         <DataTemplate x:Key="DatabaseTemplate">
             <views:DatabaseView/>
@@ -122,11 +122,11 @@
         </Style>
 
         <Style x:Key="NavigationContentStyle" TargetType="ContentControl">
-            <Setter Property="ContentTemplate" Value="{StaticResource DashboardTemplate}"/>
+            <Setter Property="ContentTemplate" Value="{StaticResource WalletsTemplate}"/>
             <Style.Triggers>
                 <DataTrigger Binding="{Binding ElementName=NavigationMenuListBox, Path=SelectedItem}"
-                             Value="Wallets">
-                    <Setter Property="ContentTemplate" Value="{StaticResource WalletsTemplate}"/>
+                             Value="What If">
+                    <Setter Property="ContentTemplate" Value="{StaticResource WhatIfTemplate}"/>
                 </DataTrigger>
                 <DataTrigger Binding="{Binding ElementName=NavigationMenuListBox, Path=SelectedItem}"
                              Value="Database">
@@ -146,11 +146,11 @@
         <DataTemplate x:Key="NavigationDataTemplate">
             <iconPacks:PackIconMaterial x:Name="MenuItemIcon" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="8" Width="{DynamicResource ButtonSize}" Height="{DynamicResource ButtonSize}"/>
             <DataTemplate.Triggers>
-                <DataTrigger Binding="{Binding}" Value="Dashboard">
-                    <Setter TargetName="MenuItemIcon" Property="Kind" Value="MonitorDashboard"/>
-                </DataTrigger>
                 <DataTrigger Binding="{Binding}" Value="Wallets">
                     <Setter TargetName="MenuItemIcon" Property="Kind" Value="Wallet"/>
+                </DataTrigger>
+                <DataTrigger Binding="{Binding}" Value="What If">
+                    <Setter TargetName="MenuItemIcon" Property="Kind" Value="ChartLine"/>
                 </DataTrigger>
                 <DataTrigger Binding="{Binding}" Value="Database">
                     <Setter TargetName="MenuItemIcon" Property="Kind" Value="Database"/>

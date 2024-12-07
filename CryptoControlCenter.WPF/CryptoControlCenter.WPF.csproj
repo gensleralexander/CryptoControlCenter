@@ -6,8 +6,8 @@
     <Nullable>enable</Nullable>
     <UseWPF>true</UseWPF>
     <AssemblyName>CryptoControlCenter</AssemblyName>
-    <AssemblyVersion>1.0.400.8995</AssemblyVersion>
-    <FileVersion>1.0.400.8995</FileVersion>
+    <AssemblyVersion>1.2.548.9107</AssemblyVersion>
+    <FileVersion>1.2.548.9107</FileVersion>
     <ApplicationIcon>Resources\Logo.ico</ApplicationIcon>
     <Title>CryptoControlCenter</Title>
     <Authors>Alexander Gensler</Authors>
@@ -68,7 +68,7 @@
 
   <ItemGroup>
     <PackageReference Include="CountryFlag.Wpf" Version="1.0.0" />
-    <PackageReference Include="MahApps.Metro.IconPacks.Material" Version="5.0.0" />
+    <PackageReference Include="MahApps.Metro.IconPacks.Material" Version="5.1.0" />
     <PackageReference Include="Syncfusion.SfBusyIndicator.WPF" Version="26.1.40" />
     <PackageReference Include="Syncfusion.SfChromelessWindow.WPF" Version="26.1.40" />
     <PackageReference Include="Syncfusion.SfGrid.WPF" Version="26.1.40" />

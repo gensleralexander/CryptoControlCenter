@@ -125,198 +125,333 @@ namespace CryptoControlCenter.Common.Helper
             {
                 throw new ArgumentNullException("Invalid transaction");
             }
-
-            decimal left; 
-            decimal leftFee;
-            decimal buy = 0.0m;
-            decimal buy23 = 0.0m;
-            decimal fee = 0.0m;
-            decimal fee23 = 0.0m;
-            decimal sell = 0.0m;
-            decimal sell23 = 0.0m;
-            bool isLeapYear = false;
-
-            switch (transaction.TransactionType)
+            else
             {
-                case TransactionType.Buy:
-                case TransactionType.Sell:
-                    left = (decimal)transaction.AmountStart;
-                    leftFee = (decimal)transaction.FeeAmount;
-                    #region Asset
-                    //Buy with EUR is excluded, as it is no sell of a taxable currency
-                    while (left > 0.0m)
-                    {
-                        try
-                        {
-                            var asset = hodledAssets.First(x => x.removed == false && x.Asset == transaction.AssetStart && x.Location == transaction.Wallet);
-                            if ((DateTime.IsLeapYear(asset.Received.Year) && asset.Received < new DateTime(asset.Received.Year, 2, 29)) || (DateTime.IsLeapYear(transaction.TransactionTime.Year) && transaction.TransactionTime > new DateTime(transaction.TransactionTime.Year, 3, 1)))
-                            {
-                                isLeapYear = true;
-                            }
-                            else
-                            {
-                                isLeapYear = false;
-                            }
-                            if (asset.CurrentAmount <= left)
-                            {
-                                if (transaction.AssetStart != "EUR") //excludes cases, where a crypto is bought with EUR as this is not added to afs
-                                {
-                                    if (asset.Received.IsWithinTimeSpan(transaction.TransactionTime, new TimeSpan(isLeapYear ? -365 : -364, -23, -59, -59)))
-                                    {
-                                        buy += asset.CurrentValueOnBuyRate;
-                                        sell += asset.CurrentAmount / (decimal)transaction.AmountStart * (decimal)transaction.TransactionValue;
-                                    }
-                                    else
-                                    {
-                                        fsDictionary.First(x => x.Key == transaction.Wallet).Value.paragraph23estg = true;
-                                        buy23 += asset.CurrentValueOnBuyRate;
-                                        sell23 += asset.CurrentAmount / (decimal)transaction.AmountStart * (decimal)transaction.TransactionValue;
-                                    }
-                                }
-                                left -= asset.CurrentAmount;
-                                asset.CurrentAmount = 0.0m;
-                                asset.CurrentValueOnBuyRate = 0.0m;
-                                asset.removed = true;
-                            }
-                            else
-                            {
-                                if (transaction.AssetStart != "EUR") //excludes cases, where a crypto is bought with EUR as this is not added to afs
-                                {
-                                    if (asset.Received.IsWithinTimeSpan(transaction.TransactionTime, new TimeSpan(isLeapYear ? -365 : -364, -23, -59, -59)))
-                                    {
-                                        buy += left / asset.OriginalAmount * asset.OriginalValue;
-                                        sell += left / (decimal)transaction.AmountStart * (decimal)transaction.TransactionValue;
-                                    }
-                                    else
-                                    {
-                                        fsDictionary.First(x => x.Key == transaction.Wallet).Value.paragraph23estg = true;
-                                        buy23 += left / asset.OriginalAmount * asset.OriginalValue;
-                                        sell23 += left / (decimal)transaction.AmountStart * (decimal)transaction.TransactionValue;
-                                    }
-                                }
-                                asset.CurrentValueOnBuyRate -= left / asset.OriginalAmount * asset.OriginalValue;
-                                asset.CurrentAmount -= left;
-                                left = 0.0m;
-                            }
-                        }
-                        catch (InvalidOperationException)
-                        {
-                            var leftValue = left / transaction.AmountStart * transaction.TransactionValue;
-                            if (leftValue < 1.00m) //Catches some errors due to rounding of APIs. When leftValue is less than 1 €, the exception gets ignored
-                            {
-                                left = 0.0m;
-                            }
-                            else
-                            {
-                                throw new InvalidOperationException("HodledAssets did not contain an asset, that needs to be sold.");
-                            }
-                        }
-                    }
-                    #endregion
-                    //Insert new Asset into Set
-                    hodledAssets.Add(new HodledAsset(transaction.Wallet, transaction.AssetDestination, (decimal)transaction.AmountDestination, (decimal)transaction.TransactionValue, transaction.TransactionTime));
-                    #region Fee
-                    if (transaction.FeeAsset == transaction.AssetDestination)
-                    {
-                        var feeAsset = hodledAssets.Last(x => x.Asset == transaction.FeeAsset);
-                        feeAsset.CurrentValueOnBuyRate -= leftFee / feeAsset.OriginalAmount * feeAsset.OriginalValue;
-                        feeAsset.CurrentAmount -= leftFee;
-                        leftFee = 0.0m;
-                    }
-                    else
-                    {
-                        while (leftFee > 0.0m)
+#pragma warning disable CS8629 // Ein Werttyp, der NULL zulässt, kann NULL sein. → Abgedeckt durch Validate
+                decimal left;
+                decimal leftFee;
+                decimal buy = 0.0m;
+                decimal buy23 = 0.0m;
+                decimal fee = 0.0m;
+                decimal fee23 = 0.0m;
+                decimal sell = 0.0m;
+                decimal sell23 = 0.0m;
+                bool isLeapYear = false;
+
+                switch (transaction.TransactionType)
+                {
+                    case TransactionType.Buy:
+                    case TransactionType.Sell:
+
+                        left = (decimal)transaction.AmountStart;
+                        leftFee = (decimal)transaction.FeeAmount;
+                        #region Asset
+                        //Buy with EUR is excluded, as it is no sell of a taxable currency
+                        while (left > 0.0m)
                         {
                             try
                             {
-                                if (!string.IsNullOrWhiteSpace(transaction.FeeAsset))
+                                var asset = hodledAssets.First(x => x.removed == false && x.Asset == transaction.AssetStart && x.Wallet == transaction.Wallet);
+                                if ((DateTime.IsLeapYear(asset.Received.Year) && asset.Received < new DateTime(asset.Received.Year, 2, 29)) || (DateTime.IsLeapYear(transaction.TransactionTime.Year) && transaction.TransactionTime > new DateTime(transaction.TransactionTime.Year, 3, 1)))
                                 {
-                                    var feeAsset = hodledAssets.First(x => x.Asset == transaction.FeeAsset && x.removed == false && x.Location == transaction.Wallet);
-                                    if (feeAsset.CurrentAmount <= leftFee)
+                                    isLeapYear = true;
+                                }
+                                else
+                                {
+                                    isLeapYear = false;
+                                }
+                                if (asset.CurrentAmount <= left)
+                                {
+                                    if (transaction.AssetStart != "EUR") //excludes cases, where a crypto is bought with EUR as this is not added to afs
                                     {
-                                        leftFee -= feeAsset.CurrentAmount;
-                                        feeAsset.CurrentAmount = 0.0m;
-                                        feeAsset.CurrentValueOnBuyRate = 0.0m;
-                                        feeAsset.removed = true;
+                                        if (asset.Received.IsWithinTimeSpan(transaction.TransactionTime, new TimeSpan(isLeapYear ? -365 : -364, -23, -59, -59)))
+                                        {
+                                            buy += asset.CurrentValueOnBuyRate;
+                                            sell += asset.CurrentAmount / (decimal)transaction.AmountStart * (decimal)transaction.TransactionValue;
+                                        }
+                                        else
+                                        {
+                                            fsDictionary.First(x => x.Key == transaction.Wallet).Value.paragraph23estg = true;
+                                            buy23 += asset.CurrentValueOnBuyRate;
+                                            sell23 += asset.CurrentAmount / (decimal)transaction.AmountStart * (decimal)transaction.TransactionValue;
+                                        }
                                     }
-                                    else
+                                    left -= asset.CurrentAmount;
+                                    asset.CurrentAmount = 0.0m;
+                                    asset.CurrentValueOnBuyRate = 0.0m;
+                                    asset.removed = true;
+                                }
+                                else
+                                {
+                                    if (transaction.AssetStart != "EUR") //excludes cases, where a crypto is bought with EUR as this is not added to afs
                                     {
-                                        feeAsset.CurrentValueOnBuyRate -= leftFee / feeAsset.OriginalAmount * feeAsset.OriginalValue;
-                                        feeAsset.CurrentAmount -= leftFee;
-                                        leftFee = 0.0m;
+                                        if (asset.Received.IsWithinTimeSpan(transaction.TransactionTime, new TimeSpan(isLeapYear ? -365 : -364, -23, -59, -59)))
+                                        {
+                                            buy += left / asset.OriginalAmount * asset.OriginalValue;
+                                            sell += left / (decimal)transaction.AmountStart * (decimal)transaction.TransactionValue;
+                                        }
+                                        else
+                                        {
+                                            fsDictionary.First(x => x.Key == transaction.Wallet).Value.paragraph23estg = true;
+                                            buy23 += left / asset.OriginalAmount * asset.OriginalValue;
+                                            sell23 += left / (decimal)transaction.AmountStart * (decimal)transaction.TransactionValue;
+                                        }
                                     }
+                                    asset.CurrentValueOnBuyRate -= left / asset.OriginalAmount * asset.OriginalValue;
+                                    asset.CurrentAmount -= left;
+                                    left = 0.0m;
                                 }
                             }
                             catch (InvalidOperationException)
                             {
-                                var leftFeeValue = leftFee / transaction.FeeAmount * transaction.FeeValue;
-                                if (leftFeeValue < 0.05m) //Catches some errors due to rounding of APIs. When leftFeeValue is less than 5ct, the exception gets ignored
+                                var leftValue = left / transaction.AmountStart * transaction.TransactionValue;
+                                if (leftValue < 1.00m) //Catches some errors due to rounding of APIs. When leftValue is less than 1 €, the exception gets ignored
                                 {
-                                    leftFee = 0.0m;
+                                    left = 0.0m;
                                 }
                                 else
                                 {
-                                    throw new InvalidOperationException("Hodled Assets did not contain an asset, that is fee.");
+                                    throw new InvalidOperationException("HodledAssets did not contain an asset, that needs to be sold.");
                                 }
                             }
                         }
-                    }
-                    if (transaction.AssetStart == "EUR") //when a crypto is bought with EUR the fee is nontheless added, but due line //note not calculatable like below
-                    {
-                        fee = (decimal)transaction.FeeValue;
-                    }
-                    else
-                    {
-                        if (sell == 0.0m && sell23 != 0.0m)
+                        #endregion
+                        //Insert new Asset into Set
+                        hodledAssets.Add(new HodledAsset(transaction.Wallet, transaction.AssetDestination, (decimal)transaction.AmountDestination, (decimal)transaction.TransactionValue, transaction.TransactionTime));
+                        #region Fee
+                        if (transaction.FeeAsset == transaction.AssetDestination)
                         {
-                            fee23 = (decimal)transaction.FeeValue;
+                            var feeAsset = hodledAssets.Last(x => x.Asset == transaction.FeeAsset);
+                            feeAsset.CurrentValueOnBuyRate -= leftFee / feeAsset.OriginalAmount * feeAsset.OriginalValue;
+                            feeAsset.CurrentAmount -= leftFee;
+                            leftFee = 0.0m;
                         }
-                        else if (sell != 0.0m && sell23 == 0.0m)
+                        else
+                        {
+                            while (leftFee > 0.0m)
+                            {
+                                try
+                                {
+                                    if (!string.IsNullOrWhiteSpace(transaction.FeeAsset))
+                                    {
+                                        var feeAsset = hodledAssets.First(x => x.Asset == transaction.FeeAsset && x.removed == false && x.Wallet == transaction.Wallet);
+                                        if (feeAsset.CurrentAmount <= leftFee)
+                                        {
+                                            leftFee -= feeAsset.CurrentAmount;
+                                            feeAsset.CurrentAmount = 0.0m;
+                                            feeAsset.CurrentValueOnBuyRate = 0.0m;
+                                            feeAsset.removed = true;
+                                        }
+                                        else
+                                        {
+                                            feeAsset.CurrentValueOnBuyRate -= leftFee / feeAsset.OriginalAmount * feeAsset.OriginalValue;
+                                            feeAsset.CurrentAmount -= leftFee;
+                                            leftFee = 0.0m;
+                                        }
+                                    }
+                                }
+                                catch (InvalidOperationException)
+                                {
+                                    var leftFeeValue = leftFee / transaction.FeeAmount * transaction.FeeValue;
+                                    if (leftFeeValue < 0.05m) //Catches some errors due to rounding of APIs. When leftFeeValue is less than 5ct, the exception gets ignored
+                                    {
+                                        leftFee = 0.0m;
+                                    }
+                                    else
+                                    {
+                                        throw new InvalidOperationException("Hodled Assets did not contain an asset, that is fee.");
+                                    }
+                                }
+                            }
+                        }
+                        if (transaction.AssetStart == "EUR") //when a crypto is bought with EUR the fee is nontheless added, but due line //note not calculatable like below
                         {
                             fee = (decimal)transaction.FeeValue;
                         }
                         else
                         {
-                            fee = (sell / (sell + sell23)) * (decimal)transaction.FeeValue;
-                            fee23 = (sell23 / (sell + sell23)) * (decimal)transaction.FeeValue;
+                            if (sell == 0.0m && sell23 != 0.0m)
+                            {
+                                fee23 = (decimal)transaction.FeeValue;
+                            }
+                            else if (sell != 0.0m && sell23 == 0.0m)
+                            {
+                                fee = (decimal)transaction.FeeValue;
+                            }
+                            else
+                            {
+                                fee = (sell / (sell + sell23)) * (decimal)transaction.FeeValue;
+                                fee23 = (sell23 / (sell + sell23)) * (decimal)transaction.FeeValue;
+                            }
                         }
-                    }
-                    #endregion
-                    break;
-                case TransactionType.Transfer:
-                    if (transaction.LocationDestination != transaction.Wallet)//deposits gets dropped and done through withdrawal action
-                    {
-                        left = (decimal)transaction.AmountStart;
+                        #endregion
+                        break;
+                    case TransactionType.Transfer:
+                        if (transaction.LocationDestination != transaction.Wallet)//deposits gets dropped and done through withdrawal action
+                        {
+                            left = (decimal)transaction.AmountStart;
+                            leftFee = (decimal)transaction.FeeAmount;
+                            #region Asset
+                            while (left > 0.0m)
+                            {
+                                try
+                                {
+                                    //Transfers are not taxed nor do they change the receive date and affect the one-year-holding duration
+                                    var asset = hodledAssets.First(x => x.Asset == transaction.AssetStart && x.removed == false && x.Wallet == transaction.Wallet);
+                                    if (asset.CurrentAmount <= left)
+                                    {
+                                        left -= asset.CurrentAmount;
+                                        asset.Wallet = transaction.LocationDestination;
+                                    }
+                                    else
+                                    {
+                                        hodledAssets.Add(asset.Split(left, transaction.LocationDestination));
+                                        left = 0.0m;
+                                    }
+                                }
+                                catch (InvalidOperationException)
+                                {
+                                    var leftPercent = left / transaction.AmountStart;
+                                    if (leftPercent < 0.01m) //Catches some errors due to rounding of APIs. When leftPercent is less than 1%, the exception gets ignored
+                                    {
+                                        left = 0.0m;
+                                    }
+                                    else
+                                    {
+                                        throw new InvalidOperationException("Hodled Assets did not contain an asset, that needs to be withdrawn.");
+                                    }
+                                }
+                            }
+                            #endregion
+                            #region Fee
+                            while (leftFee > 0.0m)
+                            {
+                                try
+                                {
+                                    if (!string.IsNullOrWhiteSpace(transaction.FeeAsset))
+                                    {
+                                        var feeAsset = hodledAssets.First(x => x.Asset == transaction.FeeAsset && x.Wallet == transaction.LocationStart && x.removed == false);
+                                        if (feeAsset.CurrentAmount <= leftFee)
+                                        {
+                                            leftFee -= feeAsset.CurrentAmount;
+                                            feeAsset.CurrentAmount = 0.0m;
+                                            feeAsset.CurrentValueOnBuyRate = 0.0m;
+                                            feeAsset.removed = true;
+                                        }
+                                        else
+                                        {
+                                            feeAsset.CurrentValueOnBuyRate -= leftFee / feeAsset.OriginalAmount * feeAsset.OriginalValue;
+                                            feeAsset.CurrentAmount -= leftFee;
+                                            leftFee = 0.0m;
+                                        }
+                                    }
+                                }
+                                catch (InvalidOperationException)
+                                {
+                                    var leftFeeValue = leftFee / transaction.FeeAmount * transaction.FeeValue;
+                                    if (leftFeeValue < 0.05m) //Catches some errors due to rounding of APIs. When leftFeeValue is less than 5ct, the exception gets ignored
+                                    {
+                                        leftFee = 0.0m;
+                                    }
+                                    else
+                                    {
+                                        throw new InvalidOperationException("Hodled Assets did not contain an asset, that is fee.");
+                                    }
+                                }
+                            }
+                            //Fees gets added nonetheless transfer is not taxed, as they are still expenses
+                            fee = (decimal)transaction.FeeValue;
+                            #endregion
+                        }
+                        break;
+                    case TransactionType.Distribution:
+                        //Insert Distribution into HodledAsset-Set, but with value = 0 -> AFS-Buys will not increase, but Sells as soon as it is sold
+                        //When distribution amount is negative, it is most commonly a swap
+                        if (transaction.AmountDestination > 0.0m)
+                        {
+                            hodledAssets.Add(new HodledAsset(transaction.LocationDestination, transaction.AssetDestination, (decimal)transaction.AmountDestination, 0.0m, transaction.TransactionTime));
+                        }
+                        else
+                        {
+                            left = (decimal)transaction.AmountDestination * -1.0m;
+                            while (left > 0.0m)
+                            {
+                                try
+                                {
+                                    //Distribution swaps are not taxed nor do they change the receive date and affect the one-year-holding duration
+                                    var asset = hodledAssets.First(x => x.Asset == transaction.AssetDestination && x.removed == false && x.Wallet == transaction.Wallet);
+                                    if (asset.CurrentAmount <= left)
+                                    {
+                                        left -= asset.CurrentAmount;
+                                        asset.removed = true;
+                                    }
+                                    else
+                                    {
+                                        var a = asset.Split(left, transaction.LocationDestination);
+                                        a.removed = true;
+                                        hodledAssets.Add(a);
+                                        left = 0.0m;
+                                    }
+                                }
+                                catch (InvalidOperationException)
+                                {
+                                    var leftValue = left / transaction.AmountDestination * transaction.TransactionValue;
+                                    if (leftValue < 1.00m) //Catches some errors due to rounding of APIs. When leftValue is less than 1 €, the exception gets ignored
+                                    {
+                                        left = 0.0m;
+                                    }
+                                    else
+                                    {
+                                        throw new InvalidOperationException("Hodled Assets did not contain an asset, that needs to be withdrawn.");
+                                    }
+                                }
+                            }
+                        }
+                        break;
+                    case TransactionType.Dust:
+                        //TODO Dust
+                        throw new NotImplementedException();
+                    case TransactionType.BankDeposit:
+                        hodledAssets.Add(new HodledAsset(transaction.LocationDestination, transaction.AssetDestination, (decimal)transaction.AmountDestination, (decimal)transaction.TransactionValue, transaction.TransactionTime));
+                        break;
+                    case TransactionType.BankWithdrawal:
+                        left = (decimal)transaction.AmountDestination;
                         leftFee = (decimal)transaction.FeeAmount;
                         #region Asset
                         while (left > 0.0m)
                         {
                             try
                             {
-                                //Transfers are not taxed nor do they change the receive date and affect the one-year-holding duration
-                                var asset = hodledAssets.First(x => x.Asset == transaction.AssetStart && x.removed == false && x.Location == transaction.Wallet);
-                                if (asset.CurrentAmount <= left)
+                                var asset = hodledAssets.First(x => x.Asset == transaction.AssetDestination && x.removed == false && x.Wallet == transaction.LocationStart);
+                                if ((DateTime.IsLeapYear(asset.Received.Year) && asset.Received < new DateTime(asset.Received.Year, 2, 29)) || (DateTime.IsLeapYear(transaction.TransactionTime.Year) && transaction.TransactionTime > new DateTime(transaction.TransactionTime.Year, 3, 1)))
                                 {
-                                    left -= asset.CurrentAmount;
-                                    asset.Location = transaction.LocationDestination;
+                                    isLeapYear = true;
                                 }
                                 else
                                 {
-                                    hodledAssets.Add(asset.Split(left, transaction.LocationDestination));
+                                    isLeapYear = false;
+                                }
+                                if (asset.CurrentAmount <= left)
+                                {
+                                    //BankWithdrawal is not added to Buys/Sells as EUR/USD is a FIAT-Currency and is therefore not taxed.
+                                    //Only update hodledAssets here
+                                    left -= asset.CurrentAmount;
+                                    asset.CurrentAmount = 0.0m;
+                                    asset.CurrentValueOnBuyRate = 0.0m;
+                                    asset.removed = true;
+                                }
+                                else
+                                {
+                                    //BankWithdrawal is not added to Buys/Sells as EUR/USD is a FIAT-Currency and is therefore not taxed.
+                                    //Only update hodledAssets here
+                                    asset.CurrentValueOnBuyRate -= left / asset.OriginalAmount * asset.OriginalValue;
+                                    asset.CurrentAmount -= left;
                                     left = 0.0m;
                                 }
                             }
                             catch (InvalidOperationException)
                             {
-                                var leftPercent = left / transaction.AmountStart;
-                                if (leftPercent < 0.01m) //Catches some errors due to rounding of APIs. When leftPercent is less than 1%, the exception gets ignored
-                                {
-                                    left = 0.0m;
-                                }
-                                else
-                                {
-                                    throw new InvalidOperationException("Hodled Assets did not contain an asset, that needs to be withdrawn.");
-                                }
+                                throw new InvalidOperationException("Hodled Assets did not contain an FIAT asset, that needs to be withdrawn.");
                             }
                         }
                         #endregion
@@ -327,7 +462,7 @@ namespace CryptoControlCenter.Common.Helper
                             {
                                 if (!string.IsNullOrWhiteSpace(transaction.FeeAsset))
                                 {
-                                    var feeAsset = hodledAssets.First(x => x.Asset == transaction.FeeAsset && x.Location == transaction.LocationStart && x.removed == false);
+                                    var feeAsset = hodledAssets.First(x => x.Asset == transaction.FeeAsset && x.removed == false && x.Wallet == transaction.LocationStart);
                                     if (feeAsset.CurrentAmount <= leftFee)
                                     {
                                         leftFee -= feeAsset.CurrentAmount;
@@ -356,160 +491,30 @@ namespace CryptoControlCenter.Common.Helper
                                 }
                             }
                         }
-                        //Fees gets added nonetheless transfer is not taxed, as they are still expenses
+                        //Fees however are added to AFS, as they are expenses, nontheless EUR/USD is not taxed.
                         fee = (decimal)transaction.FeeValue;
                         #endregion
-                    }
-                    break;
-                case TransactionType.Distribution:
-                    //Insert Distribution into HodledAsset-Set, but with value = 0 -> AFS-Buys will not increase, but Sells as soon as it is sold
-                    //When distribution amount is negative, it is most commonly a swap
-                    if (transaction.AmountDestination > 0.0m)
-                    {
-                        hodledAssets.Add(new HodledAsset(transaction.LocationDestination, transaction.AssetDestination, (decimal)transaction.AmountDestination, 0.0m, transaction.TransactionTime));
-                    }
-                    else
-                    {
-                        left = (decimal)transaction.AmountDestination * -1.0m;
-                        while (left > 0.0m)
-                        {
-                            try
-                            {
-                                //Distribution swaps are not taxed nor do they change the receive date and affect the one-year-holding duration
-                                var asset = hodledAssets.First(x => x.Asset == transaction.AssetDestination && x.removed == false && x.Location == transaction.Wallet);
-                                if (asset.CurrentAmount <= left)
-                                {
-                                    left -= asset.CurrentAmount;
-                                    asset.removed = true;
-                                }
-                                else
-                                {
-                                    var a = asset.Split(left, transaction.LocationDestination);
-                                    a.removed = true;
-                                    hodledAssets.Add(a);
-                                    left = 0.0m;
-                                }
-                            }
-                            catch (InvalidOperationException)
-                            {
-                                var leftValue = left / transaction.AmountDestination * transaction.TransactionValue;
-                                if (leftValue < 1.00m) //Catches some errors due to rounding of APIs. When leftValue is less than 1 €, the exception gets ignored
-                                {
-                                    left = 0.0m;
-                                }
-                                else
-                                {
-                                    throw new InvalidOperationException("Hodled Assets did not contain an asset, that needs to be withdrawn.");
-                                }
-                            }
-                        }
-                    }
-                    break;
-                case TransactionType.Dust:
-                    //TODO Dust
-                    throw new NotImplementedException();
-                case TransactionType.BankDeposit:
-                    hodledAssets.Add(new HodledAsset(transaction.LocationDestination, transaction.AssetDestination, (decimal)transaction.AmountDestination, (decimal)transaction.TransactionValue, transaction.TransactionTime));
-                    break;
-                case TransactionType.BankWithdrawal:
-                    left = (decimal)transaction.AmountDestination;
-                    leftFee = (decimal)transaction.FeeAmount;
-                    #region Asset
-                    while (left > 0.0m)
-                    {
-                        try
-                        {
-                            var asset = hodledAssets.First(x => x.Asset == transaction.AssetDestination && x.removed == false && x.Location == transaction.LocationStart);
-                            if ((DateTime.IsLeapYear(asset.Received.Year) && asset.Received < new DateTime(asset.Received.Year, 2, 29)) || (DateTime.IsLeapYear(transaction.TransactionTime.Year) && transaction.TransactionTime > new DateTime(transaction.TransactionTime.Year, 3, 1)))
-                            {
-                                isLeapYear = true;
-                            }
-                            else
-                            {
-                                isLeapYear = false;
-                            }
-                            if (asset.CurrentAmount <= left)
-                            {
-                                //BankWithdrawal is not added to Buys/Sells as EUR/USD is a FIAT-Currency and is therefore not taxed.
-                                //Only update hodledAssets here
-                                left -= asset.CurrentAmount;
-                                asset.CurrentAmount = 0.0m;
-                                asset.CurrentValueOnBuyRate = 0.0m;
-                                asset.removed = true;
-                            }
-                            else
-                            {
-                                //BankWithdrawal is not added to Buys/Sells as EUR/USD is a FIAT-Currency and is therefore not taxed.
-                                //Only update hodledAssets here
-                                asset.CurrentValueOnBuyRate -= left / asset.OriginalAmount * asset.OriginalValue;
-                                asset.CurrentAmount -= left;
-                                left = 0.0m;
-                            }
-                        }
-                        catch (InvalidOperationException)
-                        {
-                            throw new InvalidOperationException("Hodled Assets did not contain an FIAT asset, that needs to be withdrawn.");
-                        }
-                    }
-                    #endregion
-                    #region Fee
-                    while (leftFee > 0.0m)
-                    {
-                        try
-                        {
-                            if (!string.IsNullOrWhiteSpace(transaction.FeeAsset))
-                            {
-                                var feeAsset = hodledAssets.First(x => x.Asset == transaction.FeeAsset && x.removed == false && x.Location == transaction.LocationStart);
-                                if (feeAsset.CurrentAmount <= leftFee)
-                                {
-                                    leftFee -= feeAsset.CurrentAmount;
-                                    feeAsset.CurrentAmount = 0.0m;
-                                    feeAsset.CurrentValueOnBuyRate = 0.0m;
-                                    feeAsset.removed = true;
-                                }
-                                else
-                                {
-                                    feeAsset.CurrentValueOnBuyRate -= leftFee / feeAsset.OriginalAmount * feeAsset.OriginalValue;
-                                    feeAsset.CurrentAmount -= leftFee;
-                                    leftFee = 0.0m;
-                                }
-                            }
-                        }
-                        catch (InvalidOperationException)
-                        {
-                            var leftFeeValue = leftFee / transaction.FeeAmount * transaction.FeeValue;
-                            if (leftFeeValue < 0.05m) //Catches some errors due to rounding of APIs. When leftFeeValue is less than 5ct, the exception gets ignored
-                            {
-                                leftFee = 0.0m;
-                            }
-                            else
-                            {
-                                throw new InvalidOperationException("Hodled Assets did not contain an asset, that is fee.");
-                            }
-                        }
-                    }
-                    //Fees however are added to AFS, as they are expenses, nontheless EUR/USD is not taxed.
-                    fee = (decimal)transaction.FeeValue;
-                    #endregion
-                    break;
-                default:
-                    throw new NotImplementedException();
+                        break;
+                    default:
+                        throw new NotImplementedException();
+                }
+                fsDictionary.First(x => x.Key == transaction.Wallet).Value.summedBuys += decimal.Round(buy, 2);
+                fsDictionary.First(x => x.Key == transaction.Wallet).Value.summedBuys23 += decimal.Round(buy23, 2);
+                fsDictionary.First(x => x.Key == transaction.Wallet).Value.summedSells += decimal.Round(sell, 2);
+                fsDictionary.First(x => x.Key == transaction.Wallet).Value.summedSells23 += decimal.Round(sell23, 2);
+                fsDictionary.First(x => x.Key == transaction.Wallet).Value.summedFees += decimal.Round(fee, 2);
+                fsDictionary.First(x => x.Key == transaction.Wallet).Value.summedFees23 += decimal.Round(fee23, 2);
+                if (buy23 != 0.0m && buy != 0.0m)
+                {
+                    return ProcessResult.PartialParagraph23;
+                }
+                else if (buy23 != 0.0m)
+                {
+                    return ProcessResult.FullParagraph23;
+                }
+                else return ProcessResult.NoParagraph23;
             }
-            fsDictionary.First(x => x.Key == transaction.Wallet).Value.summedBuys += decimal.Round(buy, 2);
-            fsDictionary.First(x => x.Key == transaction.Wallet).Value.summedBuys23 += decimal.Round(buy23, 2);
-            fsDictionary.First(x => x.Key == transaction.Wallet).Value.summedSells += decimal.Round(sell, 2);
-            fsDictionary.First(x => x.Key == transaction.Wallet).Value.summedSells23 += decimal.Round(sell23, 2);
-            fsDictionary.First(x => x.Key == transaction.Wallet).Value.summedFees += decimal.Round(fee, 2);
-            fsDictionary.First(x => x.Key == transaction.Wallet).Value.summedFees23 += decimal.Round(fee23, 2);
-            if (buy23 != 0.0m && buy != 0.0m)
-            {
-                return ProcessResult.PartialParagraph23;
-            }
-            else if (buy23 != 0.0m)
-            {
-                return ProcessResult.FullParagraph23;
-            }
-            else return ProcessResult.NoParagraph23;
+#pragma warning restore CS8629 // Ein Werttyp, der NULL zulässt, kann NULL sein.
         }
     }
 }
